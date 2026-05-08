@@ -464,42 +464,53 @@ var data=null;
 var DEFAULT='You are the reason I believe in unconditional love. Every warmth I\'ve ever felt, every safety I\'ve known, every soft landing after life knocked me down — that was you. On this Mother\'s Day, I want you to know that you are not just loved, you are treasured, celebrated, and deeply, endlessly adored. Thank you for being mine.';
 
 function loadData(){
+
   var p = new URLSearchParams(window.location.search);
 
-  // PAID MODE
+  // paid link mode
   var d = p.get('d');
+
   if(d){
+
     try{
-      data = JSON.parse(decodeURIComponent(escape(atob(d))));
-      // block reopening preview
-if(data && data.isPreview && data.previewLocked){
-  window.location.href = 'payment.html';
-  return;
-}
+      data = JSON.parse(
+        decodeURIComponent(
+          escape(atob(d))
+        )
+      );
     }catch(e){
       console.error(e);
     }
   }
 
-  // PREVIEW MODE
+  // preview mode
   var id = p.get('id');
+
   if(id && !data){
+
     try{
+
       var stored = localStorage.getItem(id);
+
       if(stored){
         data = JSON.parse(stored);
       }
+
+      // block reopened previews
       if(data && data.isPreview && data.previewLocked){
-  window.location.href = 'payment.html';
-  return;
-}
+
+        window.location.href =
+          'create.html?payPreview=' + id;
+
+        return;
+      }
+
     }catch(e){
       console.error(e);
     }
   }
 
   init();
-  
 }
 
 function init(){
@@ -636,6 +647,11 @@ function goTab(t){
 
 
 function openSurprise(){
+
+  var frame = document.getElementById('ytPlayer');
+
+frame.src =
+'https://www.youtube.com/embed/hlWiI4xVVKY?autoplay=1&loop=1&playlist=hlWiI4xVVKY&controls=0&enablejsapi=1';
   var intro=document.getElementById('intro');
   intro.classList.add('out');
   setTimeout(function(){intro.style.display='none';},1300);
@@ -661,9 +677,10 @@ function openSurprise(){
       localStorage.setItem(id, JSON.stringify(data));
     }
 
-    window.location.href = 'payment.html';
+    window.location.href =
+  'create.html?payPreview=' + id;
 
-  }, 15000);
+  }, 30000);
 
 }
 
@@ -742,7 +759,7 @@ window.addEventListener('keydown', function(e){
     id="ytPlayer"
     width="0"
     height="0"
-    src="https://www.youtube.com/embed/hlWiI4xVVKY?autoplay=1&loop=1&playlist=hlWiI4xVVKY&controls=0&enablejsapi=1"
+    src=""
     title="Background Music"
     frameborder="0"
     allow="autoplay"

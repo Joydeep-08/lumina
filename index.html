@@ -452,6 +452,47 @@ function handlePay(){
   var rzp=new Razorpay(options);
   rzp.open();
 }
+function handlePayFromPreview(d, previewId){
+
+  var options={
+    key:'rzp_live_SmizRaPApu81ZS',
+    amount:3900,
+    currency:'INR',
+    name:"Mom's Surprise",
+    description:"Mother's Day Surprise Link",
+
+    handler:async function(response){
+
+      // unlock preview permanently
+      var stored = localStorage.getItem(previewId);
+
+      if(stored){
+
+        var payload = JSON.parse(stored);
+
+        payload.isPreview = false;
+        payload.previewLocked = false;
+        payload.pid = response.razorpay_payment_id;
+
+        localStorage.setItem(
+          previewId,
+          JSON.stringify(payload)
+        );
+
+        // open final version
+        window.location.href =
+          'view.html?id=' + previewId + '&paid=1';
+      }
+    },
+
+    prefill:{name:d.yourName||''},
+    theme:{color:'#d4456a'}
+  };
+
+  var rzp=new Razorpay(options);
+
+  rzp.open();
+}
 
 async function buildAndShowLink(d, paymentId){
   var compressed=await Promise.all(d.balloons.map(async function(b){
@@ -489,6 +530,40 @@ function resetAll(){
   addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
+(function(){
+
+  var p = new URLSearchParams(window.location.search);
+
+  var previewId = p.get('payPreview');
+
+  if(!previewId) return;
+
+  var stored = localStorage.getItem(previewId);
+
+  if(!stored) return;
+
+  try{
+
+    var payload = JSON.parse(stored);
+
+    // rebuild temporary data object
+    var d = {
+      herName: payload.n || '',
+      yourName: payload.f || '',
+      msg: payload.m || '',
+      balloons: payload.b || []
+    };
+
+    // auto start payment
+    setTimeout(function(){
+      handlePayFromPreview(d, previewId);
+    }, 600);
+
+  }catch(e){
+    console.error(e);
+  }
+
+})();
 </script>
 </body>
 </html>
