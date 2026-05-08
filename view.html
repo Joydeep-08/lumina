@@ -445,10 +445,33 @@ var data=null;
 var DEFAULT='You are the reason I believe in unconditional love. Every warmth I\'ve ever felt, every safety I\'ve known, every soft landing after life knocked me down — that was you. On this Mother\'s Day, I want you to know that you are not just loved, you are treasured, celebrated, and deeply, endlessly adored. Thank you for being mine.';
 
 function loadData(){
-  var p=new URLSearchParams(window.location.search);
-  var d=p.get('d');
-  if(d){try{data=JSON.parse(decodeURIComponent(escape(atob(d))));}catch(e){console.error(e);}}
+  var p = new URLSearchParams(window.location.search);
+
+  // PAID MODE
+  var d = p.get('d');
+  if(d){
+    try{
+      data = JSON.parse(decodeURIComponent(escape(atob(d))));
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  // PREVIEW MODE
+  var id = p.get('id');
+  if(id && !data){
+    try{
+      var stored = localStorage.getItem(id);
+      if(stored){
+        data = JSON.parse(stored);
+      }
+    }catch(e){
+      console.error(e);
+    }
+  }
+
   init();
+  
 }
 
 function init(){
@@ -526,6 +549,10 @@ function popBalloon(i,b,el,evt){
   if(el.classList.contains('popped'))return;
   var rect=el.getBoundingClientRect();
   el.classList.add('popped');
+  try{
+  popSound.currentTime = 0;
+  popSound.play();
+}catch(e){}
   balLeft--;
   burst(rect.left+rect.width/2,rect.top+rect.height/2);
 
@@ -575,16 +602,14 @@ function goTab(t){
 }
 
 // ── Audio ──
-var audio=new Audio('https://cdn.pixabay.com/audio/2023/07/26/audio_8e2e47b5c5.mp3');
-audio.loop=true;audio.volume=0.85;
-var playing=false;
+
 
 function openSurprise(){
   var intro=document.getElementById('intro');
   intro.classList.add('out');
   setTimeout(function(){intro.style.display='none';},1300);
   document.getElementById('app').classList.add('show');
-  audio.play().then(function(){playing=true;}).catch(function(){});
+  
   document.getElementById('musicPill').classList.add('vis');
   setTimeout(function(){burst(window.innerWidth*.3,window.innerHeight*.35);},150);
   setTimeout(function(){burst(window.innerWidth*.7,window.innerHeight*.4);},350);
@@ -593,13 +618,63 @@ function openSurprise(){
   setTimeout(function(){burst(window.innerWidth*.8,window.innerHeight*.3);},1050);
 }
 
+
+var playing = true;
+
+
+
 function toggleMusic(){
-  var pill=document.getElementById('musicPill');
-  if(playing){audio.pause();playing=false;document.getElementById('micon').textContent='▶';pill.classList.add('muted');}
-  else{audio.play();playing=true;document.getElementById('micon').textContent='⏸';pill.classList.remove('muted');}
+
+  var pill = document.getElementById('musicPill');
+  var frame = document.getElementById('ytPlayer');
+
+  if(playing){
+
+    frame.src = '';
+
+    playing = false;
+
+    pill.classList.add('muted');
+    document.getElementById('micon').textContent = '▶';
+
+  } else {
+
+    frame.src =
+      'https://www.youtube.com/embed/hlWiI4xVVKY?autoplay=1&loop=1&playlist=hlWiI4xVVKY&controls=0&enablejsapi=1';
+
+    playing = true;
+
+    pill.classList.remove('muted');
+    document.getElementById('micon').textContent = '⏸';
+  }
 }
 
+
+
+
+
+
+var popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+popSound.volume = 1;
+
+
 loadData();
+
 </script>
+<!-- Hidden YouTube Music -->
+<div id="ytMusicWrap" style="position:fixed; width:0; height:0; overflow:hidden; opacity:0; pointer-events:none;">
+  
+  <iframe
+    id="ytPlayer"
+    width="0"
+    height="0"
+    src="https://www.youtube.com/embed/hlWiI4xVVKY?autoplay=1&loop=1&playlist=hlWiI4xVVKY&controls=0&enablejsapi=1"
+    title="Background Music"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen>
+  </iframe>
+
+</div>
 </body>
 </html>
