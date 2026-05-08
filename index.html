@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Create Mom's Surprise 🌺</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -20,7 +19,6 @@
 }
 body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
 
-/* Background */
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .bg-layer::before{
   content:'';position:absolute;inset:0;
@@ -34,7 +32,6 @@ body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);m
   100%{transform:translateY(110vh) rotate(540deg);opacity:0;}
 }
 
-/* Header */
 header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
 .mama-badge{
   display:inline-flex;align-items:center;gap:8px;
@@ -43,18 +40,12 @@ header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
   border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;
   margin-bottom:22px;
 }
-h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(40px,9vw,80px);font-weight:700;line-height:1;
-  letter-spacing:-1px;color:var(--deep);
-}
+h1{font-family:'Playfair Display',serif;font-size:clamp(40px,9vw,80px);font-weight:700;line-height:1;letter-spacing:-1px;color:var(--deep);}
 h1 em{font-style:italic;color:var(--rose);}
 .tagline{margin-top:12px;font-size:14px;color:var(--muted);font-weight:300;}
 
-/* Wrap */
 .wrap{position:relative;z-index:2;max-width:700px;margin:0 auto 100px;padding:0 18px;}
 
-/* Card */
 .card{
   background:var(--card-bg);backdrop-filter:blur(20px);
   border:1px solid var(--border);border-radius:24px;
@@ -71,7 +62,6 @@ h1 em{font-style:italic;color:var(--rose);}
 .card-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
 .card-sub{font-size:12px;color:var(--muted);margin-bottom:26px;}
 
-/* Form elements */
 .lbl{display:block;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
 input[type=text],textarea{
   width:100%;padding:14px 18px;
@@ -80,19 +70,14 @@ input[type=text],textarea{
   border:1.5px solid rgba(212,69,106,0.14);border-radius:14px;
   outline:none;transition:border-color .2s,box-shadow .2s;resize:none;
 }
-input[type=text]:focus,textarea:focus{
-  border-color:var(--rose);
-  box-shadow:0 0 0 3px rgba(212,69,106,0.09);
-}
+input[type=text]:focus,textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(212,69,106,0.09);}
 textarea{height:90px;line-height:1.6;}
 .f{margin-bottom:22px;}
 
-/* Balloon builder */
 .balloon-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
 .b-item{
   background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);
-  border-radius:18px;padding:20px;position:relative;
-  transition:border-color .2s;
+  border-radius:18px;padding:20px;position:relative;transition:border-color .2s;
 }
 .b-item:hover{border-color:rgba(212,69,106,0.3);}
 .b-item-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
@@ -103,16 +88,11 @@ textarea{height:90px;line-height:1.6;}
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 .b-item-title{font-weight:600;font-size:14px;flex:1;}
-.b-del{
-  background:none;border:none;cursor:pointer;
-  color:var(--muted);font-size:16px;padding:4px;
-  border-radius:50%;transition:background .2s,color .2s;
-}
+.b-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;border-radius:50%;transition:background .2s,color .2s;}
 .b-del:hover{background:rgba(212,69,106,0.1);color:var(--rose);}
 .b-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:500px){.b-row{grid-template-columns:1fr;}}
 
-/* Photo slot */
 .photo-slot{
   aspect-ratio:1;border:2px dashed rgba(212,69,106,0.25);
   border-radius:12px;position:relative;overflow:hidden;
@@ -122,11 +102,7 @@ textarea{height:90px;line-height:1.6;}
 .photo-slot input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:3;}
 .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:1;}
 .photo-slot.filled img{display:block;}
-.photo-icon{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;z-index:0;
-}
+.photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;z-index:0;}
 .photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
 .photo-slot.filled .photo-icon{display:none;}
 .del-x{
@@ -138,7 +114,6 @@ textarea{height:90px;line-height:1.6;}
 }
 .photo-slot.filled .del-x{display:flex;}
 
-/* Add balloon btn */
 .add-balloon-btn{
   width:100%;padding:16px;
   background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);
@@ -148,22 +123,22 @@ textarea{height:90px;line-height:1.6;}
 }
 .add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
 
-/* Submit section */
 .hint-box{
   background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);
   border-radius:14px;padding:16px 20px;margin-bottom:18px;
   font-size:13px;color:var(--gold);line-height:1.6;
 }
 .hint-box strong{font-weight:600;}
+
 .free-prev-btn{
   width:100%;padding:16px;
-  background:transparent;
-  border:2px solid rgba(212,69,106,0.25);
+  background:transparent;border:2px solid rgba(212,69,106,0.25);
   border-radius:16px;font-family:'Outfit',sans-serif;
   font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;
   transition:all .2s;margin-bottom:12px;
 }
 .free-prev-btn:hover{background:rgba(212,69,106,0.06);}
+
 .pay-btn{
   width:100%;padding:20px;
   background:linear-gradient(135deg,var(--rose),#c94d7a);
@@ -173,19 +148,13 @@ textarea{height:90px;line-height:1.6;}
   transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
-.pay-badge{
-  background:rgba(255,255,255,0.2);border-radius:100px;
-  padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:1px;
-}
 
-/* Error */
 .err{
   display:none;background:rgba(255,80,80,0.07);
   border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;
   padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;
 }
 
-/* Result */
 .result{
   display:none;background:var(--card-bg);border:1px solid var(--border);
   border-radius:24px;padding:40px;text-align:center;
@@ -200,10 +169,7 @@ textarea{height:90px;line-height:1.6;}
   border-radius:12px;padding:12px 16px;margin-bottom:16px;
 }
 .link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;}
-.copy-btn{
-  background:var(--rose);color:#fff;border:none;border-radius:9px;
-  padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;
-}
+.copy-btn{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
 .open-btn{
   display:inline-block;padding:15px 36px;
   background:linear-gradient(135deg,var(--rose),#c94d7a);
@@ -219,7 +185,6 @@ textarea{height:90px;line-height:1.6;}
 </style>
 </head>
 <body>
-<!-- Falling petals -->
 <div class="bg-layer"></div>
 <div id="petals"></div>
 
@@ -230,8 +195,6 @@ textarea{height:90px;line-height:1.6;}
 </header>
 
 <div class="wrap">
-
-  <!-- Step 1 -->
   <div class="card">
     <div class="step-badge">1</div>
     <div class="card-title">About her</div>
@@ -240,7 +203,6 @@ textarea{height:90px;line-height:1.6;}
     <div class="f"><label class="lbl">Your Name</label><input type="text" id="yourName" placeholder="Who is this from?"/></div>
   </div>
 
-  <!-- Step 2 -->
   <div class="card">
     <div class="step-badge">2</div>
     <div class="card-title">Balloon Cards 🎈</div>
@@ -249,7 +211,6 @@ textarea{height:90px;line-height:1.6;}
     <button class="add-balloon-btn" onclick="addBalloon()">+ Add another balloon card</button>
   </div>
 
-  <!-- Step 3 -->
   <div class="card">
     <div class="step-badge">3</div>
     <div class="card-title">Final Message 💌</div>
@@ -260,16 +221,13 @@ textarea{height:90px;line-height:1.6;}
   </div>
 
   <div class="hint-box">
-   <strong>🔍 Preview First</strong> — See exactly how the surprise looks before generating your shareable link 🌺
+    <strong>🔍 Preview First</strong> — See exactly how the surprise looks before generating your shareable link 🌺
   </div>
 
   <div class="err" id="errBox"></div>
 
   <button class="free-prev-btn" onclick="openPreview()">👁 Preview First</button>
-  <button class="pay-btn" onclick="handlePay()">
-    🌺 &nbsp; Get Her Surprise Link &nbsp;
-    
-  </button>
+  <button class="pay-btn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
 
   <div class="result" id="resultBox">
     <div class="result-icon">🌺</div>
@@ -282,11 +240,24 @@ textarea{height:90px;line-height:1.6;}
     <a id="openLink" class="open-btn" href="#" target="_blank">Open &amp; Preview →</a>
     <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
   </div>
-
 </div>
 
 <script>
-// ── Petals ──
+// ─── Helpers ───────────────────────────────────────────────────────────────
+
+/**
+ * FIX #2 & #1: Build absolute view.html URL using current origin.
+ * Works on Cloudflare Pages regardless of directory structure.
+ */
+function viewURL(id) {
+  // Always build the URL relative to the current page's directory,
+  // replacing create.html with view.html in the pathname.
+  var base = window.location.origin
+    + window.location.pathname.replace(/create\.html$/i, 'view.html');
+  return base + '?id=' + encodeURIComponent(id);
+}
+
+// ─── Petals ────────────────────────────────────────────────────────────────
 (function(){
   var emojis=['🌸','🌺','🌼','🍀','🌹'];
   var wrap=document.getElementById('petals');
@@ -302,13 +273,13 @@ textarea{height:90px;line-height:1.6;}
   }
 })();
 
-// ── Balloon builder ──
-var balloons=[]; // [{msg:'', photoB64: null}]
+// ─── Balloon builder ───────────────────────────────────────────────────────
+var balloons=[];
 var bCount=0;
 
 function addBalloon(){
   var idx=bCount++;
-  balloons.push({msg:'', photoB64:null});
+  balloons.push({msg:'',photoB64:null});
 
   var item=document.createElement('div');
   item.className='b-item';item.id='bi'+idx;
@@ -357,6 +328,7 @@ function loadPic(idx,inp){
   };
   r.readAsDataURL(inp.files[0]);
 }
+
 function removePic(idx,e){
   e.stopPropagation();
   balloons[idx].photoB64=null;
@@ -365,27 +337,30 @@ function removePic(idx,e){
   var inp=document.querySelector('#ps'+idx+' input[type=file]');
   if(inp)inp.value='';
 }
+
 function updateMsg(idx,val){
   if(balloons[idx])balloons[idx].msg=val;
 }
 
-// Add 3 default balloons
+// Default 3 balloons on load
 addBalloon();addBalloon();addBalloon();
 
-// ── Validate & gather data ──
+// ─── Validate ──────────────────────────────────────────────────────────────
 function gatherData(){
   var herName=document.getElementById('herName').value.trim();
   var yourName=document.getElementById('yourName').value.trim();
   var msg=document.getElementById('msg').value.trim();
+
   if(!herName){showErr('Please enter her name 🌺');return null;}
 
+  // Only keep balloons that exist and have a message
   var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
   if(activeBalloons.length===0){showErr('Add at least one balloon message 🎈');return null;}
 
-  return {herName,yourName,msg,balloons:activeBalloons};
+  return {herName:herName,yourName:yourName,msg:msg,balloons:activeBalloons};
 }
 
-// ── Compress ──
+// ─── Image compress ────────────────────────────────────────────────────────
 function compress(dataURL,maxPx,q){
   return new Promise(function(res){
     var img=new Image();
@@ -401,146 +376,91 @@ function compress(dataURL,maxPx,q){
   });
 }
 
-// ── Preview (free) ──
-function openPreview(){
-  var d=gatherData();
-  if(!d)return;
-  // Build preview URL with data embedded
-  buildAndOpen(d);
-}
-
-async function buildAndOpen(d){
-  var compressed=await Promise.all(d.balloons.map(async function(b){
-    return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,400,0.6):null};
+// ─── Compress all balloon photos ───────────────────────────────────────────
+async function compressBalloons(bArr, maxPx, quality){
+  return Promise.all(bArr.map(async function(b){
+    return {
+      msg: b.msg,
+      photoB64: b.photoB64 ? await compress(b.photoB64, maxPx, quality) : null
+    };
   }));
-  var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed};
- const id = 'preview_' + Date.now();
-
-payload.isPreview = true;
-payload.previewLocked = false;
-
-localStorage.setItem(id, JSON.stringify(payload));
-
-// remember preview opened
-localStorage.setItem('opened_' + id, '1');
-
-window.location.href = 'view.html?id=' + id;
 }
 
-// ── Razorpay ──
-function handlePay(){
+// ─── FIX #3: Preview Flow ──────────────────────────────────────────────────
+// Preview: watermarked, locked after 30s, no permanent link
+async function openPreview(){
   var d=gatherData();
   if(!d)return;
 
-  var options={
-    key:'rzp_live_SmizRaPApu81ZS', // ← Replace with your Razorpay key
-    amount:3900, // ₹49 in paise
-    currency:'INR',
-    name:"Mom's Surprise",
-    description:"Mother's Day Surprise Link",
-    image:'',
-    handler:async function(response){
-      // Payment success → build and show link
-      await buildAndShowLink(d, response.razorpay_payment_id);
-    },
-    prefill:{name:d.yourName||''},
-    theme:{color:'#d4456a'},
-    modal:{
-      ondismiss:function(){/* user closed */}
-    }
-  };
-  // TEMPORARY BYPASS FOR DEMO
+  var compressed=await compressBalloons(d.balloons, 400, 0.6);
 
-buildAndShowLink(
-  d,
-  'demo_payment_success'
-);
-}
-function handlePayFromPreview(d, previewId){
-
-  var options={
-    key:'rzp_live_SmizRaPApu81ZS',
-    amount:3900,
-    currency:'INR',
-    name:"Mom's Surprise",
-    description:"Mother's Day Surprise Link",
-
-    handler:async function(response){
-
-      // unlock preview permanently
-      var stored = localStorage.getItem(previewId);
-
-      if(stored){
-
-        var payload = JSON.parse(stored);
-
-        payload.isPreview = false;
-        payload.previewLocked = false;
-        payload.pid = response.razorpay_payment_id;
-
-        localStorage.setItem(
-          previewId,
-          JSON.stringify(payload)
-        );
-
-        // open final version
-        window.location.href =
-          'view.html?id=' + previewId + '&paid=1';
-      }
-    },
-
-    prefill:{name:d.yourName||''},
-    theme:{color:'#d4456a'}
-  };
-
-  var rzp=new Razorpay(options);
-
-  rzp.open();
-}
-
-async function buildAndShowLink(d, paymentId){
-  var compressed=await Promise.all(d.balloons.map(async function(b){
-    return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,480,0.6):null};
-  }));
   var payload={
-  n:d.herName,
-  f:d.yourName,
-  m:d.msg,
-  b:compressed,
-  pid:paymentId
-};
+    n: d.herName,
+    f: d.yourName,
+    m: d.msg,
+    b: compressed,
+    isPreview: true        // view.html reads this to show watermark + timer
+  };
 
-// store locally instead of giant URL
-var id='gift_'+Date.now();
+  var id='preview_'+Date.now();
+  try{
+    localStorage.setItem(id, JSON.stringify(payload));
+  }catch(e){
+    showErr('Storage error — try reducing photo sizes.');
+    return;
+  }
 
-localStorage.setItem(
-  id,
-  JSON.stringify(payload)
-);
+  // FIX #1: always navigate to view.html, never create.html
+  window.open(viewURL(id), '_blank');
+}
 
-var url=
-  window.location.origin+
-  window.location.pathname.replace('create.html','view.html')+
-  '?id='+id;
+// ─── FIX #4: Permanent Link Flow (Razorpay bypassed) ──────────────────────
+// Generates permanent link immediately, no watermark, no timer
+async function generateLink(){
+  var d=gatherData();
+  if(!d)return;
+
+  var compressed=await compressBalloons(d.balloons, 480, 0.65);
+
+  var payload={
+    n: d.herName,
+    f: d.yourName,
+    m: d.msg,
+    b: compressed,
+    isPreview: false       // no watermark, no timer
+  };
+
+  var id='gift_'+Date.now();
+  try{
+    localStorage.setItem(id, JSON.stringify(payload));
+  }catch(e){
+    showErr('Storage error — try reducing photo sizes or remove some photos.');
+    return;
+  }
+
+  var url=viewURL(id);
   window._url=url;
-  document.getElementById('linkText').textContent=url.substring(0,60)+'…';
+  document.getElementById('linkText').textContent=url;
   document.getElementById('openLink').href=url;
   document.getElementById('resultBox').style.display='block';
   document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
+// ─── UI helpers ────────────────────────────────────────────────────────────
 function showErr(m){
   var b=document.getElementById('errBox');
   b.textContent='⚠️ '+m;b.style.display='block';
-  setTimeout(function(){b.style.display='none';},4000);
+  setTimeout(function(){b.style.display='none';},4500);
 }
+
 function copyIt(){
   var url=window._url||document.getElementById('openLink').href;
   navigator.clipboard.writeText(url).then(function(){
     var b=document.querySelector('.copy-btn');
-    b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy';},2000);
+    b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy';},2500);
   });
 }
+
 function resetAll(){
   document.getElementById('herName').value='';
   document.getElementById('yourName').value='';
@@ -551,40 +471,6 @@ function resetAll(){
   addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-(function(){
-
-  var p = new URLSearchParams(window.location.search);
-
-  var previewId = p.get('payPreview');
-
-  if(!previewId) return;
-
-  var stored = localStorage.getItem(previewId);
-
-  if(!stored) return;
-
-  try{
-
-    var payload = JSON.parse(stored);
-
-    // rebuild temporary data object
-    var d = {
-      herName: payload.n || '',
-      yourName: payload.f || '',
-      msg: payload.m || '',
-      balloons: payload.b || []
-    };
-
-    // auto start payment
-    setTimeout(function(){
-      handlePayFromPreview(d, previewId);
-    }, 600);
-
-  }catch(e){
-    console.error(e);
-  }
-
-})();
 </script>
 </body>
 </html>
