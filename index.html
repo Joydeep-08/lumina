@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Mom's Surprise 🌺</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --rose:#d4456a;
+  --gold:#c9873a;
+  --cream:#fdf8f2;
+  --warm:#fef3e8;
+  --deep:#1e0f0a;
+  --muted:#7a5045;
+  --border:rgba(212,69,106,0.15);
+  --card-bg:rgba(255,255,255,0.92);
+}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
+
+/* Background */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-layer::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 90% -10%, rgba(212,69,106,0.12) 0%, transparent 60%),
+             radial-gradient(ellipse 60% 50% at -10% 100%, rgba(201,135,58,0.1) 0%, transparent 55%),
+             radial-gradient(ellipse 40% 40% at 50% 50%, rgba(253,243,232,0.5) 0%, transparent 100%);
+}
+.petal{position:fixed;pointer-events:none;font-size:18px;animation:fall linear infinite;opacity:0;z-index:0;}
+@keyframes fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}
+  100%{transform:translateY(110vh) rotate(540deg);opacity:0;}
+}
+
+/* Header */
+header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
+.mama-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:var(--rose);background:rgba(212,69,106,0.07);
+  border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;
+  margin-bottom:22px;
+}
+h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(40px,9vw,80px);font-weight:700;line-height:1;
+  letter-spacing:-1px;color:var(--deep);
+}
+h1 em{font-style:italic;color:var(--rose);}
+.tagline{margin-top:12px;font-size:14px;color:var(--muted);font-weight:300;}
+
+/* Wrap */
+.wrap{position:relative;z-index:2;max-width:700px;margin:0 auto 100px;padding:0 18px;}
+
+/* Card */
+.card{
+  background:var(--card-bg);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:24px;
+  padding:38px;margin-bottom:20px;
+  box-shadow:0 8px 40px rgba(212,69,106,0.07);
+}
+.step-badge{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--rose),#e8698a);
+  color:#fff;font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-bottom:14px;box-shadow:0 4px 12px rgba(212,69,106,0.3);
+}
+.card-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:26px;}
+
+/* Form elements */
+.lbl{display:block;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+input[type=text],textarea{
+  width:100%;padding:14px 18px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--deep);
+  background:rgba(253,248,242,0.8);
+  border:1.5px solid rgba(212,69,106,0.14);border-radius:14px;
+  outline:none;transition:border-color .2s,box-shadow .2s;resize:none;
+}
+input[type=text]:focus,textarea:focus{
+  border-color:var(--rose);
+  box-shadow:0 0 0 3px rgba(212,69,106,0.09);
+}
+textarea{height:90px;line-height:1.6;}
+.f{margin-bottom:22px;}
+
+/* Balloon builder */
+.balloon-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
+.b-item{
+  background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);
+  border-radius:18px;padding:20px;position:relative;
+  transition:border-color .2s;
+}
+.b-item:hover{border-color:rgba(212,69,106,0.3);}
+.b-item-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.b-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--rose),#e8698a);
+  color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.b-item-title{font-weight:600;font-size:14px;flex:1;}
+.b-del{
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:16px;padding:4px;
+  border-radius:50%;transition:background .2s,color .2s;
+}
+.b-del:hover{background:rgba(212,69,106,0.1);color:var(--rose);}
+.b-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.b-row{grid-template-columns:1fr;}}
+
+/* Photo slot */
+.photo-slot{
+  aspect-ratio:1;border:2px dashed rgba(212,69,106,0.25);
+  border-radius:12px;position:relative;overflow:hidden;
+  background:rgba(253,248,242,0.5);transition:border-color .2s;cursor:pointer;
+}
+.photo-slot:hover{border-color:var(--rose);}
+.photo-slot input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:3;}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:1;}
+.photo-slot.filled img{display:block;}
+.photo-icon{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;z-index:0;
+}
+.photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
+.photo-slot.filled .photo-icon{display:none;}
+.del-x{
+  position:absolute;top:4px;right:4px;width:20px;height:20px;
+  border-radius:50%;background:rgba(255,255,255,0.95);
+  border:none;font-size:10px;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  z-index:4;color:#c0392b;font-weight:700;padding:0;
+}
+.photo-slot.filled .del-x{display:flex;}
+
+/* Add balloon btn */
+.add-balloon-btn{
+  width:100%;padding:16px;
+  background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);
+  border-radius:18px;color:var(--rose);font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
+
+/* Submit section */
+.hint-box{
+  background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);
+  border-radius:14px;padding:16px 20px;margin-bottom:18px;
+  font-size:13px;color:var(--gold);line-height:1.6;
+}
+.hint-box strong{font-weight:600;}
+.free-prev-btn{
+  width:100%;padding:16px;
+  background:transparent;
+  border:2px solid rgba(212,69,106,0.25);
+  border-radius:16px;font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;
+  transition:all .2s;margin-bottom:12px;
+}
+.free-prev-btn:hover{background:rgba(212,69,106,0.06);}
+.pay-btn{
+  width:100%;padding:20px;
+  background:linear-gradient(135deg,var(--rose),#c94d7a);
+  color:#fff;border:none;border-radius:16px;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
+  box-shadow:0 8px 32px rgba(212,69,106,0.35);
+  transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
+.pay-badge{
+  background:rgba(255,255,255,0.2);border-radius:100px;
+  padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:1px;
+}
+
+/* Error */
+.err{
+  display:none;background:rgba(255,80,80,0.07);
+  border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;
+  padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;
+}
+
+/* Result */
+.result{
+  display:none;background:var(--card-bg);border:1px solid var(--border);
+  border-radius:24px;padding:40px;text-align:center;
+  box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;
+}
+.result-icon{font-size:56px;margin-bottom:16px;}
+.result h3{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:8px;}
+.result p{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.link-box{
+  display:flex;gap:8px;align-items:center;
+  background:rgba(212,69,106,0.05);border:1.5px solid rgba(212,69,106,0.14);
+  border-radius:12px;padding:12px 16px;margin-bottom:16px;
+}
+.link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;}
+.copy-btn{
+  background:var(--rose);color:#fff;border:none;border-radius:9px;
+  padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;
+}
+.open-btn{
+  display:inline-block;padding:15px 36px;
+  background:linear-gradient(135deg,var(--rose),#c94d7a);
+  color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:600;text-decoration:none;
+  box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;
+}
+.reset-btn{
+  background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);
+  border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;
+  font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;
+}
+</style>
+</head>
+<body>
+<!-- Falling petals -->
+<div class="bg-layer"></div>
+<div id="petals"></div>
+
+<header>
+  <div class="mama-badge">🌺 Mother's Day · May 2026</div>
+  <h1>Surprise <em>Mom</em></h1>
+  <p class="tagline">Pop-the-balloon cards · a personal message · made with love</p>
+</header>
+
+<div class="wrap">
+
+  <!-- Step 1 -->
+  <div class="card">
+    <div class="step-badge">1</div>
+    <div class="card-title">About her</div>
+    <div class="card-sub">The basics that make it personal</div>
+    <div class="f"><label class="lbl">Her Name *</label><input type="text" id="herName" placeholder="Mom, Maa, Amma, Ummi…"/></div>
+    <div class="f"><label class="lbl">Your Name</label><input type="text" id="yourName" placeholder="Who is this from?"/></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="card">
+    <div class="step-badge">2</div>
+    <div class="card-title">Balloon Cards 🎈</div>
+    <div class="card-sub">Each balloon she pops reveals a polaroid card — add a photo &amp; sweet message for each</div>
+    <div class="balloon-list" id="balloonList"></div>
+    <button class="add-balloon-btn" onclick="addBalloon()">+ Add another balloon card</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card">
+    <div class="step-badge">3</div>
+    <div class="card-title">Final Message 💌</div>
+    <div class="card-sub">The heartfelt note she reads at the end — leave blank for a beautiful default</div>
+    <div class="f"><label class="lbl">Your Message</label>
+      <textarea id="msg" placeholder="Leave blank and a beautiful message will be written for you…"></textarea>
+    </div>
+  </div>
+
+  <div class="hint-box">
+    <strong>🔍 Free Preview</strong> — Click "Preview" to see exactly how it looks. Then pay ₹49 to get your shareable link to send to Mom 🌺
+  </div>
+
+  <div class="err" id="errBox"></div>
+
+  <button class="free-prev-btn" onclick="openPreview()">👁 Preview First (Free)</button>
+  <button class="pay-btn" onclick="handlePay()">
+    🌺 &nbsp; Get Her Surprise Link &nbsp;
+    <span class="pay-badge">₹49</span>
+  </button>
+
+  <div class="result" id="resultBox">
+    <div class="result-icon">🌺</div>
+    <h3>Send it to Mom!</h3>
+    <p>She'll tap through her surprise 💕</p>
+    <div class="link-box">
+      <span id="linkText">—</span>
+      <button class="copy-btn" onclick="copyIt()">Copy</button>
+    </div>
+    <a id="openLink" class="open-btn" href="#" target="_blank">Open &amp; Preview →</a>
+    <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
+  </div>
+
+</div>
+
+<script>
+// ── Petals ──
+(function(){
+  var emojis=['🌸','🌺','🌼','🍀','🌹'];
+  var wrap=document.getElementById('petals');
+  for(var i=0;i<14;i++){
+    var d=document.createElement('div');
+    d.className='petal';
+    d.textContent=emojis[i%emojis.length];
+    d.style.left=Math.random()*100+'%';
+    d.style.animationDelay=Math.random()*18+'s';
+    d.style.animationDuration=(10+Math.random()*12)+'s';
+    d.style.fontSize=(13+Math.random()*12)+'px';
+    wrap.appendChild(d);
+  }
+})();
+
+// ── Balloon builder ──
+var balloons=[]; // [{msg:'', photoB64: null}]
+var bCount=0;
+
+function addBalloon(){
+  var idx=bCount++;
+  balloons.push({msg:'', photoB64:null});
+
+  var item=document.createElement('div');
+  item.className='b-item';item.id='bi'+idx;
+
+  var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
+  var colorDot=colors[idx%colors.length];
+
+  item.innerHTML=`
+    <div class="b-item-header">
+      <div class="b-num">${idx+1}</div>
+      <div class="b-item-title">${colorDot} Balloon ${idx+1}</div>
+      <button class="b-del" onclick="removeBalloon(${idx})" title="Remove">✕</button>
+    </div>
+    <div class="b-row">
+      <div>
+        <label class="lbl">Photo (optional)</label>
+        <div class="photo-slot" id="ps${idx}">
+          <input type="file" accept="image/*" onchange="loadPic(${idx},this)"/>
+          <img id="pi${idx}" src="" alt=""/>
+          <div class="photo-icon">📷<small>Add photo</small></div>
+          <button class="del-x" type="button" onclick="removePic(${idx},event)">✕</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:flex-start;">
+        <label class="lbl">Message *</label>
+        <textarea id="bm${idx}" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(${idx},this.value)"></textarea>
+      </div>
+    </div>`;
+
+  document.getElementById('balloonList').appendChild(item);
+}
+
+function removeBalloon(idx){
+  var el=document.getElementById('bi'+idx);
+  if(el)el.remove();
+  if(balloons[idx])balloons[idx]=null;
+}
+
+function loadPic(idx,inp){
+  if(!inp.files||!inp.files[0])return;
+  var r=new FileReader();
+  r.onload=function(e){
+    balloons[idx].photoB64=e.target.result;
+    document.getElementById('pi'+idx).src=e.target.result;
+    document.getElementById('ps'+idx).classList.add('filled');
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+function removePic(idx,e){
+  e.stopPropagation();
+  balloons[idx].photoB64=null;
+  document.getElementById('pi'+idx).src='';
+  document.getElementById('ps'+idx).classList.remove('filled');
+  var inp=document.querySelector('#ps'+idx+' input[type=file]');
+  if(inp)inp.value='';
+}
+function updateMsg(idx,val){
+  if(balloons[idx])balloons[idx].msg=val;
+}
+
+// Add 3 default balloons
+addBalloon();addBalloon();addBalloon();
+
+// ── Validate & gather data ──
+function gatherData(){
+  var herName=document.getElementById('herName').value.trim();
+  var yourName=document.getElementById('yourName').value.trim();
+  var msg=document.getElementById('msg').value.trim();
+  if(!herName){showErr('Please enter her name 🌺');return null;}
+
+  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
+  if(activeBalloons.length===0){showErr('Add at least one balloon message 🎈');return null;}
+
+  return {herName,yourName,msg,balloons:activeBalloons};
+}
+
+// ── Compress ──
+function compress(dataURL,maxPx,q){
+  return new Promise(function(res){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width,h=img.height;
+      if(w>h){if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}}
+      else{if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}}
+      var c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/jpeg',q));
+    };
+    img.src=dataURL;
+  });
+}
+
+// ── Preview (free) ──
+function openPreview(){
+  var d=gatherData();
+  if(!d)return;
+  // Build preview URL with data embedded
+  buildAndOpen(d);
+}
+
+async function buildAndOpen(d){
+  var compressed=await Promise.all(d.balloons.map(async function(b){
+    return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,400,0.6):null};
+  }));
+  var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed};
+  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  var url='view.html?d='+encoded;
+  window.open(url,'_blank');
+}
+
+// ── Razorpay ──
+function handlePay(){
+  var d=gatherData();
+  if(!d)return;
+
+  var options={
+    key:'rzp_live_SmizRaPApu81ZS', // ← Replace with your Razorpay key
+    amount:4900, // ₹49 in paise
+    currency:'INR',
+    name:"Mom's Surprise",
+    description:"Mother's Day Surprise Link",
+    image:'',
+    handler:async function(response){
+      // Payment success → build and show link
+      await buildAndShowLink(d, response.razorpay_payment_id);
+    },
+    prefill:{name:d.yourName||''},
+    theme:{color:'#d4456a'},
+    modal:{
+      ondismiss:function(){/* user closed */}
+    }
+  };
+  var rzp=new Razorpay(options);
+  rzp.open();
+}
+
+async function buildAndShowLink(d, paymentId){
+  var compressed=await Promise.all(d.balloons.map(async function(b){
+    return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,480,0.6):null};
+  }));
+  var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed,pid:paymentId};
+  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  var url=window.location.origin+window.location.pathname.replace('create.html','view.html')+'?d='+encoded;
+  window._url=url;
+  document.getElementById('linkText').textContent=url.substring(0,60)+'…';
+  document.getElementById('openLink').href=url;
+  document.getElementById('resultBox').style.display='block';
+  document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function showErr(m){
+  var b=document.getElementById('errBox');
+  b.textContent='⚠️ '+m;b.style.display='block';
+  setTimeout(function(){b.style.display='none';},4000);
+}
+function copyIt(){
+  var url=window._url||document.getElementById('openLink').href;
+  navigator.clipboard.writeText(url).then(function(){
+    var b=document.querySelector('.copy-btn');
+    b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy';},2000);
+  });
+}
+function resetAll(){
+  document.getElementById('herName').value='';
+  document.getElementById('yourName').value='';
+  document.getElementById('msg').value='';
+  document.getElementById('balloonList').innerHTML='';
+  document.getElementById('resultBox').style.display='none';
+  balloons=[];bCount=0;
+  addBalloon();addBalloon();addBalloon();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
