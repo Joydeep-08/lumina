@@ -18,86 +18,36 @@
   --card-bg:rgba(255,255,255,0.92);
 }
 body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
-
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.bg-layer::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 60% at 90% -10%, rgba(212,69,106,0.12) 0%, transparent 60%),
-             radial-gradient(ellipse 60% 50% at -10% 100%, rgba(201,135,58,0.1) 0%, transparent 55%),
-             radial-gradient(ellipse 40% 40% at 50% 50%, rgba(253,243,232,0.5) 0%, transparent 100%);
-}
+.bg-layer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 90% -10%,rgba(212,69,106,0.12) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at -10% 100%,rgba(201,135,58,0.1) 0%,transparent 55%);}
 .petal{position:fixed;pointer-events:none;font-size:18px;animation:fall linear infinite;opacity:0;z-index:0;}
-@keyframes fall{
-  0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}
-  100%{transform:translateY(110vh) rotate(540deg);opacity:0;}
-}
-
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}100%{transform:translateY(110vh) rotate(540deg);opacity:0;}}
 header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
-.mama-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
-  color:var(--rose);background:rgba(212,69,106,0.07);
-  border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;
-  margin-bottom:22px;
-}
+.mama-badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);background:rgba(212,69,106,0.07);border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;margin-bottom:22px;}
 h1{font-family:'Playfair Display',serif;font-size:clamp(40px,9vw,80px);font-weight:700;line-height:1;letter-spacing:-1px;color:var(--deep);}
 h1 em{font-style:italic;color:var(--rose);}
 .tagline{margin-top:12px;font-size:14px;color:var(--muted);font-weight:300;}
-
 .wrap{position:relative;z-index:2;max-width:700px;margin:0 auto 100px;padding:0 18px;}
-
-.card{
-  background:var(--card-bg);backdrop-filter:blur(20px);
-  border:1px solid var(--border);border-radius:24px;
-  padding:38px;margin-bottom:20px;
-  box-shadow:0 8px 40px rgba(212,69,106,0.07);
-}
-.step-badge{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,var(--rose),#e8698a);
-  color:#fff;font-size:11px;font-weight:700;
-  display:inline-flex;align-items:center;justify-content:center;
-  margin-bottom:14px;box-shadow:0 4px 12px rgba(212,69,106,0.3);
-}
+.card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:38px;margin-bottom:20px;box-shadow:0 8px 40px rgba(212,69,106,0.07);}
+.step-badge{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(212,69,106,0.3);}
 .card-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
 .card-sub{font-size:12px;color:var(--muted);margin-bottom:26px;}
-
 .lbl{display:block;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-input[type=text],textarea{
-  width:100%;padding:14px 18px;
-  font-family:'Outfit',sans-serif;font-size:14px;color:var(--deep);
-  background:rgba(253,248,242,0.8);
-  border:1.5px solid rgba(212,69,106,0.14);border-radius:14px;
-  outline:none;transition:border-color .2s,box-shadow .2s;resize:none;
-}
+input[type=text],textarea{width:100%;padding:14px 18px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--deep);background:rgba(253,248,242,0.8);border:1.5px solid rgba(212,69,106,0.14);border-radius:14px;outline:none;transition:border-color .2s,box-shadow .2s;resize:none;}
 input[type=text]:focus,textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(212,69,106,0.09);}
 textarea{height:90px;line-height:1.6;}
 .f{margin-bottom:22px;}
-
 .balloon-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
-.b-item{
-  background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);
-  border-radius:18px;padding:20px;position:relative;transition:border-color .2s;
-}
+.b-item{background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);border-radius:18px;padding:20px;position:relative;transition:border-color .2s;}
 .b-item:hover{border-color:rgba(212,69,106,0.3);}
 .b-item-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.b-num{
-  width:28px;height:28px;border-radius:50%;
-  background:linear-gradient(135deg,var(--rose),#e8698a);
-  color:#fff;font-size:11px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
+.b-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .b-item-title{font-weight:600;font-size:14px;flex:1;}
 .b-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;border-radius:50%;transition:background .2s,color .2s;}
 .b-del:hover{background:rgba(212,69,106,0.1);color:var(--rose);}
 .b-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:500px){.b-row{grid-template-columns:1fr;}}
-
-.photo-slot{
-  aspect-ratio:1;border:2px dashed rgba(212,69,106,0.25);
-  border-radius:12px;position:relative;overflow:hidden;
-  background:rgba(253,248,242,0.5);transition:border-color .2s;cursor:pointer;
-}
+.photo-slot{aspect-ratio:1;border:2px dashed rgba(212,69,106,0.25);border-radius:12px;position:relative;overflow:hidden;background:rgba(253,248,242,0.5);transition:border-color .2s;cursor:pointer;}
 .photo-slot:hover{border-color:var(--rose);}
 .photo-slot input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:3;}
 .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:1;}
@@ -105,88 +55,47 @@ textarea{height:90px;line-height:1.6;}
 .photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;z-index:0;}
 .photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
 .photo-slot.filled .photo-icon{display:none;}
-.del-x{
-  position:absolute;top:4px;right:4px;width:20px;height:20px;
-  border-radius:50%;background:rgba(255,255,255,0.95);
-  border:none;font-size:10px;cursor:pointer;
-  display:none;align-items:center;justify-content:center;
-  z-index:4;color:#c0392b;font-weight:700;padding:0;
-}
+.del-x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:4;color:#c0392b;font-weight:700;padding:0;}
 .photo-slot.filled .del-x{display:flex;}
-
-.add-balloon-btn{
-  width:100%;padding:16px;
-  background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);
-  border-radius:18px;color:var(--rose);font-family:'Outfit',sans-serif;
-  font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
+.add-balloon-btn{width:100%;padding:16px;background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);border-radius:18px;color:var(--rose);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
-
-.hint-box{
-  background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);
-  border-radius:14px;padding:16px 20px;margin-bottom:18px;
-  font-size:13px;color:var(--gold);line-height:1.6;
-}
+.hint-box{background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--gold);line-height:1.6;}
 .hint-box strong{font-weight:600;}
-
-.free-prev-btn{
-  width:100%;padding:16px;
-  background:transparent;border:2px solid rgba(212,69,106,0.25);
-  border-radius:16px;font-family:'Outfit',sans-serif;
-  font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;
-  transition:all .2s;margin-bottom:12px;
-}
+.size-bar{background:rgba(212,69,106,0.06);border:1px solid rgba(212,69,106,0.15);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted);}
+.size-bar .sz{font-weight:600;color:var(--rose);}
+.size-bar .sz-ok{color:#16a34a;}
+.size-bar .sz-warn{color:#d97706;}
+.size-bar .sz-bad{color:#dc2626;}
+.free-prev-btn{width:100%;padding:16px;background:transparent;border:2px solid rgba(212,69,106,0.25);border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;transition:all .2s;margin-bottom:12px;}
 .free-prev-btn:hover{background:rgba(212,69,106,0.06);}
-
-.pay-btn{
-  width:100%;padding:20px;
-  background:linear-gradient(135deg,var(--rose),#c94d7a);
-  color:#fff;border:none;border-radius:16px;
-  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
-  box-shadow:0 8px 32px rgba(212,69,106,0.35);
-  transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;
-}
+.pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,69,106,0.35);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
-
-.err{
-  display:none;background:rgba(255,80,80,0.07);
-  border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;
-  padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;
-}
-
-.result{
-  display:none;background:var(--card-bg);border:1px solid var(--border);
-  border-radius:24px;padding:40px;text-align:center;
-  box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;
-}
+.pay-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.err{display:none;background:rgba(255,80,80,0.07);border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;}
+.result{display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;}
 .result-icon{font-size:56px;margin-bottom:16px;}
 .result h3{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:8px;}
 .result p{color:var(--muted);font-size:13px;margin-bottom:24px;}
-.link-box{
-  display:flex;gap:8px;align-items:center;
-  background:rgba(212,69,106,0.05);border:1.5px solid rgba(212,69,106,0.14);
-  border-radius:12px;padding:12px 16px;margin-bottom:16px;
-}
-.link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;}
+.link-box{display:flex;gap:8px;align-items:center;background:rgba(212,69,106,0.05);border:1.5px solid rgba(212,69,106,0.14);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
+.link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;max-height:60px;overflow:hidden;}
 .copy-btn{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
-.open-btn{
-  display:inline-block;padding:15px 36px;
-  background:linear-gradient(135deg,var(--rose),#c94d7a);
-  color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;
-  font-size:14px;font-weight:600;text-decoration:none;
-  box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;
-}
-.reset-btn{
-  background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);
-  border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;
-  font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;
-}
+.open-btn{display:inline-block;padding:15px 36px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;}
+.reset-btn{background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(253,248,242,0.92);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-overlay.show{display:flex;}
+.loading-spinner{width:48px;height:48px;border:3px solid rgba(212,69,106,0.2);border-top-color:var(--rose);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:var(--muted);}
 </style>
 </head>
 <body>
 <div class="bg-layer"></div>
 <div id="petals"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Preparing your surprise link…</div>
+</div>
 
 <header>
   <div class="mama-badge">🌺 Mother's Day · May 2026</div>
@@ -221,18 +130,22 @@ textarea{height:90px;line-height:1.6;}
   </div>
 
   <div class="hint-box">
-    <strong>🔍 Preview First</strong> — See exactly how the surprise looks before generating your shareable link 🌺
+    <strong>✅ Photos travel with the link</strong> — Everything is encoded directly into the shareable URL, so it works on <em>any</em> device without sign-in. Keep photos small for a shorter link 🌺
+  </div>
+
+  <div class="size-bar" id="sizeBar">
+    Estimated link size: <span class="sz" id="szVal">—</span>
   </div>
 
   <div class="err" id="errBox"></div>
 
   <button class="free-prev-btn" onclick="openPreview()">👁 Preview First</button>
-  <button class="pay-btn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
+  <button class="pay-btn" id="genBtn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
 
   <div class="result" id="resultBox">
     <div class="result-icon">🌺</div>
     <h3>Send it to Mom!</h3>
-    <p>She'll tap through her surprise 💕</p>
+    <p>Share this link — it works on any phone or computer 💕</p>
     <div class="link-box">
       <span id="linkText">—</span>
       <button class="copy-btn" onclick="copyIt()">Copy</button>
@@ -243,28 +156,6 @@ textarea{height:90px;line-height:1.6;}
 </div>
 
 <script>
-// ─── Helpers ───────────────────────────────────────────────────────────────
-
-/**
- * FIX #2 & #1: Build absolute view.html URL using current origin.
- * Works on Cloudflare Pages regardless of directory structure.
- */
-function viewURL(id) {
-  // current folder path
-  const path = window.location.pathname;
-
-  // remove current file name
-  const baseDir = path.substring(0, path.lastIndexOf('/') + 1);
-
-  // always point to view.html
-  return (
-    window.location.origin +
-    baseDir +
-    'view.html?id=' +
-    encodeURIComponent(id)
-  );
-}
-
 // ─── Petals ────────────────────────────────────────────────────────────────
 (function(){
   var emojis=['🌸','🌺','🌼','🍀','🌹'];
@@ -288,13 +179,10 @@ var bCount=0;
 function addBalloon(){
   var idx=bCount++;
   balloons.push({msg:'',photoB64:null});
-
   var item=document.createElement('div');
   item.className='b-item';item.id='bi'+idx;
-
   var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
   var colorDot=colors[idx%colors.length];
-
   item.innerHTML=`
     <div class="b-item-header">
       <div class="b-num">${idx+1}</div>
@@ -316,7 +204,6 @@ function addBalloon(){
         <textarea id="bm${idx}" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(${idx},this.value)"></textarea>
       </div>
     </div>`;
-
   document.getElementById('balloonList').appendChild(item);
 }
 
@@ -324,15 +211,20 @@ function removeBalloon(idx){
   var el=document.getElementById('bi'+idx);
   if(el)el.remove();
   if(balloons[idx])balloons[idx]=null;
+  updateSizeBar();
 }
 
 function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
   var r=new FileReader();
   r.onload=function(e){
-    balloons[idx].photoB64=e.target.result;
-    document.getElementById('pi'+idx).src=e.target.result;
-    document.getElementById('ps'+idx).classList.add('filled');
+    // Immediately compress on load
+    compress(e.target.result,300,0.55).then(function(c){
+      balloons[idx].photoB64=c;
+      document.getElementById('pi'+idx).src=c;
+      document.getElementById('ps'+idx).classList.add('filled');
+      updateSizeBar();
+    });
   };
   r.readAsDataURL(inp.files[0]);
 }
@@ -344,29 +236,16 @@ function removePic(idx,e){
   document.getElementById('ps'+idx).classList.remove('filled');
   var inp=document.querySelector('#ps'+idx+' input[type=file]');
   if(inp)inp.value='';
+  updateSizeBar();
 }
 
 function updateMsg(idx,val){
   if(balloons[idx])balloons[idx].msg=val;
+  updateSizeBar();
 }
 
-// Default 3 balloons on load
+// Default 3 balloons
 addBalloon();addBalloon();addBalloon();
-
-// ─── Validate ──────────────────────────────────────────────────────────────
-function gatherData(){
-  var herName=document.getElementById('herName').value.trim();
-  var yourName=document.getElementById('yourName').value.trim();
-  var msg=document.getElementById('msg').value.trim();
-
-  if(!herName){showErr('Please enter her name 🌺');return null;}
-
-  // Only keep balloons that exist and have a message
-  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
-  if(activeBalloons.length===0){showErr('Add at least one balloon message 🎈');return null;}
-
-  return {herName:herName,yourName:yourName,msg:msg,balloons:activeBalloons};
-}
 
 // ─── Image compress ────────────────────────────────────────────────────────
 function compress(dataURL,maxPx,q){
@@ -384,87 +263,131 @@ function compress(dataURL,maxPx,q){
   });
 }
 
-// ─── Compress all balloon photos ───────────────────────────────────────────
-async function compressBalloons(bArr, maxPx, quality){
-  return Promise.all(bArr.map(async function(b){
-    return {
-      msg: b.msg,
-      photoB64: b.photoB64 ? await compress(b.photoB64, maxPx, quality) : null
-    };
-  }));
+// ─── Size estimator ────────────────────────────────────────────────────────
+function estimateSize(){
+  var d=gatherDataRaw();
+  if(!d)return 0;
+  var json=JSON.stringify(d);
+  // base64 of json → roughly same size since photos already b64
+  return json.length;
 }
 
-// ─── FIX #3: Preview Flow ──────────────────────────────────────────────────
-// Preview: watermarked, locked after 30s, no permanent link
+function updateSizeBar(){
+  var sz=estimateSize();
+  if(!sz){document.getElementById('szVal').textContent='—';return;}
+  var kb=Math.round(sz/1024);
+  var el=document.getElementById('szVal');
+  el.textContent=kb+'KB';
+  el.className='sz';
+  if(kb<1800){el.classList.add('sz-ok');}
+  else if(kb<3000){el.classList.add('sz-warn');}
+  else{el.classList.add('sz-bad');}
+}
+
+// ─── Validate (raw, no extra compress) ─────────────────────────────────────
+function gatherDataRaw(){
+  var herName=document.getElementById('herName').value.trim();
+  var yourName=document.getElementById('yourName').value.trim();
+  var msg=document.getElementById('msg').value.trim();
+  if(!herName)return null;
+  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
+  if(activeBalloons.length===0)return null;
+  return{n:herName,f:yourName,m:msg,b:activeBalloons};
+}
+
+function gatherData(){
+  var herName=document.getElementById('herName').value.trim();
+  var yourName=document.getElementById('yourName').value.trim();
+  var msg=document.getElementById('msg').value.trim();
+  if(!herName){showErr('Please enter her name 🌺');return null;}
+  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
+  if(activeBalloons.length===0){showErr('Add at least one balloon message 🎈');return null;}
+  return{n:herName,f:yourName,m:msg,b:activeBalloons};
+}
+
+// ─── Encode payload → URL hash ─────────────────────────────────────────────
+// We base64-encode the JSON directly. Photos are already base64 inside.
+// The whole thing goes into the URL hash: view.html#<encoded>
+function encodePayload(obj){
+  try{
+    var json=JSON.stringify(obj);
+    // btoa requires UTF-8 safe chars; use encodeURIComponent trick
+    return btoa(unescape(encodeURIComponent(json)));
+  }catch(e){
+    return null;
+  }
+}
+
+function viewURL(hash){
+  var path=window.location.pathname;
+  var baseDir=path.substring(0,path.lastIndexOf('/')+1);
+  return window.location.origin+baseDir+'view.html#'+hash;
+}
+
+// ─── Preview ───────────────────────────────────────────────────────────────
 async function openPreview(){
   var d=gatherData();
   if(!d)return;
-
-  var compressed=await compressBalloons(d.balloons, 400, 0.6);
-
-  var payload={
-    n: d.herName,
-    f: d.yourName,
-    m: d.msg,
-    b: compressed,
-    isPreview: true        // view.html reads this to show watermark + timer
-  };
-
-  var id='preview_'+Date.now();
-  try{
-    localStorage.setItem(id, JSON.stringify(payload));
-  }catch(e){
-    showErr('Storage error — try reducing photo sizes.');
-    return;
-  }
-
-  // FIX #1: always navigate to view.html, never create.html
-  const previewWindow = window.open(viewURL(id), '_blank');
-
-if (!previewWindow) {
-  alert('Please allow popups for preview.');
-}
+  d.isPreview=true;
+  var hash=encodePayload(d);
+  if(!hash){showErr('Could not encode data.');return;}
+  var url=viewURL(hash);
+  var w=window.open(url,'_blank');
+  if(!w)alert('Please allow popups for preview.');
 }
 
-// ─── FIX #4: Permanent Link Flow (Razorpay bypassed) ──────────────────────
-// Generates permanent link immediately, no watermark, no timer
+// ─── Generate link ──────────────────────────────────────────────────────────
 async function generateLink(){
   var d=gatherData();
   if(!d)return;
 
-  var compressed=await compressBalloons(d.balloons, 480, 0.65);
+  showLoading('Compressing photos…');
 
-  var payload={
-    n: d.herName,
-    f: d.yourName,
-    m: d.msg,
-    b: compressed,
-    isPreview: false       // no watermark, no timer
-  };
+  // Check raw size
+  var rawJson=JSON.stringify(d);
+  if(rawJson.length>3*1024*1024){
+    // Try extra compression
+    showLoading('Photos are large, compressing more…');
+    d.b=await Promise.all(d.b.map(async function(b){
+      return{msg:b.msg,photoB64:b.photoB64?await compress(b.photoB64,200,0.45):null};
+    }));
+  }
 
-  var id='gift_'+Date.now();
-  try{
-    localStorage.setItem(id, JSON.stringify(payload));
-  }catch(e){
-    showErr('Storage error — try reducing photo sizes or remove some photos.');
+  d.isPreview=false;
+  showLoading('Building your link…');
+  var hash=encodePayload(d);
+  if(!hash){hideLoading();showErr('Could not encode the data. Try removing some photos.');return;}
+
+  var url=viewURL(hash);
+
+  // Warn if very long (some apps truncate)
+  if(url.length>50000){
+    hideLoading();
+    showErr('Link is very long ('+Math.round(url.length/1024)+'KB). Try removing photos or use smaller images for best sharing.');
     return;
   }
 
-  var url=viewURL(id);
   window._url=url;
-  document.getElementById('linkText').textContent=url;
+  document.getElementById('linkText').textContent=url.substring(0,80)+'…';
   document.getElementById('openLink').href=url;
+  hideLoading();
   document.getElementById('resultBox').style.display='block';
   document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 // ─── UI helpers ────────────────────────────────────────────────────────────
+function showLoading(txt){
+  document.getElementById('loadingText').textContent=txt||'Working…';
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading(){
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
 function showErr(m){
   var b=document.getElementById('errBox');
   b.textContent='⚠️ '+m;b.style.display='block';
-  setTimeout(function(){b.style.display='none';},4500);
+  setTimeout(function(){b.style.display='none';},5500);
 }
-
 function copyIt(){
   var url=window._url||document.getElementById('openLink').href;
   navigator.clipboard.writeText(url).then(function(){
@@ -472,7 +395,6 @@ function copyIt(){
     b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy';},2500);
   });
 }
-
 function resetAll(){
   document.getElementById('herName').value='';
   document.getElementById('yourName').value='';
