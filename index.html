@@ -250,11 +250,19 @@ textarea{height:90px;line-height:1.6;}
  * Works on Cloudflare Pages regardless of directory structure.
  */
 function viewURL(id) {
-  // Always build the URL relative to the current page's directory,
-  // replacing create.html with view.html in the pathname.
-  var base = window.location.origin
-    + window.location.pathname.replace(/create\.html$/i, 'view.html');
-  return base + '?id=' + encodeURIComponent(id);
+  // current folder path
+  const path = window.location.pathname;
+
+  // remove current file name
+  const baseDir = path.substring(0, path.lastIndexOf('/') + 1);
+
+  // always point to view.html
+  return (
+    window.location.origin +
+    baseDir +
+    'view.html?id=' +
+    encodeURIComponent(id)
+  );
 }
 
 // ─── Petals ────────────────────────────────────────────────────────────────
@@ -411,7 +419,11 @@ async function openPreview(){
   }
 
   // FIX #1: always navigate to view.html, never create.html
-  window.open(viewURL(id), '_blank');
+  const previewWindow = window.open(viewURL(id), '_blank');
+
+if (!previewWindow) {
+  alert('Please allow popups for preview.');
+}
 }
 
 // ─── FIX #4: Permanent Link Flow (Razorpay bypassed) ──────────────────────

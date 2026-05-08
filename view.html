@@ -454,13 +454,14 @@ function startPreviewTimer() {
     seconds--;
     if (el) el.textContent = seconds;
     if (seconds <= 0) {
-      clearInterval(interval);
-      // Just close the tab / show expired message — do NOT redirect to create.html
-      // (redirecting in a new tab causes confusion; just notify)
-      document.getElementById('previewBanner').innerHTML =
-        '⏰ Preview expired — close this tab and return to your creation page to generate the real link.';
-      document.getElementById('previewBanner').style.background = '#7a5045';
-    }
+  clearInterval(interval);
+
+  document.getElementById('previewBanner').innerHTML =
+    '⏰ Preview expired. Close this tab and return to your creation page.';
+
+  document.getElementById('previewBanner').style.background =
+    '#7a5045';
+}
   }, 1000);
 }
 
