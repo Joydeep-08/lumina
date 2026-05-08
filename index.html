@@ -8,19 +8,13 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --rose:#d4456a;
-  --gold:#c9873a;
-  --cream:#fdf8f2;
-  --warm:#fef3e8;
-  --deep:#1e0f0a;
-  --muted:#7a5045;
-  --border:rgba(212,69,106,0.15);
-  --card-bg:rgba(255,255,255,0.92);
+  --rose:#d4456a;--gold:#c9873a;--cream:#fdf8f2;--deep:#1e0f0a;--muted:#7a5045;
+  --border:rgba(212,69,106,0.15);--card-bg:rgba(255,255,255,0.92);
 }
 body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .bg-layer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 90% -10%,rgba(212,69,106,0.12) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at -10% 100%,rgba(201,135,58,0.1) 0%,transparent 55%);}
-.petal{position:fixed;pointer-events:none;font-size:18px;animation:fall linear infinite;opacity:0;z-index:0;}
+.petal{position:fixed;pointer-events:none;animation:fall linear infinite;opacity:0;z-index:0;}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}100%{transform:translateY(110vh) rotate(540deg);opacity:0;}}
 header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
 .mama-badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);background:rgba(212,69,106,0.07);border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;margin-bottom:22px;}
@@ -38,7 +32,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--rose);box-shadow:0 0 0 
 textarea{height:90px;line-height:1.6;}
 .f{margin-bottom:22px;}
 .balloon-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
-.b-item{background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);border-radius:18px;padding:20px;position:relative;transition:border-color .2s;}
+.b-item{background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);border-radius:18px;padding:20px;transition:border-color .2s;}
 .b-item:hover{border-color:rgba(212,69,106,0.3);}
 .b-item-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .b-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -52,7 +46,7 @@ textarea{height:90px;line-height:1.6;}
 .photo-slot input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:3;}
 .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:1;}
 .photo-slot.filled img{display:block;}
-.photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;z-index:0;}
+.photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;}
 .photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
 .photo-slot.filled .photo-icon{display:none;}
 .del-x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:4;color:#c0392b;font-weight:700;padding:0;}
@@ -61,31 +55,33 @@ textarea{height:90px;line-height:1.6;}
 .add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
 .hint-box{background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--gold);line-height:1.6;}
 .hint-box strong{font-weight:600;}
-.size-bar{background:rgba(212,69,106,0.06);border:1px solid rgba(212,69,106,0.15);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted);}
-.size-bar .sz{font-weight:600;color:var(--rose);}
-.size-bar .sz-ok{color:#16a34a;}
-.size-bar .sz-warn{color:#d97706;}
-.size-bar .sz-bad{color:#dc2626;}
 .free-prev-btn{width:100%;padding:16px;background:transparent;border:2px solid rgba(212,69,106,0.25);border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;transition:all .2s;margin-bottom:12px;}
 .free-prev-btn:hover{background:rgba(212,69,106,0.06);}
 .pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,69,106,0.35);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
-.pay-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 .err{display:none;background:rgba(255,80,80,0.07);border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;}
 .result{display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;}
 .result-icon{font-size:56px;margin-bottom:16px;}
 .result h3{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:8px;}
 .result p{color:var(--muted);font-size:13px;margin-bottom:24px;}
 .link-box{display:flex;gap:8px;align-items:center;background:rgba(212,69,106,0.05);border:1.5px solid rgba(212,69,106,0.14);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
-.link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;max-height:60px;overflow:hidden;}
+.link-box span{flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-align:left;}
 .copy-btn{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
 .open-btn{display:inline-block;padding:15px 36px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;}
 .reset-btn{background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;}
-.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(253,248,242,0.92);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+
+/* Loading overlay */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(253,248,242,0.95);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;gap:20px;}
 .loading-overlay.show{display:flex;}
-.loading-spinner{width:48px;height:48px;border:3px solid rgba(212,69,106,0.2);border-top-color:var(--rose);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading-text{font-size:14px;color:var(--muted);}
+.loading-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 12px 40px rgba(212,69,106,0.4);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.loading-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--deep);}
+.loading-sub{font-size:13px;color:var(--muted);}
+.loading-dots{display:flex;gap:6px;}
+.loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--rose);animation:dot 1.2s ease-in-out infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
 </style>
 </head>
 <body>
@@ -93,8 +89,10 @@ textarea{height:90px;line-height:1.6;}
 <div id="petals"></div>
 
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" id="loadingText">Preparing your surprise link…</div>
+  <div class="loading-orb">🌺</div>
+  <div class="loading-title" id="loadingTitle">Creating your surprise…</div>
+  <div class="loading-sub" id="loadingSub">Uploading photos with love</div>
+  <div class="loading-dots"><span></span><span></span><span></span></div>
 </div>
 
 <header>
@@ -115,7 +113,7 @@ textarea{height:90px;line-height:1.6;}
   <div class="card">
     <div class="step-badge">2</div>
     <div class="card-title">Balloon Cards 🎈</div>
-    <div class="card-sub">Each balloon she pops reveals a polaroid card — add a photo &amp; sweet message for each</div>
+    <div class="card-sub">Each balloon she pops reveals a polaroid — add a photo &amp; sweet message for each</div>
     <div class="balloon-list" id="balloonList"></div>
     <button class="add-balloon-btn" onclick="addBalloon()">+ Add another balloon card</button>
   </div>
@@ -130,22 +128,17 @@ textarea{height:90px;line-height:1.6;}
   </div>
 
   <div class="hint-box">
-    <strong>✅ Photos travel with the link</strong> — Everything is encoded directly into the shareable URL, so it works on <em>any</em> device without sign-in. Keep photos small for a shorter link 🌺
-  </div>
-
-  <div class="size-bar" id="sizeBar">
-    Estimated link size: <span class="sz" id="szVal">—</span>
+    <strong>📸 Full quality photos</strong> — Photos are stored safely in the cloud. Your link will be short and work perfectly on any phone or device 🌺
   </div>
 
   <div class="err" id="errBox"></div>
-
   <button class="free-prev-btn" onclick="openPreview()">👁 Preview First</button>
-  <button class="pay-btn" id="genBtn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
+  <button class="pay-btn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
 
   <div class="result" id="resultBox">
     <div class="result-icon">🌺</div>
     <h3>Send it to Mom!</h3>
-    <p>Share this link — it works on any phone or computer 💕</p>
+    <p>Share this link — works on any phone, any device 💕</p>
     <div class="link-box">
       <span id="linkText">—</span>
       <button class="copy-btn" onclick="copyIt()">Copy</button>
@@ -156,38 +149,35 @@ textarea{height:90px;line-height:1.6;}
 </div>
 
 <script>
-// ─── Petals ────────────────────────────────────────────────────────────────
+var JSONBIN_KEY = '$2a$10$5v95bKiTdPd/CS0keVOTBOXrWUVgMIDW8ocpTfdt.OV0U1edqS/o6';
+var JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
+
+// ─── Petals ───────────────────────────────────────────────────────────────
 (function(){
-  var emojis=['🌸','🌺','🌼','🍀','🌹'];
-  var wrap=document.getElementById('petals');
+  var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');
   for(var i=0;i<14;i++){
-    var d=document.createElement('div');
-    d.className='petal';
-    d.textContent=emojis[i%emojis.length];
-    d.style.left=Math.random()*100+'%';
-    d.style.animationDelay=Math.random()*18+'s';
-    d.style.animationDuration=(10+Math.random()*12)+'s';
-    d.style.fontSize=(13+Math.random()*12)+'px';
-    wrap.appendChild(d);
+    var d=document.createElement('div');d.className='petal';
+    d.textContent=e[i%e.length];d.style.left=Math.random()*100+'%';
+    d.style.animationDelay=Math.random()*18+'s';d.style.animationDuration=(10+Math.random()*12)+'s';
+    d.style.fontSize=(13+Math.random()*12)+'px';d.style.position='fixed';d.style.zIndex='0';
+    w.appendChild(d);
   }
 })();
 
-// ─── Balloon builder ───────────────────────────────────────────────────────
-var balloons=[];
-var bCount=0;
+// ─── Balloon builder ──────────────────────────────────────────────────────
+var balloons=[],bCount=0;
 
 function addBalloon(){
   var idx=bCount++;
   balloons.push({msg:'',photoB64:null});
+  var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
   var item=document.createElement('div');
   item.className='b-item';item.id='bi'+idx;
-  var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
-  var colorDot=colors[idx%colors.length];
   item.innerHTML=`
     <div class="b-item-header">
       <div class="b-num">${idx+1}</div>
-      <div class="b-item-title">${colorDot} Balloon ${idx+1}</div>
-      <button class="b-del" onclick="removeBalloon(${idx})" title="Remove">✕</button>
+      <div class="b-item-title">${colors[idx%colors.length]} Balloon ${idx+1}</div>
+      <button class="b-del" onclick="removeBalloon(${idx})">✕</button>
     </div>
     <div class="b-row">
       <div>
@@ -199,7 +189,7 @@ function addBalloon(){
           <button class="del-x" type="button" onclick="removePic(${idx},event)">✕</button>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;justify-content:flex-start;">
+      <div style="display:flex;flex-direction:column;">
         <label class="lbl">Message *</label>
         <textarea id="bm${idx}" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(${idx},this.value)"></textarea>
       </div>
@@ -208,22 +198,19 @@ function addBalloon(){
 }
 
 function removeBalloon(idx){
-  var el=document.getElementById('bi'+idx);
-  if(el)el.remove();
+  var el=document.getElementById('bi'+idx);if(el)el.remove();
   if(balloons[idx])balloons[idx]=null;
-  updateSizeBar();
 }
 
 function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
   var r=new FileReader();
   r.onload=function(e){
-    // Immediately compress on load
-    compress(e.target.result,300,0.55).then(function(c){
+    // Good quality — 800px, 0.85 quality. Looks great, still reasonable size.
+    compress(e.target.result,800,0.85).then(function(c){
       balloons[idx].photoB64=c;
       document.getElementById('pi'+idx).src=c;
       document.getElementById('ps'+idx).classList.add('filled');
-      updateSizeBar();
     });
   };
   r.readAsDataURL(inp.files[0]);
@@ -236,18 +223,13 @@ function removePic(idx,e){
   document.getElementById('ps'+idx).classList.remove('filled');
   var inp=document.querySelector('#ps'+idx+' input[type=file]');
   if(inp)inp.value='';
-  updateSizeBar();
 }
 
-function updateMsg(idx,val){
-  if(balloons[idx])balloons[idx].msg=val;
-  updateSizeBar();
-}
+function updateMsg(idx,val){if(balloons[idx])balloons[idx].msg=val;}
 
-// Default 3 balloons
 addBalloon();addBalloon();addBalloon();
 
-// ─── Image compress ────────────────────────────────────────────────────────
+// ─── Compress ─────────────────────────────────────────────────────────────
 function compress(dataURL,maxPx,q){
   return new Promise(function(res){
     var img=new Image();
@@ -263,136 +245,95 @@ function compress(dataURL,maxPx,q){
   });
 }
 
-// ─── Size estimator ────────────────────────────────────────────────────────
-function estimateSize(){
-  var d=gatherDataRaw();
-  if(!d)return 0;
-  var json=JSON.stringify(d);
-  // base64 of json → roughly same size since photos already b64
-  return json.length;
-}
-
-function updateSizeBar(){
-  var sz=estimateSize();
-  if(!sz){document.getElementById('szVal').textContent='—';return;}
-  var kb=Math.round(sz/1024);
-  var el=document.getElementById('szVal');
-  el.textContent=kb+'KB';
-  el.className='sz';
-  if(kb<1800){el.classList.add('sz-ok');}
-  else if(kb<3000){el.classList.add('sz-warn');}
-  else{el.classList.add('sz-bad');}
-}
-
-// ─── Validate (raw, no extra compress) ─────────────────────────────────────
-function gatherDataRaw(){
-  var herName=document.getElementById('herName').value.trim();
-  var yourName=document.getElementById('yourName').value.trim();
-  var msg=document.getElementById('msg').value.trim();
-  if(!herName)return null;
-  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
-  if(activeBalloons.length===0)return null;
-  return{n:herName,f:yourName,m:msg,b:activeBalloons};
-}
-
+// ─── Gather & validate ────────────────────────────────────────────────────
 function gatherData(){
   var herName=document.getElementById('herName').value.trim();
   var yourName=document.getElementById('yourName').value.trim();
   var msg=document.getElementById('msg').value.trim();
   if(!herName){showErr('Please enter her name 🌺');return null;}
-  var activeBalloons=balloons.filter(function(b){return b&&b.msg.trim();});
-  if(activeBalloons.length===0){showErr('Add at least one balloon message 🎈');return null;}
-  return{n:herName,f:yourName,m:msg,b:activeBalloons};
+  var active=balloons.filter(function(b){return b&&b.msg.trim();});
+  if(!active.length){showErr('Add at least one balloon message 🎈');return null;}
+  return{n:herName,f:yourName,m:msg,b:active};
 }
 
-// ─── Encode payload → URL hash ─────────────────────────────────────────────
-// We base64-encode the JSON directly. Photos are already base64 inside.
-// The whole thing goes into the URL hash: view.html#<encoded>
-function encodePayload(obj){
-  try{
-    var json=JSON.stringify(obj);
-    // btoa requires UTF-8 safe chars; use encodeURIComponent trick
-    return btoa(unescape(encodeURIComponent(json)));
-  }catch(e){
-    return null;
+// ─── Save to JSONBin ──────────────────────────────────────────────────────
+async function saveToJSONBin(payload){
+  var res=await fetch(JSONBIN_URL,{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-Master-Key':JSONBIN_KEY,
+      'X-Bin-Private':'false',
+      'X-Bin-Name':'mday-'+Date.now()
+    },
+    body:JSON.stringify(payload)
+  });
+  if(!res.ok){
+    var txt=await res.text();
+    throw new Error('JSONBin error: '+res.status+' '+txt);
   }
+  var json=await res.json();
+  return json.metadata.id; // short ID like "6830f2e..."
 }
 
-function viewURL(hash){
+// ─── View URL builder ─────────────────────────────────────────────────────
+function viewURL(id){
   var path=window.location.pathname;
   var baseDir=path.substring(0,path.lastIndexOf('/')+1);
-  return window.location.origin+baseDir+'view.html#'+hash;
+  return window.location.origin+baseDir+'view.html?id='+encodeURIComponent(id);
 }
 
-// ─── Preview ───────────────────────────────────────────────────────────────
+// ─── Preview ──────────────────────────────────────────────────────────────
 async function openPreview(){
-  var d=gatherData();
-  if(!d)return;
+  var d=gatherData();if(!d)return;
   d.isPreview=true;
-  var hash=encodePayload(d);
-  if(!hash){showErr('Could not encode data.');return;}
-  var url=viewURL(hash);
-  var w=window.open(url,'_blank');
-  if(!w)alert('Please allow popups for preview.');
-}
-
-// ─── Generate link ──────────────────────────────────────────────────────────
-async function generateLink(){
-  var d=gatherData();
-  if(!d)return;
-
-  showLoading('Compressing photos…');
-
-  // Check raw size
-  var rawJson=JSON.stringify(d);
-  if(rawJson.length>3*1024*1024){
-    // Try extra compression
-    showLoading('Photos are large, compressing more…');
-    d.b=await Promise.all(d.b.map(async function(b){
-      return{msg:b.msg,photoB64:b.photoB64?await compress(b.photoB64,200,0.45):null};
-    }));
-  }
-
-  d.isPreview=false;
-  showLoading('Building your link…');
-  var hash=encodePayload(d);
-  if(!hash){hideLoading();showErr('Could not encode the data. Try removing some photos.');return;}
-
-  var url=viewURL(hash);
-
-  // Warn if very long (some apps truncate)
-  if(url.length>50000){
+  showLoading('Building preview…','Just a moment');
+  try{
+    var id=await saveToJSONBin(d);
     hideLoading();
-    showErr('Link is very long ('+Math.round(url.length/1024)+'KB). Try removing photos or use smaller images for best sharing.');
-    return;
+    var url=viewURL(id);
+    var w=window.open(url,'_blank');
+    if(!w)alert('Allow popups to preview.');
+  }catch(e){
+    hideLoading();showErr('Could not save: '+e.message);
   }
-
-  window._url=url;
-  document.getElementById('linkText').textContent=url.substring(0,80)+'…';
-  document.getElementById('openLink').href=url;
-  hideLoading();
-  document.getElementById('resultBox').style.display='block';
-  document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-// ─── UI helpers ────────────────────────────────────────────────────────────
-function showLoading(txt){
-  document.getElementById('loadingText').textContent=txt||'Working…';
+// ─── Generate link ────────────────────────────────────────────────────────
+async function generateLink(){
+  var d=gatherData();if(!d)return;
+  d.isPreview=false;
+  showLoading('Uploading your surprise…','Saving photos to the cloud ☁️');
+  try{
+    var id=await saveToJSONBin(d);
+    hideLoading();
+    var url=viewURL(id);
+    window._url=url;
+    document.getElementById('linkText').textContent=url;
+    document.getElementById('openLink').href=url;
+    document.getElementById('resultBox').style.display='block';
+    document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){
+    hideLoading();showErr('Upload failed: '+e.message+'. Check your internet and try again.');
+  }
+}
+
+// ─── UI helpers ───────────────────────────────────────────────────────────
+function showLoading(title,sub){
+  document.getElementById('loadingTitle').textContent=title||'Working…';
+  document.getElementById('loadingSub').textContent=sub||'';
   document.getElementById('loadingOverlay').classList.add('show');
 }
-function hideLoading(){
-  document.getElementById('loadingOverlay').classList.remove('show');
-}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
 function showErr(m){
-  var b=document.getElementById('errBox');
-  b.textContent='⚠️ '+m;b.style.display='block';
-  setTimeout(function(){b.style.display='none';},5500);
+  var b=document.getElementById('errBox');b.textContent='⚠️ '+m;b.style.display='block';
+  setTimeout(function(){b.style.display='none';},6000);
 }
 function copyIt(){
   var url=window._url||document.getElementById('openLink').href;
   navigator.clipboard.writeText(url).then(function(){
-    var b=document.querySelector('.copy-btn');
-    b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy';},2500);
+    var b=document.querySelector('.copy-btn');b.textContent='Copied ✓';
+    setTimeout(function(){b.textContent='Copy';},2500);
   });
 }
 function resetAll(){
