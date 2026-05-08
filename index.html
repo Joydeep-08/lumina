@@ -449,8 +449,12 @@ function handlePay(){
       ondismiss:function(){/* user closed */}
     }
   };
-  var rzp=new Razorpay(options);
-  rzp.open();
+  // TEMPORARY BYPASS FOR DEMO
+
+buildAndShowLink(
+  d,
+  'demo_payment_success'
+);
 }
 function handlePayFromPreview(d, previewId){
 
