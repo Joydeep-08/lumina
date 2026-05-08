@@ -502,9 +502,26 @@ async function buildAndShowLink(d, paymentId){
   var compressed=await Promise.all(d.balloons.map(async function(b){
     return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,480,0.6):null};
   }));
-  var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed,pid:paymentId};
-  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-  var url=window.location.origin+window.location.pathname.replace('create.html','view.html')+'?d='+encoded;
+  var payload={
+  n:d.herName,
+  f:d.yourName,
+  m:d.msg,
+  b:compressed,
+  pid:paymentId
+};
+
+// store locally instead of giant URL
+var id='gift_'+Date.now();
+
+localStorage.setItem(
+  id,
+  JSON.stringify(payload)
+);
+
+var url=
+  window.location.origin+
+  window.location.pathname.replace('create.html','view.html')+
+  '?id='+id;
   window._url=url;
   document.getElementById('linkText').textContent=url.substring(0,60)+'…';
   document.getElementById('openLink').href=url;
