@@ -448,9 +448,14 @@ var DEFAULT='You are the reason I believe in unconditional love. Every warmth I\
 
 function loadData(){
   var p=new URLSearchParams(window.location.search);
-  var d=p.get('d');
-  if(d){try{data=JSON.parse(decodeURIComponent(escape(atob(d))));}catch(e){console.error(e);}}
-  init();
+  var id = p.get('id');
+
+if(id){
+  var raw = localStorage.getItem(id);
+  if(raw){
+    data = JSON.parse(raw);
+  }
+}
 }
 
 function init(){

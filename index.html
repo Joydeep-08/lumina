@@ -414,9 +414,11 @@ async function buildAndOpen(d){
     return {msg:b.msg, photoB64:b.photoB64?await compress(b.photoB64,400,0.6):null};
   }));
   var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed};
-  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-  var url='view.html?d='+encoded;
-  window.open(url,'_blank');
+ const id = 'preview_' + Date.now();
+
+localStorage.setItem(id, JSON.stringify(payload));
+
+window.open('view.html?id=' + id, '_blank');
 }
 
 // ── Razorpay ──
