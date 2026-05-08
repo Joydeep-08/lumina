@@ -17,8 +17,6 @@
   --warm:#f5ede0;
   --card:#fffdf9;
 }
-
-
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;cursor:default;}
 
@@ -448,14 +446,9 @@ var DEFAULT='You are the reason I believe in unconditional love. Every warmth I\
 
 function loadData(){
   var p=new URLSearchParams(window.location.search);
-  var id = p.get('id');
-
-if(id){
-  var raw = localStorage.getItem(id);
-  if(raw){
-    data = JSON.parse(raw);
-  }
-}
+  var d=p.get('d');
+  if(d){try{data=JSON.parse(decodeURIComponent(escape(atob(d))));}catch(e){console.error(e);}}
+  init();
 }
 
 function init(){
