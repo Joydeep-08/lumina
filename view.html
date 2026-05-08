@@ -266,6 +266,7 @@ var DEFAULT_MSG = "You are the reason I believe in unconditional love. Every war
 
 var data = null;
 var isPreview = false;
+var photoCache = {};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DATA LOADING — ONLY via ?id=SHORT_ID from JSONBin
@@ -286,7 +287,7 @@ async function loadData() {
       ]
     };
     isPreview = false;
-    hideLodaScreen();
+    hideLoadScreen();
     init();
     return;
   }
@@ -306,6 +307,43 @@ async function loadData() {
     var errScreen = document.getElementById('errScreen');
     document.getElementById('errMsg').textContent = 'Could not load this surprise. Please check the link and try again. (' + e.message + ')';
     errScreen.style.display = 'flex';
+  }
+}
+
+async function fetchPhoto(photoId){
+  if(!photoId) return null;
+
+  // cache hit
+  if(photoCache[photoId]){
+    return photoCache[photoId];
+  }
+
+  try{
+    var res = await fetch(JSONBIN_READ + encodeURIComponent(photoId), {
+      headers:{
+        'X-Master-Key': JSONBIN_KEY
+      }
+    });
+
+    if(!res.ok){
+      throw new Error('Photo fetch failed: '+res.status);
+    }
+
+    var json = await res.json();
+
+    var img = json.record && json.record.img
+      ? json.record.img
+      : null;
+
+    if(img){
+      photoCache[photoId] = img;
+    }
+
+    return img;
+
+  }catch(e){
+    console.error('Photo fetch error:', e);
+    return null;
   }
 }
 
@@ -330,16 +368,30 @@ function init() {
   }
 
   // Portrait photo — first balloon with a photo
-  var firstPhoto = data.b && data.b.find(function(b) { return b && b.photoB64; });
-  if (firstPhoto) {
-    var pno = document.getElementById('pno');
-    if (pno) pno.remove();
-    var img = document.createElement('img');
-    img.className = 'pimg';
-    img.src = firstPhoto.photoB64;
-    var portrait = document.getElementById('portrait');
-    portrait.insertBefore(img, portrait.firstChild);
-  }
+  // Portrait photo — first balloon with a photoId
+(async function(){
+
+  var firstPhotoBalloon = data.b && data.b.find(function(b){
+    return b && b.photoId;
+  });
+
+  if(!firstPhotoBalloon) return;
+
+  var fetchedImg = await fetchPhoto(firstPhotoBalloon.photoId);
+
+  if(!fetchedImg) return;
+
+  var pno = document.getElementById('pno');
+  if(pno) pno.remove();
+
+  var img = document.createElement('img');
+  img.className = 'pimg';
+  img.src = fetchedImg;
+
+  var portrait = document.getElementById('portrait');
+  portrait.insertBefore(img, portrait.firstChild);
+
+})();
 
   buildName(data.n || 'Mom');
   buildBalloons(data.b || []);
@@ -468,19 +520,40 @@ function popBalloon(i, b, el, evt) {
   polCard.style.setProperty('--tilt', tilts[i % tilts.length] + 'deg');
   document.getElementById('polMsg').textContent = b.msg || '';
 
-  if (b.photoB64) {
-    // Assign src directly — data was already compressed once on create, never touch it again
-    polImg.src = b.photoB64;
-    polPhoto.classList.add('hasimg');
-    polPhoto.style.background = 'none';
-  } else {
+  (async function(){
+
+  if(b.photoId){
+
+    polImg.src = '';
+
+    var fetchedImg = await fetchPhoto(b.photoId);
+
+    if(fetchedImg){
+      polImg.src = fetchedImg;
+      polPhoto.classList.add('hasimg');
+      polPhoto.style.background = 'none';
+    }else{
+      polPhoto.classList.remove('hasimg');
+      polPhoto.style.background = gradients[i % gradients.length];
+    }
+
+  }else{
+
     polImg.src = '';
     polPhoto.classList.remove('hasimg');
     polPhoto.style.background = gradients[i % gradients.length];
+
     var p = pals[i % pals.length];
-    document.getElementById('balInside').innerHTML = '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="72">' + balloonSVGInner(p) + '</svg><div class="balthread"></div>';
+
+    document.getElementById('balInside').innerHTML =
+      '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="72">' +
+      balloonSVGInner(p) +
+      '</svg><div class="balthread"></div>';
+
   }
+
   document.getElementById('cardReveal').classList.add('show');
+
   if (balLeft === 0) {
     setTimeout(function() {
       closeCard();
@@ -488,6 +561,8 @@ function popBalloon(i, b, el, evt) {
       document.getElementById('adone').style.display = 'block';
     }, 2700);
   }
+
+})();
 }
 
 function closeCard() { document.getElementById('cardReveal').classList.remove('show'); }
