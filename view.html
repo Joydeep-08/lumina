@@ -489,7 +489,7 @@ if(data && data.isPreview && data.previewLocked){
       if(stored){
         data = JSON.parse(stored);
       }
-      if(data.isPreview && data.previewLocked){
+      if(data && data.isPreview && data.previewLocked){
   window.location.href = 'payment.html';
   return;
 }
