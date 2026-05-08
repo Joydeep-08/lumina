@@ -281,9 +281,9 @@ async function loadData() {
     data = {
       n: 'Mom', f: '', m: '', isPreview: false,
       b: [
-        {msg: 'You are my sunshine ☀️', photoB64: null},
-        {msg: 'Thank you for everything 🌺', photoB64: null},
-        {msg: 'I love you to the moon 🌙', photoB64: null}
+        {msg: 'You are my sunshine ☀️', photoId: null},
+        {msg: 'Thank you for everything 🌺', photoId: null},
+        {msg: 'I love you to the moon 🌙', photoId: null}
       ]
     };
     isPreview = false;
@@ -300,7 +300,7 @@ async function loadData() {
     var json = await res.json();
     data = json.record;
     isPreview = !!(data && data.isPreview);
-    hideLodaScreen();
+    hideLoadScreen();
     init();
   } catch (e) {
     document.getElementById('loadScreen').style.display = 'none';
@@ -347,7 +347,7 @@ async function fetchPhoto(photoId){
   }
 }
 
-function hideLodaScreen() {
+function hideLoadScreen() {
   var ls = document.getElementById('loadScreen');
   if (ls) ls.style.display = 'none';
 }
