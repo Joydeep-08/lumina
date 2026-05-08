@@ -6,6 +6,23 @@
 <title>Happy Mother's Day 🌺</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
 <style>
+  .preview-watermark{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:82px;
+  font-weight:800;
+  color:rgba(180,0,40,.22);
+  z-index:9999;
+  pointer-events:none;
+  transform:rotate(-28deg);
+  text-align:center;
+  line-height:1.6;
+  letter-spacing:6px;
+  user-select:none;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --ink:#1a0e0a;
@@ -262,7 +279,9 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
 </style>
 </head>
 <body>
-
+<div class="preview-watermark" id="previewMark">
+  PREVIEW ONLY • UNPAID VERSION • PREVIEW ONLY • UNPAID VERSION
+</div>
 <div class="grain"></div>
 <div class="scene"></div>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
@@ -452,6 +471,11 @@ function loadData(){
   if(d){
     try{
       data = JSON.parse(decodeURIComponent(escape(atob(d))));
+      // block reopening preview
+if(data && data.isPreview && data.previewLocked){
+  window.location.href = 'payment.html';
+  return;
+}
     }catch(e){
       console.error(e);
     }
@@ -465,6 +489,10 @@ function loadData(){
       if(stored){
         data = JSON.parse(stored);
       }
+      if(data.isPreview && data.previewLocked){
+  window.location.href = 'payment.html';
+  return;
+}
     }catch(e){
       console.error(e);
     }
@@ -475,6 +503,9 @@ function loadData(){
 }
 
 function init(){
+  if(data && data.isPreview){
+  document.getElementById('previewMark').style.display = 'flex';
+}
   if(!data){
     buildName('Mom');
     buildBalloons([{msg:'You are my sunshine ☀️',photoB64:null},{msg:'Thank you for everything 🌺',photoB64:null},{msg:'I love you to the moon 🌙',photoB64:null}]);
@@ -616,7 +647,30 @@ function openSurprise(){
   setTimeout(function(){burst(window.innerWidth*.5,window.innerHeight*.6);},600);
   setTimeout(function(){burst(window.innerWidth*.2,window.innerHeight*.5);},850);
   setTimeout(function(){burst(window.innerWidth*.8,window.innerHeight*.3);},1050);
+
+  if(data && data.isPreview){
+
+  setTimeout(function(){
+
+    data.previewLocked = true;
+
+    var p = new URLSearchParams(window.location.search);
+    var id = p.get('id');
+
+    if(id){
+      localStorage.setItem(id, JSON.stringify(data));
+    }
+
+    window.location.href = 'payment.html';
+
+  }, 15000);
+
 }
+
+
+}
+
+
 
 
 var playing = true;
@@ -659,7 +713,27 @@ popSound.volume = 1;
 
 
 loadData();
+// disable right click
+window.addEventListener('contextmenu', function(e){
+  if(data && data.isPreview){
+    e.preventDefault();
+  }
+});
 
+// disable common inspect shortcuts
+window.addEventListener('keydown', function(e){
+
+  if(data && data.isPreview){
+
+    if(
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'u')
+    ){
+      e.preventDefault();
+    }
+  }
+});
 </script>
 <!-- Hidden YouTube Music -->
 <div id="ytMusicWrap" style="position:fixed; width:0; height:0; overflow:hidden; opacity:0; pointer-events:none;">

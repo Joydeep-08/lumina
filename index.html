@@ -416,9 +416,15 @@ async function buildAndOpen(d){
   var payload={n:d.herName,f:d.yourName,m:d.msg,b:compressed};
  const id = 'preview_' + Date.now();
 
+payload.isPreview = true;
+payload.previewLocked = false;
+
 localStorage.setItem(id, JSON.stringify(payload));
 
-window.open('view.html?id=' + id, '_blank');
+// remember preview opened
+localStorage.setItem('opened_' + id, '1');
+
+window.location.href = 'view.html?id=' + id;
 }
 
 // ── Razorpay ──
