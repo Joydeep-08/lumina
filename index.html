@@ -169,7 +169,8 @@ var balloons=[],bCount=0;
 
 function addBalloon(){
   var idx=bCount++;
-  balloons.push({msg:'',photoB64:null});
+  // Each balloon stores: msg (string) + photoB64 (null or single-compressed string)
+  balloons.push({msg:'',photoB64:null,compressed:false});
   var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
   var item=document.createElement('div');
   item.className='b-item';item.id='bi'+idx;
@@ -204,11 +205,13 @@ function removeBalloon(idx){
 
 function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
+  // Guard: only compress once. Read the raw file as data URL then compress a single time.
   var r=new FileReader();
   r.onload=function(e){
-    // Good quality — 800px, 0.85 quality. Looks great, still reasonable size.
-    compress(e.target.result,800,0.85).then(function(c){
+    // Single-pass compress: 900px max dimension, 0.82 quality. Never re-run on already-compressed data.
+    compressOnce(e.target.result,900,0.82).then(function(c){
       balloons[idx].photoB64=c;
+      balloons[idx].compressed=true;
       document.getElementById('pi'+idx).src=c;
       document.getElementById('ps'+idx).classList.add('filled');
     });
@@ -219,6 +222,7 @@ function loadPic(idx,inp){
 function removePic(idx,e){
   e.stopPropagation();
   balloons[idx].photoB64=null;
+  balloons[idx].compressed=false;
   document.getElementById('pi'+idx).src='';
   document.getElementById('ps'+idx).classList.remove('filled');
   var inp=document.querySelector('#ps'+idx+' input[type=file]');
@@ -229,18 +233,26 @@ function updateMsg(idx,val){if(balloons[idx])balloons[idx].msg=val;}
 
 addBalloon();addBalloon();addBalloon();
 
-// ─── Compress ─────────────────────────────────────────────────────────────
-function compress(dataURL,maxPx,q){
+// ─── Single-pass compress (never recompress) ──────────────────────────────
+// Accepts a raw file dataURL. Resizes to maxPx on the longest edge, encodes
+// once at quality q. Returns a Promise<string> (jpeg dataURL).
+function compressOnce(dataURL,maxPx,q){
   return new Promise(function(res){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>h){if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}}
-      else{if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}}
-      var c=document.createElement('canvas');c.width=w;c.height=h;
+      // Preserve aspect ratio
+      if(w>h){
+        if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}
+      }else{
+        if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}
+      }
+      var c=document.createElement('canvas');
+      c.width=w;c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
       res(c.toDataURL('image/jpeg',q));
     };
+    img.onerror=function(){res(dataURL);};// fallback: use original if decode fails
     img.src=dataURL;
   });
 }
@@ -253,7 +265,9 @@ function gatherData(){
   if(!herName){showErr('Please enter her name 🌺');return null;}
   var active=balloons.filter(function(b){return b&&b.msg.trim();});
   if(!active.length){showErr('Add at least one balloon message 🎈');return null;}
-  return{n:herName,f:yourName,m:msg,b:active};
+  // Strip the internal `compressed` flag before saving
+  var clean=active.map(function(b){return{msg:b.msg,photoB64:b.photoB64||null};});
+  return{n:herName,f:yourName,m:msg,b:clean};
 }
 
 // ─── Save to JSONBin ──────────────────────────────────────────────────────
@@ -276,7 +290,7 @@ async function saveToJSONBin(payload){
   return json.metadata.id; // short ID like "6830f2e..."
 }
 
-// ─── View URL builder ─────────────────────────────────────────────────────
+// ─── View URL builder — ONLY uses ?id=SHORT_ID, never hash or base64 ──────
 function viewURL(id){
   var path=window.location.pathname;
   var baseDir=path.substring(0,path.lastIndexOf('/')+1);
