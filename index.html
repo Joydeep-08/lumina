@@ -190,7 +190,6 @@ textarea{height:90px;line-height:1.6;}
 var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
 var RZP_LINK = 'https://rzp.io/rzp/vaW5RY9';
-var STORAGE_KEY = 'mday_pending_v1';
 
 // petals
 (function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
@@ -288,10 +287,10 @@ async function doPay(){
   try{
     var id=await saveToSupabase(d);
     hideLoading();
-    // store id in localStorage so we can retrieve after payment redirect
-    localStorage.setItem(STORAGE_KEY, id);
-    // redirect to Razorpay
-    window.location.href=RZP_LINK;
+    // Embed the supabase ID directly in the callback URL — works across ANY device
+    var callbackUrl='https://luminaa-f37.pages.dev/?sid='+id;
+    var rzpUrl=RZP_LINK+'?callback_url='+encodeURIComponent(callbackUrl);
+    window.location.href=rzpUrl;
   }catch(e){hideLoading();showErr('Failed to save: '+e.message);}
 }
 
@@ -299,24 +298,17 @@ async function doPay(){
 window.addEventListener('load', function(){
   var params=new URLSearchParams(window.location.search);
   var paymentId=params.get('razorpay_payment_id');
-  var pendingId=localStorage.getItem(STORAGE_KEY);
+  var sid=params.get('sid');
 
-  if(paymentId && pendingId){
-    // Payment done! Show success and generate link
-    localStorage.removeItem(STORAGE_KEY);
-    // Clean URL
+  if(paymentId && sid){
+    // Payment done! Works on any device because sid came in the URL
     window.history.replaceState({},'',window.location.pathname);
-    // Show paid banner
     document.getElementById('paidBanner').classList.add('show');
     document.getElementById('paidBanner').scrollIntoView({behavior:'smooth',block:'center'});
-    // Show result
-    setTimeout(function(){
-      showResult(pendingId);
-    }, 800);
-  } else if(paymentId && !pendingId){
-    // Payment done but no pending data (maybe they cleared storage) — show generic success
+    setTimeout(function(){ showResult(sid); }, 800);
+  } else if(sid && !paymentId){
+    // sid present but no payment — someone just landed with sid, ignore
     window.history.replaceState({},'',window.location.pathname);
-    showErr('Payment received but data not found. Please create again or contact support.');
   }
 });
 
