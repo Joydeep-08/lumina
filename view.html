@@ -138,7 +138,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
 .cf{position:absolute;opacity:0;border-radius:2px;animation:cfF linear infinite;}
 @keyframes cfF{0%{transform:translateY(-20px) rotate(0);opacity:.9;}100%{transform:translateY(110vh) rotate(520deg);opacity:0;}}
 
-/* Preview redirect overlay */
 #redirectOverlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(26,14,10,.82);backdrop-filter:blur(16px);flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:32px;}
 #redirectOverlay.show{display:flex;}
 .ro-emoji{font-size:52px;}
@@ -151,9 +150,8 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
 </head>
 <body>
 <div class="preview-watermark" id="previewMark">PREVIEW</div>
-<div id="previewBanner">🔍 Preview Mode — <span id="previewCountdown">30</span>s remaining · <a href="https://luminaa-f37.pages.dev/">Create yours →</a></div>
+<div id="previewBanner">🔍 Preview Mode — <span id="previewCountdown">30</span>s remaining · <a id="previewBannerLink" href="https://luminaa-f37.pages.dev/">Create yours →</a></div>
 
-<!-- Redirect overlay shown at end of preview -->
 <div id="redirectOverlay">
   <div class="ro-emoji">🌺</div>
   <div class="ro-title">Loved what you saw?</div>
@@ -255,18 +253,19 @@ var DEFAULT_MSG="You are the reason I believe in unconditional love. Every warmt
 var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
+// ── KEY FIX: read id once, use everywhere ──
+var _pageId = new URLSearchParams(window.location.search).get('id');
+
 function goHome(){
-  var id=new URLSearchParams(window.location.search).get('id');
-  var url=HOME_URL+(id?'?prefill='+id:'');
+  var url = HOME_URL + (_pageId ? '?prefill=' + _pageId : '');
   try{ window.close(); }catch(e){}
-  setTimeout(function(){ window.location.href=url; },500);
+  setTimeout(function(){ window.location.href = url; }, 500);
 }
 
 async function loadData(){
-  var id=new URLSearchParams(window.location.search).get('id');
-  if(id){
+  if(_pageId){
     try{
-      var res=await fetch(SUPA_URL+'/rest/v1/mday?id=eq.'+id+'&select=data',{
+      var res=await fetch(SUPA_URL+'/rest/v1/mday?id=eq.'+_pageId+'&select=data',{
         headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
       });
       var j=await res.json();
@@ -284,6 +283,12 @@ async function loadData(){
 }
 
 function init(){
+  // ── FIX: set banner link to prefill URL so form is pre-filled ──
+  var bannerLink = document.getElementById('previewBannerLink');
+  if(bannerLink){
+    bannerLink.href = HOME_URL + (_pageId ? '?prefill=' + _pageId : '');
+  }
+
   if(isPreview){
     document.getElementById('previewMark').style.display='flex';
     document.getElementById('previewBanner').style.display='block';
@@ -327,7 +332,6 @@ function showRedirectOverlay(){
   var bar=document.getElementById('roBar');
   bar.style.transition='width 4s linear';
   setTimeout(function(){ bar.style.width='100%'; },50);
-  // Close the preview tab after 4s — form tab stays untouched
   setTimeout(function(){ goHome(); },4200);
 }
 
@@ -408,7 +412,6 @@ function goTab(t){
 var musicPlaying=false;
 
 window.addEventListener('load',function(){
-  // preload the audio silently
   document.getElementById('bgMusic').load();
 });
 

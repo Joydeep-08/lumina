@@ -180,7 +180,6 @@ var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var RZP_KEY='rzp_live_SmizRaPApu81ZS';
 var SITE_URL='https://luminaa-f37.pages.dev/';
 
-// petals
 (function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
 
 var balloons=[],bCount=0;
@@ -238,8 +237,6 @@ async function saveToSupabase(payload){
 
 function viewURL(id){return SITE_URL+'view.html?id='+id;}
 
-// Preview — always opens in a NEW TAB, form stays intact
-// anchor click trick works on mobile too unlike window.open
 async function doPreview(){
   var d=gatherData();if(!d)return;
   d.isPreview=true;
@@ -258,41 +255,27 @@ async function doPreview(){
   }catch(e){hideLoading();showErr('Failed: '+e.message);}
 }
 
-// Pay — saves first, then opens Razorpay POPUP (no redirect, stays on page)
 async function doPay(){
   var d=gatherData();if(!d)return;
   showLoading('Saving your surprise…','Almost there 🌺');
   try{
     var id=await saveToSupabase(d);
     hideLoading();
-    // Open Razorpay checkout popup — stays on this page the whole time
     var options={
       key: RZP_KEY,
-      amount: 3900, // paise
+      amount: 3900,
       currency: 'INR',
       name: 'Lumina',
       description: "Mother's Day Surprise Link 🌺",
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
       handler: function(response){
-        // Payment successful — popup closes, we're still on the same page
-        // response.razorpay_payment_id is available here
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
         document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
       },
-      prefill:{
-        name:'',
-        email:'',
-        contact:''
-      },
-      theme:{
-        color:'#d4456a'
-      },
-      modal:{
-        ondismiss: function(){
-          // User closed the popup without paying — do nothing, form is still intact
-        }
-      }
+      prefill:{name:'',email:'',contact:''},
+      theme:{color:'#d4456a'},
+      modal:{ondismiss:function(){}}
     };
     var rzp=new Razorpay(options);
     rzp.on('payment.failed',function(response){
@@ -338,7 +321,7 @@ function resetAll(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// Check for ?prefill=id on load — pre-fills form from existing surprise data
+// ── Pre-fill form from ?prefill=id ──
 window.addEventListener('load',function(){
   var prefillId=new URLSearchParams(window.location.search).get('prefill');
   if(prefillId){
