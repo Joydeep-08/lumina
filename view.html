@@ -246,9 +246,7 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
     </div>
   </div>
 </div>
-<div style="position:fixed;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;">
-  <iframe id="ytPlayer" width="0" height="0" src="" title="bg music" frameborder="0" allow="autoplay" allowfullscreen></iframe>
-</div>
+<audio id="bgMusic" loop preload="auto" src="song.mp3"></audio>
 <script>
 var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
@@ -408,23 +406,36 @@ function goTab(t){
 }
 
 var musicPlaying=false;
-var MSRC='https://www.youtube.com/embed/4pZIBMLSIVo?autoplay=1&loop=1&playlist=4pZIBMLSIVo&controls=0&mute=0';
 
-window.addEventListener('load', function(){
-  // Don't autostart — wait for user tap on "Open Your Surprise"
+window.addEventListener('load',function(){
+  // preload the audio silently
+  document.getElementById('bgMusic').load();
 });
 
 function startMusic(){
-  document.getElementById('ytPlayer').src=MSRC;
+  var m=document.getElementById('bgMusic');
+  m.volume=0.7;
+  m.play().catch(function(){});
   musicPlaying=true;
   document.getElementById('musicPill').classList.remove('muted');
   document.getElementById('micon').textContent='⏸';
   document.getElementById('musicPill').classList.add('vis');
 }
+
 function toggleMusic(){
-  var f=document.getElementById('ytPlayer'),p=document.getElementById('musicPill');
-  if(musicPlaying){f.src='';musicPlaying=false;p.classList.add('muted');document.getElementById('micon').textContent='▶';}
-  else{f.src=MSRC;musicPlaying=true;p.classList.remove('muted');document.getElementById('micon').textContent='⏸';}
+  var m=document.getElementById('bgMusic');
+  var p=document.getElementById('musicPill');
+  if(musicPlaying){
+    m.pause();
+    musicPlaying=false;
+    p.classList.add('muted');
+    document.getElementById('micon').textContent='▶';
+  }else{
+    m.play().catch(function(){});
+    musicPlaying=true;
+    p.classList.remove('muted');
+    document.getElementById('micon').textContent='⏸';
+  }
 }
 
 function playPop(){
