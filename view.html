@@ -243,37 +243,22 @@ async function fetchBin(id){
   return j.record;
 }
 
+var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
+
 async function loadData(){
-  var params=new URLSearchParams(window.location.search);
-  var id=params.get('id');
+  var id=new URLSearchParams(window.location.search).get('id');
   if(id){
     try{
-      // Load main record
-      data=await fetchBin(id);
-      isPreview=!!(data&&data.isPreview);
-
-      // Load each balloon's photo from its own bin
-      if(data&&data.b){
-        data.b=await Promise.all(data.b.map(async function(b){
-          if(b.photoId){
-            try{
-              var photoRecord=await fetchBin(b.photoId);
-              return{msg:b.msg,photoB64:photoRecord.p||null};
-            }catch(e){
-              return{msg:b.msg,photoB64:null};
-            }
-          }
-          return{msg:b.msg,photoB64:null};
-        }));
-      }
-    }catch(e){console.error('Load error:',e);data=null;}
+      var res=await fetch(SUPA_URL+'/rest/v1/mday?id=eq.'+id+'&select=data',{
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+      });
+      var j=await res.json();
+      if(j&&j[0]&&j[0].data) data=JSON.parse(j[0].data);
+    }catch(e){console.error(e);data=null;}
   }
   if(!data){
-    data={n:'Mom',f:'',m:'',b:[
-      {msg:'You are my sunshine ☀️',photoB64:null},
-      {msg:'Thank you for everything 🌺',photoB64:null},
-      {msg:'I love you to the moon 🌙',photoB64:null}
-    ]};
+    data={n:'Mom',f:'',m:'',b:[{msg:'You are my sunshine ☀️',photoB64:null},{msg:'Thank you for everything 🌺',photoB64:null},{msg:'I love you to the moon 🌙',photoB64:null}]};
   }
   var ls=document.getElementById('loadScreen');
   ls.classList.add('out');

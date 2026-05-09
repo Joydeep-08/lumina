@@ -135,81 +135,41 @@ textarea{height:90px;line-height:1.6;}
   <button class="free-prev-btn" onclick="openPreview()">👁 Preview First</button>
   <button class="pay-btn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
 
-  <div class="result" id="resultBox">
-    <div class="result-icon">🌺</div>
-    <h3>Send it to Mom!</h3>
-    <p>Share this link — works on any phone, any device 💕</p>
-    <div class="link-box">
-      <span id="linkText">—</span>
-      <button class="copy-btn" onclick="copyIt()">Copy</button>
-    </div>
-    <a id="openLink" class="open-btn" href="#" target="_blank">Open &amp; Preview →</a>
-    <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
-  </div>
+  <div class="link-box">
+  <a id="openLinkInline" href="#" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-decoration:underline;">—</a>
+  <button class="copy-btn" id="copyBtn" onclick="copyIt()">Copy Link</button>
+</div>
+<a id="openLink" class="open-btn" href="#" target="_blank" rel="noopener">Open & Preview →</a>
+<a id="waLink" class="wa-btn" href="#" target="_blank" rel="noopener">📲 Share via WhatsApp</a>
 </div>
 
 <script>
-var JSONBIN_KEY = '$2a$10$5v95bKiTdPd/CS0keVOTBOXrWUVgMIDW8ocpTfdt.OV0U1edqS/o6';
-var JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
-// Free plan limit: 100kb per bin. Strategy: main record stores tiny photo IDs,
-// each photo is stored in its own separate bin.
+var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
 
-// ─── Petals ───────────────────────────────────────────────────────────────
-(function(){
-  var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');
-  for(var i=0;i<14;i++){
-    var d=document.createElement('div');d.className='petal';
-    d.textContent=e[i%e.length];d.style.left=Math.random()*100+'%';
-    d.style.animationDelay=Math.random()*18+'s';d.style.animationDuration=(10+Math.random()*12)+'s';
-    d.style.fontSize=(13+Math.random()*12)+'px';d.style.position='fixed';d.style.zIndex='0';
-    w.appendChild(d);
-  }
-})();
+// petals
+(function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
 
-// ─── Balloon builder ──────────────────────────────────────────────────────
 var balloons=[],bCount=0;
+var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
 
 function addBalloon(){
   var idx=bCount++;
   balloons.push({msg:'',photoB64:null});
-  var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
   var item=document.createElement('div');
   item.className='b-item';item.id='bi'+idx;
-  item.innerHTML=`
-    <div class="b-item-header">
-      <div class="b-num">${idx+1}</div>
-      <div class="b-item-title">${colors[idx%colors.length]} Balloon ${idx+1}</div>
-      <button class="b-del" onclick="removeBalloon(${idx})">✕</button>
-    </div>
-    <div class="b-row">
-      <div>
-        <label class="lbl">Photo (optional)</label>
-        <div class="photo-slot" id="ps${idx}">
-          <input type="file" accept="image/*" onchange="loadPic(${idx},this)"/>
-          <img id="pi${idx}" src="" alt=""/>
-          <div class="photo-icon">📷<small>Add photo</small></div>
-          <button class="del-x" type="button" onclick="removePic(${idx},event)">✕</button>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;">
-        <label class="lbl">Message *</label>
-        <textarea id="bm${idx}" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(${idx},this.value)"></textarea>
-      </div>
-    </div>`;
+  item.innerHTML='<div class="b-item-header"><div class="b-num">'+(idx+1)+'</div><div class="b-item-title">'+colors[idx%colors.length]+' Balloon '+(idx+1)+'</div><button class="b-del" onclick="removeBalloon('+idx+')">✕</button></div><div class="b-row"><div><label class="lbl">Photo (optional)</label><div class="photo-slot" id="ps'+idx+'"><input type="file" accept="image/*" onchange="loadPic('+idx+',this)"/><img id="pi'+idx+'" src="" alt=""/><div class="photo-icon">📷<small>Add photo</small></div><button class="del-x" type="button" onclick="removePic('+idx+',event)">✕</button></div></div><div style="display:flex;flex-direction:column;"><label class="lbl">Message *</label><textarea id="bm'+idx+'" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg('+idx+',this.value)"></textarea></div></div>';
   document.getElementById('balloonList').appendChild(item);
 }
 
-function removeBalloon(idx){
-  var el=document.getElementById('bi'+idx);if(el)el.remove();
-  if(balloons[idx])balloons[idx]=null;
-}
+function removeBalloon(idx){var el=document.getElementById('bi'+idx);if(el)el.remove();if(balloons[idx])balloons[idx]=null;}
 
 function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
   var r=new FileReader();
   r.onload=function(e){
-    // 400px, 0.72 quality — looks great at polaroid card size, stays under 15kb each
-    compress(e.target.result,400,0.72).then(function(c){
+    // 900px, 0.92 quality — sharp on any phone
+    compress(e.target.result,900,0.92).then(function(c){
       balloons[idx].photoB64=c;
       document.getElementById('pi'+idx).src=c;
       document.getElementById('ps'+idx).classList.add('filled');
@@ -218,27 +178,16 @@ function loadPic(idx,inp){
   r.readAsDataURL(inp.files[0]);
 }
 
-function removePic(idx,e){
-  e.stopPropagation();
-  balloons[idx].photoB64=null;
-  document.getElementById('pi'+idx).src='';
-  document.getElementById('ps'+idx).classList.remove('filled');
-  var inp=document.querySelector('#ps'+idx+' input[type=file]');
-  if(inp)inp.value='';
-}
-
+function removePic(idx,e){e.stopPropagation();balloons[idx].photoB64=null;document.getElementById('pi'+idx).src='';document.getElementById('ps'+idx).classList.remove('filled');var inp=document.querySelector('#ps'+idx+' input[type=file]');if(inp)inp.value='';}
 function updateMsg(idx,val){if(balloons[idx])balloons[idx].msg=val;}
-
 addBalloon();addBalloon();addBalloon();
 
-// ─── Compress ─────────────────────────────────────────────────────────────
 function compress(dataURL,maxPx,q){
   return new Promise(function(res){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>h){if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}}
-      else{if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}}
+      if(w>h){if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}}else{if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}}
       var c=document.createElement('canvas');c.width=w;c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
       res(c.toDataURL('image/jpeg',q));
@@ -247,7 +196,6 @@ function compress(dataURL,maxPx,q){
   });
 }
 
-// ─── Gather & validate ────────────────────────────────────────────────────
 function gatherData(){
   var herName=document.getElementById('herName').value.trim();
   var yourName=document.getElementById('yourName').value.trim();
@@ -258,115 +206,69 @@ function gatherData(){
   return{n:herName,f:yourName,m:msg,b:active};
 }
 
-// ─── Save a single bin ────────────────────────────────────────────────────
-async function saveBin(obj, name){
-  var res=await fetch(JSONBIN_URL,{
+async function saveToSupabase(payload){
+  var res=await fetch(SUPA_URL+'/rest/v1/mday',{
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'X-Master-Key':JSONBIN_KEY,
-      'X-Bin-Private':'false',
-      'X-Bin-Name':name||'mday'
-    },
-    body:JSON.stringify(obj)
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+    body:JSON.stringify({data:JSON.stringify(payload)})
   });
-  if(!res.ok){var t=await res.text();throw new Error(res.status+' '+t);}
+  if(!res.ok)throw new Error(await res.text());
   var j=await res.json();
-  return j.metadata.id;
+  return j[0].id;
 }
 
-// ─── Save to JSONBin — photos in separate bins to stay under 100kb limit ──
-async function saveToJSONBin(payload){
-  // 1. Upload each photo as its own bin, replace photoB64 with photoId
-  var balloons=await Promise.all(payload.b.map(async function(b,i){
-    if(b.photoB64){
-      var photoId=await saveBin({p:b.photoB64},'mday-photo-'+i);
-      return{msg:b.msg,photoId:photoId};
-    }
-    return{msg:b.msg,photoId:null};
-  }));
-
-  // 2. Save main record without any photo data (will be tiny)
-  var mainPayload={
-    n:payload.n,
-    f:payload.f,
-    m:payload.m,
-    isPreview:payload.isPreview||false,
-    b:balloons
-  };
-  return await saveBin(mainPayload,'mday-main');
-}
-
-// ─── View URL builder ─────────────────────────────────────────────────────
 function viewURL(id){
-  var path=window.location.pathname;
-  var baseDir=path.substring(0,path.lastIndexOf('/')+1);
-  return window.location.origin+baseDir+'view.html?id='+encodeURIComponent(id);
+  var base=window.location.href.split('?')[0].split('#')[0].replace(/index\.html$/,'');
+  if(!base.endsWith('/'))base+='/';
+  return base+'view.html?id='+id;
 }
 
-// ─── Preview ──────────────────────────────────────────────────────────────
-async function openPreview(){
+async function doAction(isPreview){
   var d=gatherData();if(!d)return;
-  d.isPreview=true;
-  showLoading('Building preview…','Just a moment');
+  d.isPreview=!!isPreview;
+  showLoading('Uploading…','Saving to cloud ☁️');
   try{
-    var id=await saveToJSONBin(d);
-    hideLoading();
-    var url=viewURL(id);
-    var w=window.open(url,'_blank');
-    if(!w)alert('Allow popups to preview.');
-  }catch(e){
-    hideLoading();showErr('Could not save: '+e.message);
-  }
-}
-
-// ─── Generate link ────────────────────────────────────────────────────────
-async function generateLink(){
-  var d=gatherData();if(!d)return;
-  d.isPreview=false;
-  showLoading('Uploading your surprise…','Saving photos to the cloud ☁️');
-  try{
-    var id=await saveToJSONBin(d);
+    var id=await saveToSupabase(d);
     hideLoading();
     var url=viewURL(id);
     window._url=url;
-    document.getElementById('linkText').textContent=url;
-    document.getElementById('openLink').href=url;
-    document.getElementById('resultBox').style.display='block';
-    document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
-  }catch(e){
-    hideLoading();showErr('Upload failed: '+e.message);
+    if(isPreview){
+      var w=window.open(url,'_blank');
+      if(!w)showErr('Allow popups to preview.');
+    }else{
+      document.getElementById('openLinkInline').href=url;
+      document.getElementById('openLinkInline').textContent=url;
+      document.getElementById('openLink').href=url;
+      document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent('🌺 Happy Mother\'s Day! Open your surprise 💕 '+url);
+      document.getElementById('resultBox').style.display='block';
+      document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }catch(e){hideLoading();showErr('Upload failed: '+e.message);}
+}
+
+function showLoading(t,s){document.getElementById('loadingTitle').textContent=t;document.getElementById('loadingSub').textContent=s;document.getElementById('loadingOverlay').classList.add('show');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
+function showErr(m){var b=document.getElementById('errBox');b.textContent='⚠️ '+m;b.style.display='block';setTimeout(function(){b.style.display='none';},7000);}
+
+function copyIt(){
+  var url=window._url||document.getElementById('openLink').href;
+  var btn=document.getElementById('copyBtn');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);});
+  }else{
+    var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.focus();ta.select();
+    try{document.execCommand('copy');btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);}catch(e){}
+    document.body.removeChild(ta);
   }
 }
 
-// ─── UI helpers ───────────────────────────────────────────────────────────
-function showLoading(title,sub){
-  document.getElementById('loadingTitle').textContent=title||'Working…';
-  document.getElementById('loadingSub').textContent=sub||'';
-  document.getElementById('loadingOverlay').classList.add('show');
-}
-function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
-function showErr(m){
-  var b=document.getElementById('errBox');b.textContent='⚠️ '+m;b.style.display='block';
-  setTimeout(function(){b.style.display='none';},6000);
-}
-function copyIt(){
-  var url=window._url||document.getElementById('openLink').href;
-  navigator.clipboard.writeText(url).then(function(){
-    var b=document.querySelector('.copy-btn');b.textContent='Copied ✓';
-    setTimeout(function(){b.textContent='Copy';},2500);
-  });
-}
 function resetAll(){
-  document.getElementById('herName').value='';
-  document.getElementById('yourName').value='';
-  document.getElementById('msg').value='';
-  document.getElementById('balloonList').innerHTML='';
-  document.getElementById('resultBox').style.display='none';
-  balloons=[];bCount=0;
-  addBalloon();addBalloon();addBalloon();
+  document.getElementById('herName').value='';document.getElementById('yourName').value='';document.getElementById('msg').value='';
+  document.getElementById('balloonList').innerHTML='';document.getElementById('resultBox').style.display='none';
+  balloons=[];bCount=0;addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
+
 </body>
 </html>
