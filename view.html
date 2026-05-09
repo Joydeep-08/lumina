@@ -335,8 +335,7 @@ function buildBalloons(msgs){
   field.style.minHeight=(Math.ceil(msgs.length/3)*235+80)+'px';
 }
 
-var popSound=null;
-function getPopSound(){if(!popSound){popSound=new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');popSound.volume=0.85;}return popSound;}
+
 
 function burst(x,y){
   for(var i=0;i<30;i++){
@@ -351,7 +350,7 @@ function popBalloon(i,b,el){
   if(!el||el.classList.contains('popped'))return;
   el.classList.add('popped');balLeft--;
   var rect=el.getBoundingClientRect();burst(rect.left+rect.width/2,rect.top+rect.height/2);
-  try{var s=getPopSound();s.currentTime=0;s.play().catch(function(){});}catch(e){}
+  playPop();
   var polPhoto=document.getElementById('polPhoto'),polCard=document.getElementById('polCard');
   polCard.style.setProperty('--tilt',tilts[i%tilts.length]+'deg');
   document.getElementById('polMsg').textContent=b.msg||'';
@@ -375,12 +374,60 @@ function goTab(t){
 }
 
 var musicPlaying=false;
-var MSRC='https://www.youtube.com/embed/hlWiI4xVVKY?autoplay=1&loop=1&playlist=hlWiI4xVVKY&controls=0&enablejsapi=1';
-function startMusic(){document.getElementById('ytPlayer').src=MSRC;musicPlaying=true;document.getElementById('musicPill').classList.remove('muted');document.getElementById('micon').textContent='⏸';}
+// ── Background music (calm instrumental, starts on link open) ──
+var MSRC='https://www.youtube.com/embed/450p7goxZqg?autoplay=1&loop=1&playlist=450p7goxZqg&controls=0&mute=0';
+
+// Auto-start music immediately on page load (before button press)
+window.addEventListener('load', function(){
+  setTimeout(function(){ startMusic(); }, 1200);
+});
+
+function startMusic(){
+  document.getElementById('ytPlayer').src=MSRC;
+  musicPlaying=true;
+  document.getElementById('musicPill').classList.remove('muted');
+  document.getElementById('micon').textContent='⏸';
+  document.getElementById('musicPill').classList.add('vis');
+}
 function toggleMusic(){
   var f=document.getElementById('ytPlayer'),p=document.getElementById('musicPill');
   if(musicPlaying){f.src='';musicPlaying=false;p.classList.add('muted');document.getElementById('micon').textContent='▶';}
   else{f.src=MSRC;musicPlaying=true;p.classList.remove('muted');document.getElementById('micon').textContent='⏸';}
+}
+
+// ── Pop sound — deep thud, not shrill ──
+var popSound=null;
+function getPopSound(){
+  if(!popSound){
+    popSound=new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+    popSound.volume=0.0; // mute the shrill one
+  }
+  return popSound;
+}
+
+function playPop(){
+  try{
+    var ctx=new (window.AudioContext||window.webkitAudioContext)();
+    // Deep thud: low frequency burst
+    var buf=ctx.createBuffer(1,ctx.sampleRate*0.25,ctx.sampleRate);
+    var d=buf.getChannelData(0);
+    for(var i=0;i<d.length;i++){
+      var t=i/ctx.sampleRate;
+      // 80Hz thud with fast decay
+      d[i]=Math.sin(2*Math.PI*80*t)*Math.exp(-t*18)
+           +Math.sin(2*Math.PI*40*t)*Math.exp(-t*12)*0.6
+           +Math.sin(2*Math.PI*160*t)*Math.exp(-t*30)*0.3
+           +(Math.random()*2-1)*Math.exp(-t*25)*0.15; // slight noise burst
+    }
+    var src=ctx.createBufferSource();
+    src.buffer=buf;
+    var gain=ctx.createGain();
+    gain.gain.setValueAtTime(1.4,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+  }catch(e){}
 }
 
 function openSurprise(){
