@@ -8,6 +8,7 @@
 <style>
 .preview-watermark{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:clamp(32px,8vw,82px);font-weight:800;color:rgba(180,0,40,.18);z-index:9999;pointer-events:none;transform:rotate(-28deg);text-align:center;line-height:1.6;letter-spacing:6px;user-select:none;white-space:nowrap;}
 #previewBanner{position:fixed;top:0;left:0;right:0;z-index:10000;background:linear-gradient(90deg,#c94d6a,#a03050);color:#fff;font-family:'Jost',sans-serif;font-size:13px;padding:10px 20px;text-align:center;display:none;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+#previewBanner a{color:#fff;font-weight:600;text-decoration:underline;margin-left:8px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--ink:#1a0e0a;--rose:#c94d6a;--gold:#c8884a;--cream:#faf5ee;--warm:#f5ede0;}
 html,body{height:100%;overflow:hidden;}
@@ -136,11 +137,31 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
 .cfwrap{position:fixed;inset:0;pointer-events:none;z-index:108;}
 .cf{position:absolute;opacity:0;border-radius:2px;animation:cfF linear infinite;}
 @keyframes cfF{0%{transform:translateY(-20px) rotate(0);opacity:.9;}100%{transform:translateY(110vh) rotate(520deg);opacity:0;}}
+
+/* Preview redirect overlay */
+#redirectOverlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(26,14,10,.82);backdrop-filter:blur(16px);flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:32px;}
+#redirectOverlay.show{display:flex;}
+.ro-emoji{font-size:52px;}
+.ro-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;color:#fff;font-weight:300;}
+.ro-sub{font-size:13px;color:rgba(255,255,255,.65);letter-spacing:.5px;}
+.ro-btn{margin-top:8px;padding:16px 40px;background:linear-gradient(135deg,#c94d6a,#a03050);color:#fff;border:none;border-radius:100px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(201,77,106,.5);}
+.ro-progress{width:220px;height:3px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
+.ro-bar{height:100%;background:linear-gradient(90deg,#c94d6a,#e8a0a8);border-radius:10px;width:0%;transition:width linear;}
 </style>
 </head>
 <body>
 <div class="preview-watermark" id="previewMark">PREVIEW</div>
-<div id="previewBanner">🔍 Preview Mode — <span id="previewCountdown">30</span>s remaining · Close this tab when done</div>
+<div id="previewBanner">🔍 Preview Mode — <span id="previewCountdown">30</span>s remaining · <a href="https://luminaa-f37.pages.dev/">Create yours →</a></div>
+
+<!-- Redirect overlay shown at end of preview -->
+<div id="redirectOverlay">
+  <div class="ro-emoji">🌺</div>
+  <div class="ro-title">Loved what you saw?</div>
+  <div class="ro-sub">Create your own surprise for just ₹39</div>
+  <div class="ro-progress"><div class="ro-bar" id="roBar"></div></div>
+  <button class="ro-btn" onclick="goHome()">Create Mine Now →</button>
+</div>
+
 <div id="loadScreen">
   <div class="ls-orb">🌺</div>
   <div class="ls-text">Loading your surprise…</div>
@@ -229,22 +250,14 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
   <iframe id="ytPlayer" width="0" height="0" src="" title="bg music" frameborder="0" allow="autoplay" allowfullscreen></iframe>
 </div>
 <script>
-var JSONBIN_KEY='$2a$10$5v95bKiTdPd/CS0keVOTBOXrWUVgMIDW8ocpTfdt.OV0U1edqS/o6';
+var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
+var HOME_URL = 'https://luminaa-f37.pages.dev/';
 var DEFAULT_MSG="You are the reason I believe in unconditional love. Every warmth I've ever felt, every safety I've known, every soft landing after life knocked me down — that was you. On this Mother's Day, I want you to know that you are not just loved, you are treasured, celebrated, and deeply, endlessly adored. Thank you for being mine.";
 var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
-async function fetchBin(id){
-  var res=await fetch('https://api.jsonbin.io/v3/b/'+encodeURIComponent(id)+'/latest',{
-    headers:{'X-Master-Key':JSONBIN_KEY}
-  });
-  if(!res.ok)throw new Error(res.status);
-  var j=await res.json();
-  return j.record;
-}
-
-var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
-var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
+function goHome(){ window.location.href = HOME_URL; }
 
 async function loadData(){
   var id=new URLSearchParams(window.location.search).get('id');
@@ -293,8 +306,26 @@ function init(){
 }
 
 function startPreviewTimer(){
-  var s=30,el=document.getElementById('previewCountdown');
-  var t=setInterval(function(){s--;if(el)el.textContent=s;if(s<=0){clearInterval(t);document.getElementById('previewBanner').textContent='⏰ Preview expired. Close this tab.';}},1000);
+  var s=30;
+  var el=document.getElementById('previewCountdown');
+  var t=setInterval(function(){
+    s--;
+    if(el) el.textContent=s;
+    if(s<=0){
+      clearInterval(t);
+      showRedirectOverlay();
+    }
+  },1000);
+}
+
+function showRedirectOverlay(){
+  var overlay=document.getElementById('redirectOverlay');
+  overlay.classList.add('show');
+  // animate progress bar over 4s then redirect
+  var bar=document.getElementById('roBar');
+  bar.style.transition='width 4s linear';
+  setTimeout(function(){ bar.style.width='100%'; },50);
+  setTimeout(function(){ goHome(); },4200);
 }
 
 function buildName(n){
@@ -335,8 +366,6 @@ function buildBalloons(msgs){
   field.style.minHeight=(Math.ceil(msgs.length/3)*235+80)+'px';
 }
 
-
-
 function burst(x,y){
   for(var i=0;i<30;i++){
     var el=document.createElement('div'),ang=Math.random()*360,d=70+Math.random()*130;
@@ -374,10 +403,8 @@ function goTab(t){
 }
 
 var musicPlaying=false;
-// ── Background music (calm instrumental, starts on link open) ──
 var MSRC='https://www.youtube.com/embed/450p7goxZqg?autoplay=1&loop=1&playlist=450p7goxZqg&controls=0&mute=0';
 
-// Auto-start music immediately on page load (before button press)
 window.addEventListener('load', function(){
   setTimeout(function(){ startMusic(); }, 1200);
 });
@@ -395,29 +422,17 @@ function toggleMusic(){
   else{f.src=MSRC;musicPlaying=true;p.classList.remove('muted');document.getElementById('micon').textContent='⏸';}
 }
 
-// ── Pop sound — deep thud, not shrill ──
-var popSound=null;
-function getPopSound(){
-  if(!popSound){
-    popSound=new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-    popSound.volume=0.0; // mute the shrill one
-  }
-  return popSound;
-}
-
 function playPop(){
   try{
     var ctx=new (window.AudioContext||window.webkitAudioContext)();
-    // Deep thud: low frequency burst
     var buf=ctx.createBuffer(1,ctx.sampleRate*0.25,ctx.sampleRate);
     var d=buf.getChannelData(0);
     for(var i=0;i<d.length;i++){
       var t=i/ctx.sampleRate;
-      // 80Hz thud with fast decay
       d[i]=Math.sin(2*Math.PI*80*t)*Math.exp(-t*18)
            +Math.sin(2*Math.PI*40*t)*Math.exp(-t*12)*0.6
            +Math.sin(2*Math.PI*160*t)*Math.exp(-t*30)*0.3
-           +(Math.random()*2-1)*Math.exp(-t*25)*0.15; // slight noise burst
+           +(Math.random()*2-1)*Math.exp(-t*25)*0.15;
     }
     var src=ctx.createBufferSource();
     src.buffer=buf;

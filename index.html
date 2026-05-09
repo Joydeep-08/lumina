@@ -55,6 +55,17 @@ textarea{height:90px;line-height:1.6;}
 .add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
 .hint-box{background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--gold);line-height:1.6;}
 .hint-box strong{font-weight:600;}
+
+/* Price badge */
+.price-badge{background:linear-gradient(135deg,rgba(212,69,106,0.08),rgba(212,69,106,0.04));border:1.5px solid rgba(212,69,106,0.2);border-radius:18px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.price-left{display:flex;flex-direction:column;gap:4px;}
+.price-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.price-amount{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--rose);}
+.price-amount span{font-size:16px;font-weight:400;}
+.price-features{display:flex;flex-direction:column;gap:4px;}
+.price-feat{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.price-feat::before{content:'✓';color:var(--rose);font-weight:700;}
+
 .free-prev-btn{width:100%;padding:16px;background:transparent;border:2px solid rgba(212,69,106,0.25);border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;transition:all .2s;margin-bottom:12px;}
 .free-prev-btn:hover{background:rgba(212,69,106,0.06);}
 .pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,69,106,0.35);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
@@ -69,6 +80,11 @@ textarea{height:90px;line-height:1.6;}
 .copy-btn{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
 .open-btn{display:inline-block;padding:15px 36px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;}
 .reset-btn{background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;}
+
+/* Payment success banner */
+.paid-banner{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05));border:1.5px solid rgba(34,197,94,0.3);border-radius:16px;padding:16px 20px;margin-bottom:20px;display:none;align-items:center;gap:12px;font-size:13px;color:#166534;}
+.paid-banner.show{display:flex;}
+.paid-banner strong{font-weight:600;}
 
 /* Loading overlay */
 .loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(253,248,242,0.95);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;gap:20px;}
@@ -102,6 +118,13 @@ textarea{height:90px;line-height:1.6;}
 </header>
 
 <div class="wrap">
+
+  <!-- Payment success banner -->
+  <div class="paid-banner" id="paidBanner">
+    <span style="font-size:24px;">✅</span>
+    <div><strong>Payment successful!</strong> Generating your surprise link now…</div>
+  </div>
+
   <div class="card">
     <div class="step-badge">1</div>
     <div class="card-title">About her</div>
@@ -131,11 +154,25 @@ textarea{height:90px;line-height:1.6;}
     <strong>📸 Full quality photos</strong> — Photos are stored safely in the cloud. Your link will be short and work perfectly on any phone or device 🌺
   </div>
 
-  <div class="err" id="errBox"></div>
-  <button class="free-prev-btn" onclick="doAction(true)">👁 Preview First</button>
-<button class="pay-btn" onclick="doAction(false)">🌺 &nbsp; Get Her Surprise Link</button>
+  <!-- Price display -->
+  <div class="price-badge">
+    <div class="price-left">
+      <div class="price-label">One-time payment</div>
+      <div class="price-amount"><span>₹</span>39</div>
+    </div>
+    <div class="price-features">
+      <div class="price-feat">Permanent shareable link</div>
+      <div class="price-feat">Works on any phone</div>
+      <div class="price-feat">Photos stored safely</div>
+      <div class="price-feat">WhatsApp ready</div>
+    </div>
+  </div>
 
- <div class="result" id="resultBox">
+  <div class="err" id="errBox"></div>
+  <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
+  <button class="pay-btn" onclick="doPay()">🌺 &nbsp; Get Her Surprise Link — ₹39</button>
+
+  <div class="result" id="resultBox">
     <div class="result-icon">🌺</div>
     <h3>Send it to Mom!</h3>
     <p>Copy this link and send it — works on any phone 💕</p>
@@ -146,11 +183,14 @@ textarea{height:90px;line-height:1.6;}
     <a id="openLink" class="open-btn" href="#" target="_blank" rel="noopener">Open &amp; Preview →</a>
     <a id="waLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:12px;">📲 Share via WhatsApp</a>
     <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
-  </div></div>
+  </div>
+</div>
 
 <script>
 var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
+var RZP_LINK = 'https://rzp.io/rzp/vaW5RY9';
+var STORAGE_KEY = 'mday_pending_v1';
 
 // petals
 (function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
@@ -173,7 +213,6 @@ function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
   var r=new FileReader();
   r.onload=function(e){
-    // 900px, 0.92 quality — sharp on any phone
     compress(e.target.result,900,0.92).then(function(c){
       balloons[idx].photoB64=c;
       document.getElementById('pi'+idx).src=c;
@@ -223,32 +262,73 @@ async function saveToSupabase(payload){
 }
 
 function viewURL(id){
-  var base=window.location.href.split('?')[0].split('#')[0].replace(/index\.html$/,'');
-  if(!base.endsWith('/'))base+='/';
+  var base='https://luminaa-f37.pages.dev/';
   return base+'view.html?id='+id;
 }
 
-async function doAction(isPreview){
+// ── PREVIEW (free, 30s) ──
+async function doPreview(){
   var d=gatherData();if(!d)return;
-  d.isPreview=!!isPreview;
-  showLoading('Uploading…','Saving to cloud ☁️');
+  d.isPreview=true;
+  showLoading('Preparing preview…','Just a moment 🌺');
   try{
     var id=await saveToSupabase(d);
     hideLoading();
     var url=viewURL(id);
-    window._url=url;
-    if(isPreview){
-      var w=window.open(url,'_blank');
-      if(!w)showErr('Allow popups to preview.');
-    }else{
-      document.getElementById('openLinkInline').href=url;
-      document.getElementById('openLinkInline').textContent=url;
-      document.getElementById('openLink').href=url;
-      document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent('🌺 Happy Mother\'s Day! Open your surprise 💕 '+url);
-      document.getElementById('resultBox').style.display='block';
-      document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
-    }
-  }catch(e){hideLoading();showErr('Upload failed: '+e.message);}
+    var w=window.open(url,'_blank');
+    if(!w)showErr('Allow popups to preview.');
+  }catch(e){hideLoading();showErr('Failed: '+e.message);}
+}
+
+// ── PAY flow ──
+async function doPay(){
+  var d=gatherData();if(!d)return;
+  d.isPreview=false;
+  showLoading('Saving your surprise…','Hang tight, almost there 🌺');
+  try{
+    var id=await saveToSupabase(d);
+    hideLoading();
+    // store id in localStorage so we can retrieve after payment redirect
+    localStorage.setItem(STORAGE_KEY, id);
+    // redirect to Razorpay
+    window.location.href=RZP_LINK;
+  }catch(e){hideLoading();showErr('Failed to save: '+e.message);}
+}
+
+// ── On page load: check if returning from Razorpay ──
+window.addEventListener('load', function(){
+  var params=new URLSearchParams(window.location.search);
+  var paymentId=params.get('razorpay_payment_id');
+  var pendingId=localStorage.getItem(STORAGE_KEY);
+
+  if(paymentId && pendingId){
+    // Payment done! Show success and generate link
+    localStorage.removeItem(STORAGE_KEY);
+    // Clean URL
+    window.history.replaceState({},'',window.location.pathname);
+    // Show paid banner
+    document.getElementById('paidBanner').classList.add('show');
+    document.getElementById('paidBanner').scrollIntoView({behavior:'smooth',block:'center'});
+    // Show result
+    setTimeout(function(){
+      showResult(pendingId);
+    }, 800);
+  } else if(paymentId && !pendingId){
+    // Payment done but no pending data (maybe they cleared storage) — show generic success
+    window.history.replaceState({},'',window.location.pathname);
+    showErr('Payment received but data not found. Please create again or contact support.');
+  }
+});
+
+function showResult(id){
+  var url=viewURL(id);
+  window._url=url;
+  document.getElementById('openLinkInline').href=url;
+  document.getElementById('openLinkInline').textContent=url;
+  document.getElementById('openLink').href=url;
+  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent('🌺 Happy Mother\'s Day! Open your surprise 💕 '+url);
+  document.getElementById('resultBox').style.display='block';
+  document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 function showLoading(t,s){document.getElementById('loadingTitle').textContent=t;document.getElementById('loadingSub').textContent=s;document.getElementById('loadingOverlay').classList.add('show');}
@@ -270,6 +350,7 @@ function copyIt(){
 function resetAll(){
   document.getElementById('herName').value='';document.getElementById('yourName').value='';document.getElementById('msg').value='';
   document.getElementById('balloonList').innerHTML='';document.getElementById('resultBox').style.display='none';
+  document.getElementById('paidBanner').classList.remove('show');
   balloons=[];bCount=0;addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
