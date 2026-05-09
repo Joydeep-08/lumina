@@ -151,6 +151,8 @@ textarea{height:90px;line-height:1.6;}
 <script>
 var JSONBIN_KEY = '$2a$10$5v95bKiTdPd/CS0keVOTBOXrWUVgMIDW8ocpTfdt.OV0U1edqS/o6';
 var JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
+// Free plan limit: 100kb per bin. Strategy: main record stores tiny photo IDs,
+// each photo is stored in its own separate bin.
 
 // ─── Petals ───────────────────────────────────────────────────────────────
 (function(){
@@ -206,8 +208,8 @@ function loadPic(idx,inp){
   if(!inp.files||!inp.files[0])return;
   var r=new FileReader();
   r.onload=function(e){
-    // Good quality — 800px, 0.85 quality. Looks great, still reasonable size.
-    compress(e.target.result,800,0.85).then(function(c){
+    // 400px, 0.72 quality — looks great at polaroid card size, stays under 15kb each
+    compress(e.target.result,400,0.72).then(function(c){
       balloons[idx].photoB64=c;
       document.getElementById('pi'+idx).src=c;
       document.getElementById('ps'+idx).classList.add('filled');
@@ -256,24 +258,43 @@ function gatherData(){
   return{n:herName,f:yourName,m:msg,b:active};
 }
 
-// ─── Save to JSONBin ──────────────────────────────────────────────────────
-async function saveToJSONBin(payload){
+// ─── Save a single bin ────────────────────────────────────────────────────
+async function saveBin(obj, name){
   var res=await fetch(JSONBIN_URL,{
     method:'POST',
     headers:{
       'Content-Type':'application/json',
       'X-Master-Key':JSONBIN_KEY,
       'X-Bin-Private':'false',
-      'X-Bin-Name':'mday-'+Date.now()
+      'X-Bin-Name':name||'mday'
     },
-    body:JSON.stringify(payload)
+    body:JSON.stringify(obj)
   });
-  if(!res.ok){
-    var txt=await res.text();
-    throw new Error('JSONBin error: '+res.status+' '+txt);
-  }
-  var json=await res.json();
-  return json.metadata.id; // short ID like "6830f2e..."
+  if(!res.ok){var t=await res.text();throw new Error(res.status+' '+t);}
+  var j=await res.json();
+  return j.metadata.id;
+}
+
+// ─── Save to JSONBin — photos in separate bins to stay under 100kb limit ──
+async function saveToJSONBin(payload){
+  // 1. Upload each photo as its own bin, replace photoB64 with photoId
+  var balloons=await Promise.all(payload.b.map(async function(b,i){
+    if(b.photoB64){
+      var photoId=await saveBin({p:b.photoB64},'mday-photo-'+i);
+      return{msg:b.msg,photoId:photoId};
+    }
+    return{msg:b.msg,photoId:null};
+  }));
+
+  // 2. Save main record without any photo data (will be tiny)
+  var mainPayload={
+    n:payload.n,
+    f:payload.f,
+    m:payload.m,
+    isPreview:payload.isPreview||false,
+    b:balloons
+  };
+  return await saveBin(mainPayload,'mday-main');
 }
 
 // ─── View URL builder ─────────────────────────────────────────────────────
@@ -314,7 +335,7 @@ async function generateLink(){
     document.getElementById('resultBox').style.display='block';
     document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
   }catch(e){
-    hideLoading();showErr('Upload failed: '+e.message+'. Check your internet and try again.');
+    hideLoading();showErr('Upload failed: '+e.message);
   }
 }
 

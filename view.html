@@ -234,19 +234,39 @@ var DEFAULT_MSG="You are the reason I believe in unconditional love. Every warmt
 var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
+async function fetchBin(id){
+  var res=await fetch('https://api.jsonbin.io/v3/b/'+encodeURIComponent(id)+'/latest',{
+    headers:{'X-Master-Key':JSONBIN_KEY}
+  });
+  if(!res.ok)throw new Error(res.status);
+  var j=await res.json();
+  return j.record;
+}
+
 async function loadData(){
   var params=new URLSearchParams(window.location.search);
   var id=params.get('id');
   if(id){
     try{
-      var res=await fetch('https://api.jsonbin.io/v3/b/'+encodeURIComponent(id)+'/latest',{
-        headers:{'X-Master-Key':JSONBIN_KEY}
-      });
-      if(!res.ok)throw new Error(res.status);
-      var json=await res.json();
-      data=json.record;
+      // Load main record
+      data=await fetchBin(id);
       isPreview=!!(data&&data.isPreview);
-    }catch(e){console.error('Load error:',e);}
+
+      // Load each balloon's photo from its own bin
+      if(data&&data.b){
+        data.b=await Promise.all(data.b.map(async function(b){
+          if(b.photoId){
+            try{
+              var photoRecord=await fetchBin(b.photoId);
+              return{msg:b.msg,photoB64:photoRecord.p||null};
+            }catch(e){
+              return{msg:b.msg,photoB64:null};
+            }
+          }
+          return{msg:b.msg,photoB64:null};
+        }));
+      }
+    }catch(e){console.error('Load error:',e);data=null;}
   }
   if(!data){
     data={n:'Mom',f:'',m:'',b:[
