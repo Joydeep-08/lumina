@@ -255,6 +255,7 @@ async function loadData(){
       });
       var j=await res.json();
       if(j&&j[0]&&j[0].data) data=JSON.parse(j[0].data);
+      isPreview=!!data.isPreview;
     }catch(e){console.error(e);data=null;}
   }
   if(!data){

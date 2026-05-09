@@ -132,16 +132,21 @@ textarea{height:90px;line-height:1.6;}
   </div>
 
   <div class="err" id="errBox"></div>
-  <button class="free-prev-btn" onclick="openPreview()">👁 Preview First</button>
-  <button class="pay-btn" onclick="generateLink()">🌺 &nbsp; Get Her Surprise Link</button>
+  <button class="free-prev-btn" onclick="doAction(true)">👁 Preview First</button>
+<button class="pay-btn" onclick="doAction(false)">🌺 &nbsp; Get Her Surprise Link</button>
 
-  <div class="link-box">
-  <a id="openLinkInline" href="#" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-decoration:underline;">—</a>
-  <button class="copy-btn" id="copyBtn" onclick="copyIt()">Copy Link</button>
-</div>
-<a id="openLink" class="open-btn" href="#" target="_blank" rel="noopener">Open & Preview →</a>
-<a id="waLink" class="wa-btn" href="#" target="_blank" rel="noopener">📲 Share via WhatsApp</a>
-</div>
+ <div class="result" id="resultBox">
+    <div class="result-icon">🌺</div>
+    <h3>Send it to Mom!</h3>
+    <p>Copy this link and send it — works on any phone 💕</p>
+    <div class="link-box">
+      <a id="openLinkInline" href="#" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-decoration:underline;">—</a>
+      <button class="copy-btn" id="copyBtn" onclick="copyIt()">Copy Link</button>
+    </div>
+    <a id="openLink" class="open-btn" href="#" target="_blank" rel="noopener">Open &amp; Preview →</a>
+    <a id="waLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:12px;">📲 Share via WhatsApp</a>
+    <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
+  </div></div>
 
 <script>
 var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
