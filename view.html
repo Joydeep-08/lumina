@@ -257,7 +257,12 @@ var DEFAULT_MSG="You are the reason I believe in unconditional love. Every warmt
 var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
-function goHome(){ window.location.href = HOME_URL; }
+function goHome(){
+  // Close this preview tab instead of navigating — keeps the form tab intact
+  try{ window.close(); }catch(e){}
+  // Fallback: if close is blocked, then redirect
+  setTimeout(function(){ window.location.href=HOME_URL; },500);
+}
 
 async function loadData(){
   var id=new URLSearchParams(window.location.search).get('id');
@@ -321,10 +326,10 @@ function startPreviewTimer(){
 function showRedirectOverlay(){
   var overlay=document.getElementById('redirectOverlay');
   overlay.classList.add('show');
-  // animate progress bar over 4s then redirect
   var bar=document.getElementById('roBar');
   bar.style.transition='width 4s linear';
   setTimeout(function(){ bar.style.width='100%'; },50);
+  // Close the preview tab after 4s — form tab stays untouched
   setTimeout(function(){ goHome(); },4200);
 }
 

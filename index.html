@@ -238,7 +238,8 @@ async function saveToSupabase(payload){
 
 function viewURL(id){return SITE_URL+'view.html?id='+id;}
 
-// Preview — new tab, form stays intact
+// Preview — always opens in a NEW TAB, form stays intact
+// anchor click trick works on mobile too unlike window.open
 async function doPreview(){
   var d=gatherData();if(!d)return;
   d.isPreview=true;
@@ -247,8 +248,13 @@ async function doPreview(){
     var id=await saveToSupabase(d);
     hideLoading();
     var url=viewURL(id);
-    var w=window.open(url,'_blank');
-    if(!w)showErr('Allow pop-ups to preview, or open: '+url);
+    var a=document.createElement('a');
+    a.href=url;
+    a.target='_blank';
+    a.rel='noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }catch(e){hideLoading();showErr('Failed: '+e.message);}
 }
 
