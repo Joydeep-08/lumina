@@ -246,14 +246,13 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);disp
 </div>
 <audio id="bgMusic" loop preload="auto" src="song.mp3"></audio>
 <script>
-var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
-var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
+var SUPA_URL = 'https://acriifgwnkoagsgfezgn.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjcmlpZmd3bmtvYWdzZ2ZlemduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDUwNDEsImV4cCI6MjA5MzkyMTA0MX0.0c0uayx8A04oHksusqR0_OjATyg3Y5qz49SrHKS1m1U';
 var HOME_URL = 'https://luminaa-f37.pages.dev/';
 var DEFAULT_MSG="You are the reason I believe in unconditional love. Every warmth I've ever felt, every safety I've known, every soft landing after life knocked me down — that was you. On this Mother's Day, I want you to know that you are not just loved, you are treasured, celebrated, and deeply, endlessly adored. Thank you for being mine.";
 var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
-// ── KEY FIX: read id once, use everywhere ──
 var _pageId = new URLSearchParams(window.location.search).get('id');
 
 function goHome(){
@@ -283,7 +282,6 @@ async function loadData(){
 }
 
 function init(){
-  // ── FIX: set banner link to prefill URL so form is pre-filled ──
   var bannerLink = document.getElementById('previewBannerLink');
   if(bannerLink){
     bannerLink.href = HOME_URL + (_pageId ? '?prefill=' + _pageId : '');
