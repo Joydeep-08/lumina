@@ -122,7 +122,7 @@ textarea{height:90px;line-height:1.6;}
   <!-- Payment success banner -->
   <div class="paid-banner" id="paidBanner">
     <span style="font-size:24px;">✅</span>
-    <div><strong>Payment successful!</strong> Generating your surprise link now…</div>
+    <div><strong>Payment successful!</strong> Here is your permanent surprise link 💕</div>
   </div>
 
   <div class="card">
@@ -169,6 +169,7 @@ textarea{height:90px;line-height:1.6;}
   </div>
 
   <div class="err" id="errBox"></div>
+  <!-- FIX 1: Preview opens view.html in a new tab, form stays intact -->
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
   <button class="pay-btn" onclick="doPay()">🌺 &nbsp; Get Her Surprise Link — ₹39</button>
 
@@ -189,10 +190,19 @@ textarea{height:90px;line-height:1.6;}
 <script>
 var SUPA_URL = 'https://hkcjkydijjjsoafdgcvf.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrY2preWRpampqc29hZmRnY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTM3NjYsImV4cCI6MjA5Mzg2OTc2Nn0.54cN9-INZsdEKlyQ0RvwtHNqqWknCRRIPSNt_RaRTtk';
-var RZP_LINK = 'https://rzp.io/rzp/vaW5RY9';
+// FIX 2: New Razorpay link
+var RZP_LINK = 'https://rzp.io/rzp/2j5K2Si';
+var SITE_URL = 'https://luminaa-f37.pages.dev/';
 
-// petals
-(function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
+// Floating petals
+(function(){
+  var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');
+  for(var i=0;i<14;i++){
+    var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];
+    d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';
+    w.appendChild(d);
+  }
+})();
 
 var balloons=[],bCount=0;
 var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
@@ -221,7 +231,14 @@ function loadPic(idx,inp){
   r.readAsDataURL(inp.files[0]);
 }
 
-function removePic(idx,e){e.stopPropagation();balloons[idx].photoB64=null;document.getElementById('pi'+idx).src='';document.getElementById('ps'+idx).classList.remove('filled');var inp=document.querySelector('#ps'+idx+' input[type=file]');if(inp)inp.value='';}
+function removePic(idx,e){
+  e.stopPropagation();
+  balloons[idx].photoB64=null;
+  document.getElementById('pi'+idx).src='';
+  document.getElementById('ps'+idx).classList.remove('filled');
+  var inp=document.querySelector('#ps'+idx+' input[type=file]');
+  if(inp)inp.value='';
+}
 function updateMsg(idx,val){if(balloons[idx])balloons[idx].msg=val;}
 addBalloon();addBalloon();addBalloon();
 
@@ -252,7 +269,12 @@ function gatherData(){
 async function saveToSupabase(payload){
   var res=await fetch(SUPA_URL+'/rest/v1/mday',{
     method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+    headers:{
+      'Content-Type':'application/json',
+      'apikey':SUPA_KEY,
+      'Authorization':'Bearer '+SUPA_KEY,
+      'Prefer':'return=representation'
+    },
     body:JSON.stringify({data:JSON.stringify(payload)})
   });
   if(!res.ok)throw new Error(await res.text());
@@ -261,11 +283,10 @@ async function saveToSupabase(payload){
 }
 
 function viewURL(id){
-  var base='https://luminaa-f37.pages.dev/';
-  return base+'view.html?id='+id;
+  return SITE_URL+'view.html?id='+id;
 }
 
-// ── PREVIEW (free, 30s) ──
+// ── FIX 1: PREVIEW — saves to Supabase, opens view.html in NEW TAB, form stays intact ──
 async function doPreview(){
   var d=gatherData();if(!d)return;
   d.isPreview=true;
@@ -275,11 +296,17 @@ async function doPreview(){
     hideLoading();
     var url=viewURL(id);
     var w=window.open(url,'_blank');
-    if(!w)showErr('Allow popups to preview.');
-  }catch(e){hideLoading();showErr('Failed: '+e.message);}
+    if(!w){
+      // Fallback if popup blocked: show the link
+      showErr('Preview ready! Allow pop-ups, or open: '+url);
+    }
+  }catch(e){
+    hideLoading();
+    showErr('Failed: '+e.message);
+  }
 }
 
-// ── PAY flow ──
+// ── FIX 2: PAY — saves to Supabase → gets id → redirects to Razorpay with sid in callback URL ──
 async function doPay(){
   var d=gatherData();if(!d)return;
   d.isPreview=false;
@@ -287,27 +314,31 @@ async function doPay(){
   try{
     var id=await saveToSupabase(d);
     hideLoading();
-    // Embed the supabase ID directly in the callback URL — works across ANY device
-    var callbackUrl='https://luminaa-f37.pages.dev/?sid='+id;
+    // Embed the Supabase ID in the callback URL so Razorpay carries it back on any device
+    var callbackUrl=SITE_URL+'?sid='+id;
     var rzpUrl=RZP_LINK+'?callback_url='+encodeURIComponent(callbackUrl);
     window.location.href=rzpUrl;
-  }catch(e){hideLoading();showErr('Failed to save: '+e.message);}
+  }catch(e){
+    hideLoading();
+    showErr('Failed to save: '+e.message);
+  }
 }
 
-// ── On page load: check if returning from Razorpay ──
-window.addEventListener('load', function(){
+// ── FIX 3: On page load — check for ?razorpay_payment_id=xxx&sid=xxx in URL ──
+// No localStorage used anywhere
+window.addEventListener('load',function(){
   var params=new URLSearchParams(window.location.search);
   var paymentId=params.get('razorpay_payment_id');
   var sid=params.get('sid');
 
   if(paymentId && sid){
-    // Payment done! Works on any device because sid came in the URL
+    // Payment confirmed — clean the URL, show success banner + result
     window.history.replaceState({},'',window.location.pathname);
     document.getElementById('paidBanner').classList.add('show');
     document.getElementById('paidBanner').scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){ showResult(sid); }, 800);
+    showResult(sid);
   } else if(sid && !paymentId){
-    // sid present but no payment — someone just landed with sid, ignore
+    // sid present without payment (e.g. Razorpay cancelled) — just clean URL, do nothing
     window.history.replaceState({},'',window.location.pathname);
   }
 });
@@ -319,34 +350,50 @@ function showResult(id){
   document.getElementById('openLinkInline').textContent=url;
   document.getElementById('openLink').href=url;
   document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent('🌺 Happy Mother\'s Day! Open your surprise 💕 '+url);
-  document.getElementById('resultBox').style.display='block';
-  document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
+  var box=document.getElementById('resultBox');
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function showLoading(t,s){document.getElementById('loadingTitle').textContent=t;document.getElementById('loadingSub').textContent=s;document.getElementById('loadingOverlay').classList.add('show');}
+function showLoading(t,s){
+  document.getElementById('loadingTitle').textContent=t;
+  document.getElementById('loadingSub').textContent=s;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
 function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
-function showErr(m){var b=document.getElementById('errBox');b.textContent='⚠️ '+m;b.style.display='block';setTimeout(function(){b.style.display='none';},7000);}
+function showErr(m){
+  var b=document.getElementById('errBox');
+  b.textContent='⚠️ '+m;b.style.display='block';
+  setTimeout(function(){b.style.display='none';},9000);
+}
 
 function copyIt(){
   var url=window._url||document.getElementById('openLink').href;
   var btn=document.getElementById('copyBtn');
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(function(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);});
+    navigator.clipboard.writeText(url).then(function(){
+      btn.textContent='Copied ✓';
+      setTimeout(function(){btn.textContent='Copy Link';},2500);
+    });
   }else{
-    var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.focus();ta.select();
+    var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;opacity:0;';
+    document.body.appendChild(ta);ta.focus();ta.select();
     try{document.execCommand('copy');btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);}catch(e){}
     document.body.removeChild(ta);
   }
 }
 
 function resetAll(){
-  document.getElementById('herName').value='';document.getElementById('yourName').value='';document.getElementById('msg').value='';
-  document.getElementById('balloonList').innerHTML='';document.getElementById('resultBox').style.display='none';
+  document.getElementById('herName').value='';
+  document.getElementById('yourName').value='';
+  document.getElementById('msg').value='';
+  document.getElementById('balloonList').innerHTML='';
+  document.getElementById('resultBox').style.display='none';
   document.getElementById('paidBanner').classList.remove('show');
-  balloons=[];bCount=0;addBalloon();addBalloon();addBalloon();
+  balloons=[];bCount=0;
+  addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
-
 </body>
 </html>
