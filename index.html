@@ -337,6 +337,38 @@ function resetAll(){
   balloons=[];bCount=0;addBalloon();addBalloon();addBalloon();
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
+// Check for ?prefill=id on load — pre-fills form from existing surprise data
+window.addEventListener('load',function(){
+  var prefillId=new URLSearchParams(window.location.search).get('prefill');
+  if(prefillId){
+    window.history.replaceState({},'',window.location.pathname);
+    prefillForm(prefillId);
+  }
+});
+
+async function prefillForm(id){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/mday?id=eq.'+id+'&select=data',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var j=await res.json();
+    if(!j||!j[0]||!j[0].data)return;
+    var d=JSON.parse(j[0].data);
+    if(d.n)document.getElementById('herName').value=d.n;
+    if(d.f)document.getElementById('yourName').value=d.f;
+    if(d.m)document.getElementById('msg').value=d.m;
+    if(d.b&&d.b.length){
+      document.getElementById('balloonList').innerHTML='';
+      balloons=[];bCount=0;
+      d.b.forEach(function(b,i){
+        addBalloon();
+        if(b.msg){balloons[i].msg=b.msg;var ta=document.getElementById('bm'+i);if(ta)ta.value=b.msg;}
+        if(b.photoB64){balloons[i].photoB64=b.photoB64;document.getElementById('pi'+i).src=b.photoB64;document.getElementById('ps'+i).classList.add('filled');}
+      });
+    }
+  }catch(e){console.error('prefill failed',e);}
+}
 </script>
 </body>
 </html>

@@ -256,10 +256,10 @@ var data=null,isPreview=false;
 var cfC=['#c94d6a','#e8a0a8','#c8884a','#f7dde2','#ffb3c6','#fffdf9','#ffd6e7'];
 
 function goHome(){
-  // Close this preview tab instead of navigating — keeps the form tab intact
+  var id=new URLSearchParams(window.location.search).get('id');
+  var url=HOME_URL+(id?'?prefill='+id:'');
   try{ window.close(); }catch(e){}
-  // Fallback: if close is blocked, then redirect
-  setTimeout(function(){ window.location.href=HOME_URL; },500);
+  setTimeout(function(){ window.location.href=url; },500);
 }
 
 async function loadData(){
