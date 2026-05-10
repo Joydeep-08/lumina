@@ -203,14 +203,37 @@ var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
 function compress(dataURL, maxPx, q) {
   return new Promise(function(res) {
     var img = new Image();
+
     img.onload = function() {
-      var w=img.width, h=img.height;
-      if(w>h){ if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;} }
-      else { if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;} }
-      var c=document.createElement('canvas'); c.width=w; c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
+      var w = img.width, h = img.height;
+
+      if (w > h) {
+        if (w > maxPx) {
+          h = Math.round(h * maxPx / w);
+          w = maxPx;
+        }
+      } else {
+        if (h > maxPx) {
+          w = Math.round(w * maxPx / h);
+          h = maxPx;
+        }
+      }
+
+      var c = document.createElement('canvas');
+
+      c.width = w;
+      c.height = h;
+
+      var ctx = c.getContext('2d');
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      ctx.drawImage(img, 0, 0, w, h);
+
       res(c.toDataURL('image/webp', q));
     };
+
     img.src = dataURL;
   });
 }
@@ -288,7 +311,7 @@ function loadPic(idx, inp) {
   r.onload = async function(e) {
     try {
       // Compress hard — 600px, webp 0.72 quality
-      var compressed = await compress(e.target.result, 600, 0.72);
+      var compressed = await compress(e.target.result, 320, 0.45);
       // Upload to storage
       var url = await uploadToStorage(compressed, idx);
       balloons[idx].photoUrl = url;
