@@ -311,7 +311,7 @@ function loadPic(idx, inp) {
   r.onload = async function(e) {
     try {
       // Compress hard — 600px, webp 0.72 quality
-      var compressed = await compress(e.target.result, 320, 0.45);
+      var compressed = await compress(e.target.result, 600, 0.70);
       // Upload to storage
       var url = await uploadToStorage(compressed, idx);
       balloons[idx].photoUrl = url;
