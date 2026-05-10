@@ -262,26 +262,72 @@ function goHome() {
 }
 
 async function loadData() {
-  if(_pageId) {
+  // ── 1. Preview mode: data is encoded directly in URL, no Supabase needed ──
+  var previewParam = new URLSearchParams(window.location.search).get('preview');
+
+  if (previewParam) {
+    try {
+      data = JSON.parse(decodeURIComponent(escape(atob(previewParam))));
+      isPreview = true;
+    } catch (e) {
+      console.error('Preview decode failed:', e);
+      data = null;
+      isPreview = false;
+    }
+
+  // ── 2. Paid link: load from Supabase by ?id= ──
+  } else if (_pageId) {
     try {
       var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pageId + '&select=data', {
-        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + SUPA_KEY
+        }
       });
       var j = await res.json();
-      if(j && j[0] && j[0].data) data = JSON.parse(j[0].data);
+      if (j && j[0] && j[0].data) {
+        data = JSON.parse(j[0].data);
+      }
+      // Legacy fallback: old records had isPreview stored in the row
       isPreview = !!(data && data.isPreview);
-    } catch(e) { console.error(e); data = null; }
+    } catch (e) {
+      console.error('Supabase load failed:', e);
+      data = null;
+    }
+
+  // ── 3. No params at all: show a demo so the page isn't blank ──
+  } else {
+    data = {
+      n: 'Mom',
+      f: '',
+      m: '',
+      b: [
+        { msg: 'You are my sunshine ☀️', photoUrl: null },
+        { msg: 'Thank you for everything 🌺', photoUrl: null },
+        { msg: 'I love you to the moon 🌙', photoUrl: null }
+      ]
+    };
+    isPreview = false;
   }
-  if(!data) {
-    data = { n:'Mom', f:'', m:'', b:[
-      { msg:'You are my sunshine ☀️', photoUrl: null },
-      { msg:'Thank you for everything 🌺', photoUrl: null },
-      { msg:'I love you to the moon 🌙', photoUrl: null }
-    ]};
+
+  // ── 4. Final safety net: if data is still null after all attempts ──
+  if (!data) {
+    data = {
+      n: 'Mom',
+      f: '',
+      m: '',
+      b: [
+        { msg: 'You are my sunshine ☀️', photoUrl: null },
+        { msg: 'Thank you for everything 🌺', photoUrl: null },
+        { msg: 'I love you to the moon 🌙', photoUrl: null }
+      ]
+    };
   }
+
+  // ── 5. Hide loader and boot the app ──
   var ls = document.getElementById('loadScreen');
   ls.classList.add('out');
-  setTimeout(function(){ ls.style.display = 'none'; }, 900);
+  setTimeout(function () { ls.style.display = 'none'; }, 900);
   init();
 }
 

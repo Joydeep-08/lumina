@@ -379,22 +379,26 @@ function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
 async function doPreview() {
   var d = gatherData(); if(!d) return;
   d.isPreview = true;
-  showLoading('Preparing preview…', 'Just a moment 🌺');
   try {
-    var id = await saveToSupabase(d);
-    hideLoading();
+    // Encode data directly in URL — no Supabase write
+    var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+    var url = SITE_URL + 'view.html?preview=' + encoded;
     var a = document.createElement('a');
-    a.href = viewURL(id); a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  } catch(e) { hideLoading(); showErr('Failed: ' + e.message); }
+  } catch(e) { showErr('Failed: ' + e.message); }
 }
 
 async function doPay() {
-  var d = gatherData(); if(!d) return;
+  var d = gatherData(); if (!d) return;
+
+  // No isPreview flag needed — previews never reach this function anymore
   showLoading('Saving your surprise…', 'Almost there 🌺');
+
   try {
     var id = await saveToSupabase(d);
     hideLoading();
+
     var options = {
       key: RZP_KEY,
       amount: 5900,
@@ -402,21 +406,26 @@ async function doPay() {
       name: 'Lumina',
       description: "Mother's Day Surprise Link 🌺",
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
-      handler: function(response) {
+      handler: function (response) {
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
         document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
       },
       prefill: { name: '', email: '', contact: '' },
       theme: { color: '#d4456a' },
-      modal: { ondismiss: function(){} }
+      modal: { ondismiss: function () {} }
     };
+
     var rzp = new Razorpay(options);
-    rzp.on('payment.failed', function(response) {
+    rzp.on('payment.failed', function (response) {
       showErr('Payment failed: ' + response.error.description);
     });
     rzp.open();
-  } catch(e) { hideLoading(); showErr('Failed to save: ' + e.message); }
+
+  } catch (e) {
+    hideLoading();
+    showErr('Failed to save: ' + e.message);
+  }
 }
 
 function showResult(id) {
