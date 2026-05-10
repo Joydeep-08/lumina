@@ -47,6 +47,10 @@ textarea{height:90px;line-height:1.6;}
 .photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;}
 .photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
 .photo-slot.filled .photo-icon{display:none;}
+.photo-uploading{position:absolute;inset:0;background:rgba(253,248,242,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:5;font-size:11px;color:var(--muted);}
+.photo-slot.uploading .photo-uploading{display:flex;}
+.upload-spinner{width:22px;height:22px;border:2px solid rgba(212,69,106,0.2);border-top-color:var(--rose);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .del-x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:4;color:#c0392b;font-weight:700;padding:0;}
 .photo-slot.filled .del-x{display:flex;}
 .add-balloon-btn{width:100%;padding:16px;background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);border-radius:18px;color:var(--rose);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -65,6 +69,7 @@ textarea{height:90px;line-height:1.6;}
 .free-prev-btn:hover{background:rgba(212,69,106,0.06);}
 .pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,69,106,0.35);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
+.pay-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .err{display:none;background:rgba(255,80,80,0.07);border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;}
 .result{display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;}
 .result-icon{font-size:56px;margin-bottom:16px;}
@@ -108,7 +113,6 @@ textarea{height:90px;line-height:1.6;}
 </header>
 
 <div class="wrap">
-
   <div class="paid-banner" id="paidBanner">
     <span style="font-size:24px;">✅</span>
     <div><strong>Payment successful!</strong> Here is your permanent surprise link 💕</div>
@@ -158,7 +162,7 @@ textarea{height:90px;line-height:1.6;}
 
   <div class="err" id="errBox"></div>
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
-  <button class="pay-btn" onclick="doPay()">🌺 &nbsp; Get Her Surprise Link — ₹59</button>
+  <button class="pay-btn" id="payBtn" onclick="doPay()">🌺 &nbsp; Get Her Surprise Link — ₹59</button>
 
   <div class="result" id="resultBox">
     <div class="result-icon">🌺</div>
@@ -175,182 +179,311 @@ textarea{height:90px;line-height:1.6;}
 </div>
 
 <script>
-var SUPA_URL='https://acriifgwnkoagsgfezgn.supabase.co';
-var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjcmlpZmd3bmtvYWdzZ2ZlemduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDUwNDEsImV4cCI6MjA5MzkyMTA0MX0.0c0uayx8A04oHksusqR0_OjATyg3Y5qz49SrHKS1m1U';
-var RZP_KEY='rzp_live_SmizRaPApu81ZS';
-var SITE_URL='https://luminaa-f37.pages.dev/';
+var SUPA_URL = 'https://otyzaidfjkryynciuqhp.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90eXphaWRmamtyeXluY2l1cWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTgxMTgsImV4cCI6MjA5MzkzNDExOH0.VEBjtoA3w182b4FtGUEBwb0ssKIhaFUBcNTtzJAgKIw';
+var RZP_KEY = 'rzp_live_SmizRaPApu81ZS';
+var SITE_URL = 'https://luminaa-f37.pages.dev/';
+var BUCKET = 'photos'; // your Supabase storage bucket name
 
-(function(){var e=['🌸','🌺','🌼','🍀','🌹'],w=document.getElementById('petals');for(var i=0;i<14;i++){var d=document.createElement('div');d.className='petal';d.textContent=e[i%e.length];d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';w.appendChild(d);}})();
+// ── Petals ──
+(function(){
+  var e=['🌸','🌺','🌼','🍀','🌹'], w=document.getElementById('petals');
+  for(var i=0;i<14;i++){
+    var d=document.createElement('div'); d.className='petal';
+    d.textContent=e[i%e.length];
+    d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';
+    w.appendChild(d);
+  }
+})();
 
-var balloons=[],bCount=0;
+var balloons=[], bCount=0;
 var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
 
-function addBalloon(){
-  var idx=bCount++;
-  balloons.push({msg:'',photoB64:null});
-  var item=document.createElement('div');item.className='b-item';item.id='bi'+idx;
-  item.innerHTML='<div class="b-item-header"><div class="b-num">'+(idx+1)+'</div><div class="b-item-title">'+colors[idx%colors.length]+' Balloon '+(idx+1)+'</div><button class="b-del" onclick="removeBalloon('+idx+')">✕</button></div><div class="b-row"><div><label class="lbl">Photo (optional)</label><div class="photo-slot" id="ps'+idx+'"><input type="file" accept="image/*" onchange="loadPic('+idx+',this)"/><img id="pi'+idx+'" src="" alt=""/><div class="photo-icon">📷<small>Add photo</small></div><button class="del-x" type="button" onclick="removePic('+idx+',event)">✕</button></div></div><div style="display:flex;flex-direction:column;"><label class="lbl">Message *</label><textarea id="bm'+idx+'" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg('+idx+',this.value)"></textarea></div></div>';
+// ── Compress image before upload ──
+function compress(dataURL, maxPx, q) {
+  return new Promise(function(res) {
+    var img = new Image();
+    img.onload = function() {
+      var w=img.width, h=img.height;
+      if(w>h){ if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;} }
+      else { if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;} }
+      var c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/webp', q));
+    };
+    img.src = dataURL;
+  });
+}
+
+// ── Upload to Supabase Storage, returns public URL ──
+async function uploadToStorage(dataURL, idx) {
+  // Convert base64 to blob
+  var res = await fetch(dataURL);
+  var blob = await res.blob();
+  var fileName = 'balloon-' + Date.now() + '-' + idx + '.webp';
+
+  var uploadRes = await fetch(SUPA_URL + '/storage/v1/object/' + BUCKET + '/' + fileName, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'image/webp',
+      'x-upsert': 'true'
+    },
+    body: blob
+  });
+
+  if (!uploadRes.ok) {
+    var err = await uploadRes.text();
+    throw new Error('Photo upload failed: ' + err);
+  }
+
+  return SUPA_URL + '/storage/v1/object/public/' + BUCKET + '/' + fileName;
+}
+
+// ── Add balloon ──
+function addBalloon() {
+  var idx = bCount++;
+  balloons.push({ msg: '', photoUrl: null });
+  var item = document.createElement('div');
+  item.className = 'b-item'; item.id = 'bi' + idx;
+  item.innerHTML =
+    '<div class="b-item-header">' +
+      '<div class="b-num">' + (idx+1) + '</div>' +
+      '<div class="b-item-title">' + colors[idx%colors.length] + ' Balloon ' + (idx+1) + '</div>' +
+      '<button class="b-del" onclick="removeBalloon(' + idx + ')">✕</button>' +
+    '</div>' +
+    '<div class="b-row">' +
+      '<div>' +
+        '<label class="lbl">Photo (optional)</label>' +
+        '<div class="photo-slot" id="ps' + idx + '">' +
+          '<input type="file" accept="image/*" onchange="loadPic(' + idx + ',this)"/>' +
+          '<img id="pi' + idx + '" src="" alt=""/>' +
+          '<div class="photo-icon">📷<small>Add photo</small></div>' +
+          '<div class="photo-uploading" id="pu' + idx + '"><div class="upload-spinner"></div><span>Uploading…</span></div>' +
+          '<button class="del-x" type="button" onclick="removePic(' + idx + ',event)">✕</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;">' +
+        '<label class="lbl">Message *</label>' +
+        '<textarea id="bm' + idx + '" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(' + idx + ',this.value)"></textarea>' +
+      '</div>' +
+    '</div>';
   document.getElementById('balloonList').appendChild(item);
 }
-function removeBalloon(idx){var el=document.getElementById('bi'+idx);if(el)el.remove();if(balloons[idx])balloons[idx]=null;}
-function loadPic(idx,inp){
-  if(!inp.files||!inp.files[0])return;
-  var r=new FileReader();
-  r.onload=function(e){compress(e.target.result,900,0.92).then(function(c){balloons[idx].photoB64=c;document.getElementById('pi'+idx).src=c;document.getElementById('ps'+idx).classList.add('filled');});};
+
+function removeBalloon(idx) {
+  var el = document.getElementById('bi' + idx);
+  if(el) el.remove();
+  if(balloons[idx]) balloons[idx] = null;
+}
+
+// ── Load, compress, upload photo immediately ──
+function loadPic(idx, inp) {
+  if(!inp.files || !inp.files[0]) return;
+  var slot = document.getElementById('ps' + idx);
+  slot.classList.add('uploading');
+
+  var r = new FileReader();
+  r.onload = async function(e) {
+    try {
+      // Compress hard — 600px, webp 0.72 quality
+      var compressed = await compress(e.target.result, 600, 0.72);
+      // Upload to storage
+      var url = await uploadToStorage(compressed, idx);
+      balloons[idx].photoUrl = url;
+      document.getElementById('pi' + idx).src = url;
+      slot.classList.remove('uploading');
+      slot.classList.add('filled');
+    } catch(err) {
+      slot.classList.remove('uploading');
+      showErr('Photo upload failed. Check your internet and try again.');
+      console.error(err);
+    }
+  };
   r.readAsDataURL(inp.files[0]);
 }
-function removePic(idx,e){e.stopPropagation();balloons[idx].photoB64=null;document.getElementById('pi'+idx).src='';document.getElementById('ps'+idx).classList.remove('filled');var inp=document.querySelector('#ps'+idx+' input[type=file]');if(inp)inp.value='';}
-function updateMsg(idx,val){if(balloons[idx])balloons[idx].msg=val;}
-addBalloon();addBalloon();addBalloon();
 
-function compress(dataURL,maxPx,q){
-  return new Promise(function(res){
-    var img=new Image();
-    img.onload=function(){
-      var w=img.width,h=img.height;
-      if(w>h){if(w>maxPx){h=Math.round(h*maxPx/w);w=maxPx;}}else{if(h>maxPx){w=Math.round(w*maxPx/h);h=maxPx;}}
-      var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',q));
-    };img.src=dataURL;
-  });
+function removePic(idx, e) {
+  e.stopPropagation();
+  balloons[idx].photoUrl = null;
+  document.getElementById('pi' + idx).src = '';
+  document.getElementById('ps' + idx).classList.remove('filled');
+  var inp = document.querySelector('#ps' + idx + ' input[type=file]');
+  if(inp) inp.value = '';
 }
 
-function gatherData(){
-  var herName=document.getElementById('herName').value.trim();
-  var yourName=document.getElementById('yourName').value.trim();
-  var msg=document.getElementById('msg').value.trim();
-  if(!herName){showErr('Please enter her name 🌺');return null;}
-  var active=balloons.filter(function(b){return b&&b.msg.trim();});
-  if(!active.length){showErr('Add at least one balloon message 🎈');return null;}
-  return{n:herName,f:yourName,m:msg,b:active};
+function updateMsg(idx, val) {
+  if(balloons[idx]) balloons[idx].msg = val;
 }
 
-async function saveToSupabase(payload){
-  var res=await fetch(SUPA_URL+'/rest/v1/mday',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
-    body:JSON.stringify({data:JSON.stringify(payload)})
+// Start with 3 balloons
+addBalloon(); addBalloon(); addBalloon();
+
+// ── Gather data — now stores URLs not base64 ──
+function gatherData() {
+  var herName = document.getElementById('herName').value.trim();
+  var yourName = document.getElementById('yourName').value.trim();
+  var msg = document.getElementById('msg').value.trim();
+  if(!herName) { showErr('Please enter her name 🌺'); return null; }
+  var active = balloons.filter(function(b){ return b && b.msg.trim(); });
+  if(!active.length) { showErr('Add at least one balloon message 🎈'); return null; }
+  // Check if any photos are still uploading
+  var uploading = document.querySelectorAll('.photo-slot.uploading');
+  if(uploading.length) { showErr('Please wait for photos to finish uploading 📸'); return null; }
+  return { n: herName, f: yourName, m: msg, b: active };
+}
+
+// ── Save to Supabase — lean payload, only URLs not base64 ──
+async function saveToSupabase(payload) {
+  var res = await fetch(SUPA_URL + '/rest/v1/mday', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify({ data: JSON.stringify(payload) })
   });
-  if(!res.ok)throw new Error(await res.text());
-  var j=await res.json();
+  if(!res.ok) throw new Error(await res.text());
+  var j = await res.json();
   return j[0].id;
 }
 
-function viewURL(id){return SITE_URL+'view.html?id='+id;}
+function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
 
-async function doPreview(){
-  var d=gatherData();if(!d)return;
-  d.isPreview=true;
-  showLoading('Preparing preview…','Just a moment 🌺');
-  try{
-    var id=await saveToSupabase(d);
+async function doPreview() {
+  var d = gatherData(); if(!d) return;
+  d.isPreview = true;
+  showLoading('Preparing preview…', 'Just a moment 🌺');
+  try {
+    var id = await saveToSupabase(d);
     hideLoading();
-    var url=viewURL(id);
-    var a=document.createElement('a');
-    a.href=url;
-    a.target='_blank';
-    a.rel='noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }catch(e){hideLoading();showErr('Failed: '+e.message);}
+    var a = document.createElement('a');
+    a.href = viewURL(id); a.target = '_blank'; a.rel = 'noopener noreferrer';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  } catch(e) { hideLoading(); showErr('Failed: ' + e.message); }
 }
 
-async function doPay(){
-  var d=gatherData();if(!d)return;
-  showLoading('Saving your surprise…','Almost there 🌺');
-  try{
-    var id=await saveToSupabase(d);
+async function doPay() {
+  var d = gatherData(); if(!d) return;
+  showLoading('Saving your surprise…', 'Almost there 🌺');
+  try {
+    var id = await saveToSupabase(d);
     hideLoading();
-    var options={
+    var options = {
       key: RZP_KEY,
       amount: 5900,
       currency: 'INR',
       name: 'Lumina',
       description: "Mother's Day Surprise Link 🌺",
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
-      handler: function(response){
+      handler: function(response) {
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
-        document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'center'});
+        document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
       },
-      prefill:{name:'',email:'',contact:''},
-      theme:{color:'#d4456a'},
-      modal:{ondismiss:function(){}}
+      prefill: { name: '', email: '', contact: '' },
+      theme: { color: '#d4456a' },
+      modal: { ondismiss: function(){} }
     };
-    var rzp=new Razorpay(options);
-    rzp.on('payment.failed',function(response){
-      showErr('Payment failed: '+response.error.description);
+    var rzp = new Razorpay(options);
+    rzp.on('payment.failed', function(response) {
+      showErr('Payment failed: ' + response.error.description);
     });
     rzp.open();
-  }catch(e){hideLoading();showErr('Failed to save: '+e.message);}
+  } catch(e) { hideLoading(); showErr('Failed to save: ' + e.message); }
 }
 
-function showResult(id){
-  var url=viewURL(id);
-  window._url=url;
-  document.getElementById('openLinkInline').href=url;
-  document.getElementById('openLinkInline').textContent=url;
-  document.getElementById('openLink').href=url;
-  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent('🌺 Happy Mother\'s Day! Open your surprise 💕 '+url);
-  var box=document.getElementById('resultBox');
-  box.style.display='block';
-  box.scrollIntoView({behavior:'smooth',block:'center'});
+function showResult(id) {
+  var url = viewURL(id);
+  window._url = url;
+  document.getElementById('openLinkInline').href = url;
+  document.getElementById('openLinkInline').textContent = url;
+  document.getElementById('openLink').href = url;
+  document.getElementById('waLink').href = 'https://wa.me/?text=' + encodeURIComponent("🌺 Happy Mother's Day! Open your surprise 💕 " + url);
+  var box = document.getElementById('resultBox');
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function showLoading(t,s){document.getElementById('loadingTitle').textContent=t;document.getElementById('loadingSub').textContent=s;document.getElementById('loadingOverlay').classList.add('show');}
-function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
-function showErr(m){var b=document.getElementById('errBox');b.textContent='⚠️ '+m;b.style.display='block';setTimeout(function(){b.style.display='none';},9000);}
+function showLoading(t, s) {
+  document.getElementById('loadingTitle').textContent = t;
+  document.getElementById('loadingSub').textContent = s;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showErr(m) {
+  var b = document.getElementById('errBox');
+  b.textContent = '⚠️ ' + m; b.style.display = 'block';
+  setTimeout(function(){ b.style.display = 'none'; }, 9000);
+}
 
-function copyIt(){
-  var url=window._url||document.getElementById('openLink').href;
-  var btn=document.getElementById('copyBtn');
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(function(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);});
-  }else{
-    var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.focus();ta.select();
-    try{document.execCommand('copy');btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy Link';},2500);}catch(e){}
+function copyIt() {
+  var url = window._url || document.getElementById('openLink').href;
+  var btn = document.getElementById('copyBtn');
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function(){
+      btn.textContent = 'Copied ✓';
+      setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500);
+    });
+  } else {
+    var ta = document.createElement('textarea'); ta.value = url;
+    ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); } catch(e){}
     document.body.removeChild(ta);
   }
 }
 
-function resetAll(){
-  document.getElementById('herName').value='';document.getElementById('yourName').value='';document.getElementById('msg').value='';
-  document.getElementById('balloonList').innerHTML='';document.getElementById('resultBox').style.display='none';
+function resetAll() {
+  document.getElementById('herName').value = '';
+  document.getElementById('yourName').value = '';
+  document.getElementById('msg').value = '';
+  document.getElementById('balloonList').innerHTML = '';
+  document.getElementById('resultBox').style.display = 'none';
   document.getElementById('paidBanner').classList.remove('show');
-  balloons=[];bCount=0;addBalloon();addBalloon();addBalloon();
-  window.scrollTo({top:0,behavior:'smooth'});
+  balloons = []; bCount = 0;
+  addBalloon(); addBalloon(); addBalloon();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ── Pre-fill form from ?prefill=id ──
-window.addEventListener('load',function(){
-  var prefillId=new URLSearchParams(window.location.search).get('prefill');
-  if(prefillId){
-    window.history.replaceState({},'',window.location.pathname);
+window.addEventListener('load', function() {
+  var prefillId = new URLSearchParams(window.location.search).get('prefill');
+  if(prefillId) {
+    window.history.replaceState({}, '', window.location.pathname);
     prefillForm(prefillId);
   }
 });
 
-async function prefillForm(id){
-  try{
-    var res=await fetch(SUPA_URL+'/rest/v1/mday?id=eq.'+id+'&select=data',{
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+async function prefillForm(id) {
+  try {
+    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
     });
-    var j=await res.json();
-    if(!j||!j[0]||!j[0].data)return;
-    var d=JSON.parse(j[0].data);
-    if(d.n)document.getElementById('herName').value=d.n;
-    if(d.f)document.getElementById('yourName').value=d.f;
-    if(d.m)document.getElementById('msg').value=d.m;
-    if(d.b&&d.b.length){
-      document.getElementById('balloonList').innerHTML='';
-      balloons=[];bCount=0;
-      d.b.forEach(function(b,i){
+    var j = await res.json();
+    if(!j || !j[0] || !j[0].data) return;
+    var d = JSON.parse(j[0].data);
+    if(d.n) document.getElementById('herName').value = d.n;
+    if(d.f) document.getElementById('yourName').value = d.f;
+    if(d.m) document.getElementById('msg').value = d.m;
+    if(d.b && d.b.length) {
+      document.getElementById('balloonList').innerHTML = '';
+      balloons = []; bCount = 0;
+      d.b.forEach(function(b, i) {
         addBalloon();
-        if(b.msg){balloons[i].msg=b.msg;var ta=document.getElementById('bm'+i);if(ta)ta.value=b.msg;}
-        if(b.photoB64){balloons[i].photoB64=b.photoB64;document.getElementById('pi'+i).src=b.photoB64;document.getElementById('ps'+i).classList.add('filled');}
+        if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
+        // Photos come back as URLs now — just show them
+        if(b.photoUrl) {
+          balloons[i].photoUrl = b.photoUrl;
+          document.getElementById('pi'+i).src = b.photoUrl;
+          document.getElementById('ps'+i).classList.add('filled');
+        }
       });
     }
-  }catch(e){console.error('prefill failed',e);}
+  } catch(e) { console.error('prefill failed', e); }
 }
 </script>
 </body>
