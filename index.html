@@ -1,807 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FeelGood Link 💌</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SurpriseIt 🎂</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Caveat:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
 <style>
-*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-body { background: #0e0810; color: #f0e8f0; font-family: 'Inter', system-ui, sans-serif; }
-input, textarea, button { font-family: inherit; }
-input::placeholder, textarea::placeholder { color: #7a5c6a; }
-textarea { resize: vertical; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #f5efe6; min-height: 100vh; }
 
-/* ── Animations ── */
-@keyframes fadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-@keyframes scaleIn  { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
-@keyframes float    { 0%,100% { transform:translateY(0) rotate(-1deg); } 50% { transform:translateY(-14px) rotate(1.5deg); } }
-@keyframes blink    { 0%,100% { opacity:1; } 50% { opacity:0; } }
-@keyframes unfold   {
-  0%   { transform: perspective(800px) rotateX(-90deg) scaleY(0); opacity:0; transform-origin: top center; }
-  60%  { transform: perspective(800px) rotateX(8deg) scaleY(1); opacity:1; }
-  100% { transform: perspective(800px) rotateX(0deg) scaleY(1); opacity:1; }
-}
-@keyframes heartbeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.15)} 28%{transform:scale(1)} 42%{transform:scale(1.1)} 70%{transform:scale(1)} }
-@keyframes starfall {
-  0%   { transform:translateY(-10px) translateX(0) rotate(0deg); opacity:0; }
-  10%  { opacity:1; }
-  100% { transform:translateY(110vh) translateX(40px) rotate(720deg); opacity:0; }
-}
-@keyframes particleBurst {
-  0%   { transform:translate(-50%,-50%) translate(0,0) scale(0); opacity:1; }
-  100% { transform:translate(-50%,-50%) translate(var(--tx),var(--ty)) scale(1); opacity:0; }
-}
-@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(212,175,55,.2)} 50%{box-shadow:0 0 40px rgba(212,175,55,.5)} }
-@keyframes shimmer  { 0%,100% { opacity:.6; } 50% { opacity:1; } }
-@keyframes petaldrift {
-  0%   { transform: translateY(-5vh) translateX(0px) rotate(0deg); opacity: 0; }
-  8%   { opacity: .9; }
-  100% { transform: translateY(105vh) translateX(60px) rotate(400deg); opacity: 0; }
-}
-@keyframes orb-pulse { 0%,100%{transform:scale(1) translate(0,0); opacity:.6} 50%{transform:scale(1.08) translate(8px,-6px); opacity:.9} }
-@keyframes line-draw { from{width:0} to{width:100%} }
-@keyframes word-rise { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
-@keyframes number-count { from{opacity:0;transform:translateY(12px) scale(.8)} to{opacity:1;transform:translateY(0) scale(1)} }
-@keyframes ring-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-@keyframes badge-pop { 0%{transform:scale(0) rotate(-15deg)} 70%{transform:scale(1.12) rotate(3deg)} 100%{transform:scale(1) rotate(0)} }
+  .font-dancing { font-family: 'Dancing Script', cursive; }
+  .font-caveat  { font-family: 'Caveat', cursive; }
 
-/* ── Pages ── */
-.page { display: none; min-height: 100vh; position: relative; overflow: hidden; }
-.page.active { display: block; }
+  /* ── PAGE SYSTEM ── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; flex-direction: column; }
 
-/* ── Starfield ── */
-.starfield { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.star { position: absolute; top: -10px; border-radius: 50%; animation: starfall linear infinite; }
+  /* ── CAT ANIMATIONS ── */
+  @keyframes catBounce  { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-12px) rotate(3deg)} }
+  @keyframes waveL      { 0%,100%{transform:rotate(25deg)} 50%{transform:rotate(-25deg)} }
+  @keyframes waveR      { 0%,100%{transform:rotate(-25deg)} 50%{transform:rotate(25deg)} }
+  @keyframes blink      { 0%,88%,100%{transform:scaleY(1)} 93%{transform:scaleY(0.08)} }
+  @keyframes floatHeart { 0%{opacity:0;transform:translateX(-50%) translateY(0)} 40%{opacity:1} 100%{opacity:0;transform:translateX(-50%) translateY(-22px)} }
+  @keyframes sadShake   { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+  @keyframes tearDrop   { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(14px)} }
+  @keyframes noteSway   { 0%,100%{transform:rotate(-6deg) scale(1)} 50%{transform:rotate(6deg) scale(1.12)} }
+  @keyframes confBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+  @keyframes cursor     { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes fadeIn     { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes shimmer    { 0%{background-position:200% center} 100%{background-position:-200% center} }
+  @keyframes pulse      { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
 
-/* ── Watermark ── */
-.watermark {
-  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
-  display: flex; align-items: center; justify-content: center;
-  transform: rotate(-35deg);
-  font-family: 'Playfair Display', serif; font-size: clamp(22px,4vw,44px);
-  font-weight: 700; font-style: italic;
-  color: rgba(212,175,55,0.07); white-space: nowrap; user-select: none; letter-spacing: .12em;
-}
+  .cat-bounce   { animation: catBounce 1s ease-in-out infinite; }
+  .cat-sad      { animation: sadShake 2s ease-in-out infinite; }
+  .wave-l       { animation: waveL 0.9s ease-in-out infinite; transform-origin: top center; }
+  .wave-r       { animation: waveR 0.9s ease-in-out infinite; transform-origin: top center; }
+  .blink        { animation: blink 3.5s infinite; }
+  .float-heart  { animation: floatHeart 1.6s ease-in-out infinite; }
+  .tear-l       { animation: tearDrop 1s ease-in infinite; }
+  .tear-r       { animation: tearDrop 1s ease-in infinite 0.55s; }
+  .note-sway    { animation: noteSway 2s ease-in-out infinite; }
+  .fade-in      { animation: fadeIn 0.45s ease both; }
+  .cursor-blink { animation: cursor 0.75s step-end infinite; }
+  .pulse-btn    { animation: pulse 2s ease-in-out infinite; }
 
-/* ── Shared layout ── */
-.center-wrap { max-width: 520px; width: 100%; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
-.wide-wrap   { max-width: 680px; width: 100%; margin: 0 auto; padding: 60px 20px 100px; position: relative; z-index: 1; }
+  /* ── WATERMARK ── */
+  .watermark-wrap {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    display: flex; flex-direction: column; justify-content: space-around; overflow: hidden;
+  }
+  .watermark-row {
+    display: flex; gap: 100px; white-space: nowrap;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 17px; letter-spacing: 5px; color: #8b2020; opacity: 0.11;
+  }
+  .watermark-row:nth-child(odd) { transform: rotate(-22deg) translateX(-60px); }
+  .watermark-row:nth-child(even){ transform: rotate(-22deg) translateX(60px); }
 
-/* ── Card ── */
-.card {
-  background: #1e1325; border-radius: 24px;
-  border: 1px solid rgba(212,175,55,.18);
-  padding: clamp(24px,5vw,40px);
-  box-shadow: 0 32px 80px rgba(0,0,0,.5);
-}
+  /* ── BUTTONS ── */
+  .btn-primary {
+    padding: 12px 32px; border-radius: 30px; font-size: 13px;
+    font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; border: 2.5px solid #8b2020;
+    background: #8b2020; color: #fff;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #6d1818; transform: scale(1.03); }
+  .btn-outline {
+    padding: 12px 32px; border-radius: 30px; font-size: 13px;
+    font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; border: 2.5px solid #8b2020;
+    background: transparent; color: #8b2020;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { background: #8b2020; color: #fff; transform: scale(1.03); }
 
-/* ── Gold divider ── */
-.divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
-.divider-line { flex: 1; height: 1px; }
-.divider-left  { background: linear-gradient(to right,  transparent, #d4af37); }
-.divider-right { background: linear-gradient(to left,   transparent, #d4af37); }
-.divider-gem   { color: #d4af37; font-size: 14px; }
+  /* ── TABS ── */
+  .tab-nav { display:flex; flex-wrap:wrap; justify-content:center; border-bottom:1.5px solid #c9a88a; background:#f5efe6; position:sticky; top:0; z-index:10; }
+  .tab-btn {
+    padding: 10px 20px; background: none; border: none; border-bottom: 2.5px solid transparent;
+    color: #7a5c3a; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover { color: #3d1f0a; border-bottom-color: #8b2020; }
 
-/* ── Form inputs ── */
-.form-label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: #d4af37; margin-bottom: 8px;
-  letter-spacing: .08em; text-transform: uppercase;
-}
-.form-input {
-  width: 100%; background: rgba(255,255,255,.04);
-  border: 1.5px solid rgba(212,175,55,.18);
-  border-radius: 12px; padding: 14px 16px;
-  font-size: 15px; color: #f0e8f0; outline: none;
-  transition: border .2s;
-}
-.form-input:focus { border-color: #d4af37; }
-.form-error { color: #e8507a; font-size: 12px; margin-top: 5px; }
+  /* ── CARDS ── */
+  .card { background:#fff9f3; border:1.5px solid #d4a98a; border-radius:16px; }
 
-/* ── Buttons ── */
-.btn {
-  border: none; border-radius: 50px; padding: 14px 36px;
-  font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: all .25s; letter-spacing: .04em;
-  font-family: 'Inter', sans-serif;
-}
-.btn-gold {
-  background: linear-gradient(135deg, #d4af37, #b8960c);
-  color: #0e0810;
-}
-.btn-gold:hover { background: linear-gradient(135deg, #f0d060, #d4af37); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(212,175,55,.45); }
-.btn-ghost {
-  background: transparent; color: #d4af37;
-  border: 1.5px solid #d4af37;
-}
-.btn-ghost:hover { background: rgba(212,175,55,.12); }
-.btn:disabled { background: rgba(255,255,255,.08); color: rgba(255,255,255,.3); cursor: not-allowed; transform: none; box-shadow: none; }
-.btn-full { width: 100%; padding: 16px; font-size: 16px; }
+  /* ── MODAL ── */
+  .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal-box { background:#fff9f3; border:1.5px solid #d4a98a; border-radius:20px; width:100%; max-width:420px; padding:36px 32px; position:relative; font-family:'Inter',sans-serif; }
 
-/* ── Section cards ── */
-.section-card {
-  background: #1e1325;
-  border: 1px solid rgba(212,175,55,.18);
-  border-radius: 20px;
-  padding: clamp(20px,4vw,32px);
-  position: relative; overflow: hidden;
-  margin-bottom: 20px;
-  opacity: 0; transform: translateY(32px);
-  transition: all .7s cubic-bezier(.34,1.2,.64,1);
-}
-.section-card.visible { opacity: 1; transform: translateY(0); }
-.section-accent {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(to bottom, #d4af37, #e8507a);
-  border-radius: 3px 0 0 3px;
-}
-.section-inner { padding-left: 12px; }
-.section-emoji { font-size: 28px; margin-bottom: 10px; }
-.section-title {
-  font-family: 'Playfair Display', serif; font-size: clamp(17px,2.5vw,22px);
-  color: #d4af37; margin: 0 0 12px; font-style: italic;
-}
-.section-body { font-size: clamp(14px,2vw,16px); color: #c8b8c8; line-height: 1.85; }
+  /* ── INPUTS ── */
+  .inp {
+    width:100%; padding:10px 14px; border-radius:10px;
+    border:1.5px solid #d4a98a; background:#fffdf7;
+    font-size:14px; color:#1a0f0a; outline:none;
+    font-family:'Inter',sans-serif; transition:border-color 0.2s;
+  }
+  .inp:focus { border-color: #8b2020; }
 
-/* ── Letter ── */
-.letter-card {
-  background: #fdf6ec;
-  border-radius: 20px;
-  padding: clamp(28px,5vw,52px);
-  box-shadow: 0 40px 100px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.6);
-  position: relative;
-  border: 1px solid rgba(212,175,55,.3);
-  animation: unfold .9s cubic-bezier(.34,1.2,.64,1) forwards;
-}
-.letter-line { position: absolute; left: 52px; right: 52px; height: 1px; background: rgba(180,140,100,.1); pointer-events: none; }
-.letter-text {
-  font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: clamp(14px,2.2vw,18px);
-  color: #2a1a0a; line-height: 2;
-  white-space: pre-wrap; word-break: break-word;
-  position: relative; z-index: 1;
-}
-.cursor { display: inline-block; width: 2px; height: 1.1em; background: #8b1a3c; margin-left: 2px; vertical-align: text-bottom; animation: blink .6s step-end infinite; }
+  /* ── GIFT FLIP ── */
+  .gift-inner { transition: transform 0.5s; transform-style: preserve-3d; }
+  .gift-card-wrap:hover .gift-inner,
+  .gift-card-wrap.flipped .gift-inner { transform: rotateY(180deg); }
+  .gift-front, .gift-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .gift-back { transform: rotateY(180deg); }
 
-/* ── Payment modal ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 10000; padding: 20px;
-}
-.modal-box {
-  background: #1e1325; border-radius: 28px;
-  border: 1px solid rgba(212,175,55,.18);
-  padding: 40px clamp(20px,5vw,44px);
-  max-width: 440px; width: 100%;
-  box-shadow: 0 40px 100px rgba(0,0,0,.7);
-  animation: scaleIn .35s cubic-bezier(.34,1.56,.64,1);
-  position: relative;
-}
+  /* ── SHARE BANNER ── */
+  .share-banner { background:#2e7d32; color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; font-family:'Inter',sans-serif; }
 
-/* ── Done page particles ── */
-.particle {
-  position: fixed; left: 50%; top: 50%;
-  font-size: 22px; pointer-events: none;
-  animation: particleBurst 1.4s ease-out both;
-  z-index: 20;
-}
+  /* ── LETTER PAPER ── */
+  .letter-paper {
+    background: repeating-linear-gradient(#fffdf7, #fffdf7 28px, #e8d5c0 28px, #e8d5c0 29px);
+    line-height: 29px;
+  }
 
-/* ── Dedication page ── */
-#page-dedication { background: #0e0810; }
-.ded-hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; position: relative; }
+  /* ── SHIMMER LINK ── */
+  .shimmer-link {
+    background: linear-gradient(90deg, #8b2020, #c0392b, #e74c3c, #c0392b, #8b2020);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+    font-weight: 700;
+  }
 
-.ded-ring {
-  width: 220px; height: 220px; border-radius: 50%;
-  border: 1px solid rgba(212,175,55,.12);
-  position: absolute;
-  animation: ring-spin 30s linear infinite;
-}
-.ded-ring-2 {
-  width: 300px; height: 300px;
-  animation-direction: reverse; animation-duration: 50s;
-}
-.ded-ring-3 { width: 380px; height: 380px; animation-duration: 40s; }
-
-.ded-quote {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic; font-weight: 300;
-  font-size: clamp(22px,4vw,42px);
-  color: #f5ead8; line-height: 1.5;
-  text-align: center; max-width: 680px;
-  position: relative; z-index: 2;
-}
-.ded-quote span.gold { color: #d4af37; }
-.ded-quote span.rose { color: #e8507a; }
-
-.ded-attr { font-family: 'Inter', sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(212,175,55,.5); margin-top: 24px; position: relative; z-index: 2; }
-
-.ded-stats {
-  display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;
-  margin-top: 60px; position: relative; z-index: 2;
-}
-.ded-stat { text-align: center; }
-.ded-stat-num {
-  font-family: 'Cormorant Garamond', serif; font-size: clamp(40px,6vw,64px);
-  color: #d4af37; line-height: 1;
-  animation: number-count .8s ease both;
-}
-.ded-stat-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #8a7090; margin-top: 6px; }
-
-.ded-badges { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 44px; position: relative; z-index: 2; }
-.ded-badge {
-  background: rgba(212,175,55,.07); border: 1px solid rgba(212,175,55,.2);
-  border-radius: 100px; padding: 10px 22px;
-  font-size: 13px; color: rgba(240,232,240,.7);
-  letter-spacing: .04em;
-  animation: badge-pop .6s cubic-bezier(.34,1.56,.64,1) both;
-}
-
-.ded-scroll-hint {
-  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  color: rgba(212,175,55,.35); font-size: 12px; letter-spacing: .1em;
-  z-index: 2; cursor: pointer;
-  animation: fadeIn 1s ease 2s both;
-}
-.ded-scroll-arrow { font-size: 18px; animation: float 2s ease-in-out infinite; }
-
-/* ── Petals ── */
-.petals { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.petal { position: absolute; top: -5vh; font-size: 14px; animation: petaldrift linear infinite; }
-
-/* ── Orbs ── */
-.orb { position: fixed; border-radius: 50%; pointer-events: none; }
-
-/* ── Content page beautiful quote card ── */
-.quote-card {
-  background: linear-gradient(135deg, rgba(232,80,122,.08), rgba(212,175,55,.06));
-  border: 1px solid rgba(232,80,122,.2);
-  border-radius: 20px;
-  padding: 28px 32px;
-  margin-bottom: 28px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.quote-card::before {
-  content: '\201C';
-  position: absolute; top: -10px; left: 18px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 120px; color: rgba(212,175,55,.08);
-  line-height: 1; pointer-events: none;
-}
-.quote-card-text {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: clamp(16px,2.5vw,22px); color: #f5ead8;
-  line-height: 1.65; position: relative; z-index: 1;
-}
-.quote-card-source { font-size: 12px; color: #8a7090; margin-top: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  /* scrollbar */
+  ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:#f5efe6; } ::-webkit-scrollbar-thumb { background:#d4a98a; border-radius:3px; }
 </style>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════════ STARFIELD ══════════════════════════════ -->
-<div class="starfield" id="starfield"></div>
-<div class="petals"    id="petals"></div>
+<!-- ═══════════════════════════════════════════
+     PAGE 1 — FORM
+═══════════════════════════════════════════ -->
+<div class="page active" id="pg-form">
+  <div class="flex items-center justify-center min-h-screen p-6">
+    <div class="card w-full max-w-lg p-10 fade-in">
 
-<!-- ══════════════════════════════════ PAGE 1: FORM ══════════════════════════ -->
-<div class="page active" id="page-form" style="background:#0e0810; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px;">
-  <!-- orbs -->
-  <div class="orb" style="top:-20%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(232,80,122,.08) 0%,transparent 70%);"></div>
-  <div class="orb" style="bottom:-20%;right:-10%;width:40vw;height:40vw;background:radial-gradient(circle,rgba(212,175,55,.07) 0%,transparent 70%);"></div>
-
-  <div class="center-wrap" style="animation:fadeUp .8s cubic-bezier(.34,1.56,.64,1) both;">
-    <div style="text-align:center;margin-bottom:40px;">
-      <div style="font-size:42px;animation:heartbeat 2.5s ease infinite;display:inline-block;margin-bottom:16px;">💌</div>
-      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,44px);font-style:italic;color:#f5ead8;margin:0 0 10px;line-height:1.25;font-weight:600;">
-        Make her feel<br/><span style="color:#d4af37;">deeply loved.</span>
-      </h1>
-      <p style="font-size:14px;color:#8a7090;line-height:1.7;">A personal page she'll treasure forever.<br/>Preview free · Share for ₹79.</p>
-    </div>
-
-    <div class="card">
-      <div style="margin-bottom:20px;">
-        <label class="form-label">💕 Her name</label>
-        <input class="form-input" id="inp-name" placeholder="Priya, Shreya, Meera…"/>
-        <div class="form-error" id="err-name" style="display:none;"></div>
+      <!-- header -->
+      <div class="mb-8">
+        <div class="font-dancing text-5xl text-[#1a0f0a] leading-tight mb-1">Create a Surprise 🎂</div>
+        <p class="text-[#7a5c3a] text-sm mt-2">Fill in the details below, preview your card, then pay ₹99 to get a shareable link.</p>
       </div>
-      <div style="margin-bottom:20px;">
-        <label class="form-label">🌸 From</label>
-        <input class="form-input" id="inp-from" placeholder="Rohan, Your best friend, Mom…"/>
-        <div class="form-error" id="err-from" style="display:none;"></div>
-      </div>
-      <div style="margin-bottom:28px;">
-        <label class="form-label">✍️ Your personal message to her</label>
-        <textarea class="form-input" id="inp-message" rows="5" style="min-height:120px;line-height:1.7;" placeholder="Write from the heart. Tell her what she means to you, a memory, something only she'd understand…"></textarea>
-        <div class="form-error" id="err-message" style="display:none;"></div>
-      </div>
-      <button class="btn btn-gold btn-full" onclick="submitForm()">✨ Preview the Magic</button>
 
-      <div class="divider"><div class="divider-line divider-left"></div><span class="divider-gem">✦</span><div class="divider-line divider-right"></div></div>
-      <div style="text-align:center;font-size:12px;color:#8a7090;line-height:1.8;">
-        Coupons: <span style="color:#d4af37;">SAVE20</span> (−₹20) &nbsp;·&nbsp; <span style="color:#d4af37;">LOVE1</span> (₹1) &nbsp;·&nbsp; <span style="color:#d4af37;">LOVE100</span> (free)
-      </div>
-    </div>
-  </div>
-</div>
+      <!-- form -->
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Their Name *</label>
+          <input id="f-recipient" class="inp" placeholder="e.g. Priya" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Your Name *</label>
+          <input id="f-sender" class="inp" placeholder="e.g. Rohan" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Greeting Message</label>
+          <textarea id="f-greeting" class="inp" rows="3" style="resize:vertical">You make every day brighter just by being in it. Happy Birthday! 🎉</textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Song URL <span class="text-[#aaa] normal-case font-normal">(YouTube / Spotify)</span></label>
+          <input id="f-song" class="inp" placeholder="https://open.spotify.com/track/..." />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Personal Letter</label>
+          <textarea id="f-letter" class="inp" rows="6" style="resize:vertical">There are people in this world who make everything better just by existing — and you are one of them.
 
-<!-- ══════════════════════════════════ PAGE 2: DEDICATION ════════════════════ -->
-<div class="page" id="page-dedication">
-  <div class="ded-hero">
-    <!-- Spinning rings -->
-    <div class="ded-ring"></div>
-    <div class="ded-ring ded-ring-2"></div>
-    <div class="ded-ring ded-ring-3"></div>
+I don't always find the right words, but today I want you to know that you are seen, appreciated, and deeply loved.
 
-    <!-- Big quote -->
-    <div id="ded-name-label" style="font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.5);margin-bottom:28px;position:relative;z-index:2;animation:fadeIn .8s ease both;"></div>
+Happy Birthday, from the bottom of my heart.</textarea>
+        </div>
 
-    <div class="ded-quote" style="animation:word-rise .9s ease .2s both;">
-      She is the kind of woman who
-      <span class="gold"> rearranges the air </span>
-      when she walks into a room —<br/>
-      carrying <span class="rose">warmth</span> she doesn't even know she's giving,
-      <br/>and grace she has never thought to take credit for.
-    </div>
+        <div id="form-err" class="text-[#c62828] text-sm hidden">Please fill in both names.</div>
 
-    <div class="ded-attr" style="animation:fadeIn .8s ease .8s both;">A quiet truth, written just for her</div>
-
-    <!-- Stats -->
-    <div class="ded-stats">
-      <div class="ded-stat" style="animation-delay:.3s;">
-        <div class="ded-stat-num" style="animation-delay:.3s;">∞</div>
-        <div class="ded-stat-label">Reasons she's rare</div>
-      </div>
-      <div class="ded-stat" style="animation-delay:.5s;">
-        <div class="ded-stat-num" style="animation-delay:.5s;">1</div>
-        <div class="ded-stat-label">Person like her</div>
-      </div>
-      <div class="ded-stat" style="animation-delay:.7s;">
-        <div class="ded-stat-num" style="animation-delay:.7s;">💛</div>
-        <div class="ded-stat-label">Made entirely for her</div>
-      </div>
-    </div>
-
-    <!-- Badges -->
-    <div class="ded-badges" id="ded-badges">
-      <div class="ded-badge" style="animation-delay:.4s;">🌸 Irreplaceable</div>
-      <div class="ded-badge" style="animation-delay:.55s;">✨ Quietly magical</div>
-      <div class="ded-badge" style="animation-delay:.7s;">💛 Deeply loved</div>
-      <div class="ded-badge" style="animation-delay:.85s;">🦋 One of a kind</div>
-      <div class="ded-badge" style="animation-delay:1s;">💌 Worth every word</div>
-    </div>
-
-    <!-- Scroll hint -->
-    <div class="ded-scroll-hint" onclick="showPage('page-content')">
-      <span style="letter-spacing:.1em;">continue</span>
-      <span class="ded-scroll-arrow">↓</span>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════ PAGE 3: CONTENT ═══════════════════════ -->
-<div class="page" id="page-content" style="background:#0e0810;">
-  <div class="orb" style="top:-20%;right:-10%;width:45vw;height:45vw;background:radial-gradient(circle,rgba(212,175,55,.06) 0%,transparent 70%);"></div>
-  <div style="position:fixed;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,#0e0810,transparent);z-index:10;pointer-events:none;"></div>
-  <div id="watermark-content" class="watermark">✦ PREVIEW ONLY ✦ PREVIEW ONLY ✦</div>
-
-  <div class="wide-wrap">
-    <!-- Hero -->
-    <div style="text-align:center;margin-bottom:56px;animation:fadeUp .8s ease;">
-      <div style="font-size:56px;margin-bottom:20px;animation:float 4s ease-in-out infinite;">🌷</div>
-      <h1 id="content-title" style="font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,46px);font-style:italic;color:#f5ead8;margin:0 0 12px;line-height:1.25;"></h1>
-      <p id="content-from" style="color:#8a7090;font-size:14px;margin:0;"></p>
-    </div>
-
-    <!-- Opening quote card -->
-    <div class="quote-card" style="animation:fadeUp .8s ease .1s both;">
-      <div class="quote-card-text" id="opening-quote"></div>
-      <div class="quote-card-source">A note, before you read on</div>
-    </div>
-
-    <!-- Sections -->
-    <div id="sections-container"></div>
-
-    <!-- CTA — only read letter, NO pay button here -->
-    <div style="margin-top:48px;text-align:center;background:#1e1325;border:1px solid rgba(212,175,55,.18);border-radius:24px;padding:40px 32px;animation:glow 3s ease-in-out infinite;">
-      <div style="font-size:36px;margin-bottom:12px;">💌</div>
-      <h3 id="cta-name" style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,3vw,26px);color:#f5ead8;margin:0 0 8px;"></h3>
-      <p style="color:#8a7090;font-size:13px;margin-bottom:28px;">There's a personal letter waiting — written just for her.</p>
-      <button class="btn btn-gold" style="padding:15px 40px;font-size:15px;" onclick="showPage('page-letter')">💌 Read Her Letter →</button>
-      <p style="color:#8a7090;font-size:12px;margin-top:16px;">One-time payment on the next page · Shareable link forever</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════ PAGE 4: LETTER ════════════════════════ -->
-<div class="page" id="page-letter" style="background:#0e0810;">
-  <div id="watermark-letter" class="watermark">✦ PREVIEW ONLY ✦ PREVIEW ONLY ✦</div>
-  <div style="max-width:620px;width:100%;margin:0 auto;padding:60px 20px 100px;position:relative;z-index:1;">
-
-    <!-- Envelope -->
-    <div style="text-align:center;margin-bottom:40px;">
-      <div id="envelope-emoji" style="display:inline-block;font-size:80px;transition:transform .8s cubic-bezier(.34,1.56,.64,1),filter .8s;">📨</div>
-      <div id="envelope-sub" style="margin-top:16px;opacity:0;transition:opacity .6s .6s;font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(14px,2.5vw,18px);color:#8a7090;">A letter, sealed with love</div>
-    </div>
-
-    <!-- Letter -->
-    <div id="letter-card" class="letter-card" style="opacity:0;">
-      <div id="letter-lines"></div>
-      <div style="text-align:center;margin-bottom:28px;">
-        <span style="display:inline-block;width:48px;height:48px;border-radius:50%;line-height:48px;font-size:22px;background:linear-gradient(135deg,#8b1a3c,#c2446e);box-shadow:0 4px 16px rgba(139,26,60,.4);">❧</span>
-      </div>
-      <div class="letter-text" id="letter-text"></div>
-      <div id="letter-emojis" style="text-align:center;margin-top:32px;font-size:28px;opacity:0;transition:opacity .8s;">🥹 💛 🌸</div>
-    </div>
-
-    <!-- Payment CTA — ONLY HERE -->
-    <div id="letter-pay-cta" style="margin-top:32px;text-align:center;background:#1e1325;border:1px solid rgba(212,175,55,.18);border-radius:20px;padding:32px 24px;animation:fadeUp .8s ease 1s both;display:none;">
-      <p style="font-family:'Playfair Display',serif;font-style:italic;color:#f5ead8;font-size:clamp(16px,2.5vw,22px);margin:0 0 8px;">She deserves the real thing.</p>
-      <p style="color:#8a7090;font-size:13px;margin:0 0 24px;">Pay once · No watermark · Share a clean link forever</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-gold" style="padding:15px 36px;" onclick="openPayModal()">💳 Unlock &amp; Share — ₹79</button>
-        <button class="btn btn-ghost" style="padding:15px 24px;font-size:13px;" onclick="showPage('page-content')">← Go Back</button>
+        <button class="btn-primary w-full mt-2 pulse-btn" onclick="gotoPreview()">Preview My Card →</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════ PAGE 5: DONE ══════════════════════════ -->
-<div class="page" id="page-done" style="background:#0e0810;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;">
-  <div style="max-width:500px;width:100%;text-align:center;position:relative;z-index:1;" id="done-inner">
-    <div style="font-size:64px;margin-bottom:16px;animation:scaleIn .5s ease;">🎉</div>
-    <h1 style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(24px,5vw,40px);color:#f5ead8;margin:0 0 10px;animation:fadeUp .6s ease;">Her link is ready!</h1>
-    <p id="done-name" style="color:#8a7090;font-size:14px;margin-bottom:36px;animation:fadeUp .6s ease .1s both;"></p>
 
-    <div style="background:#1e1325;border:1px solid rgba(212,175,55,.18);border-radius:16px;padding:20px 24px;margin-bottom:20px;animation:fadeUp .6s ease .2s both;box-shadow:0 12px 40px rgba(0,0,0,.4);">
-      <div id="done-link" style="font-size:clamp(11px,1.8vw,13px);color:#d4af37;font-family:monospace;word-break:break-all;letter-spacing:.03em;"></div>
-      <div id="done-error" style="font-size:11px;color:#e8507a;margin-top:6px;display:none;"></div>
+<!-- ═══════════════════════════════════════════
+     PAGE 2 — PREVIEW (watermarked)
+═══════════════════════════════════════════ -->
+<div class="page" id="pg-preview">
+
+  <!-- top bar -->
+  <div class="flex items-center justify-between flex-wrap gap-3 px-5 py-3 bg-[#fff9f3] border-b border-[#d4a98a] sticky top-0 z-20">
+    <div>
+      <div class="text-[10px] text-[#7a5c3a] uppercase tracking-widest">Preview mode</div>
+      <div class="text-sm text-[#3d1f0a] font-medium">This is how the card will look ✨</div>
     </div>
-    <button class="btn btn-gold" style="padding:16px 48px;font-size:15px;animation:fadeUp .6s ease .3s both;" onclick="copyLink()">📋 Copy Link</button>
-
-    <div class="divider"><div class="divider-line divider-left"></div><span class="divider-gem">✦</span><div class="divider-line divider-right"></div></div>
-
-    <div style="background:#1e1325;border:1px solid rgba(212,175,55,.18);border-radius:16px;padding:24px;animation:fadeUp .6s ease .5s both;">
-      <div style="font-size:24px;margin-bottom:8px;">🌸 ✨ 💖</div>
-      <p id="done-desc" style="color:#8a7090;font-size:14px;line-height:1.7;margin:0;"></p>
+    <div class="flex gap-2">
+      <button class="btn-outline text-xs px-4 py-2" onclick="showPage('pg-form')">← Edit</button>
+      <button class="btn-primary text-xs px-4 py-2" onclick="openPayModal()">🔗 Generate Link — ₹99</button>
     </div>
   </div>
-  <div id="done-saving" style="color:#d4af37;font-family:'Playfair Display',serif;font-style:italic;font-size:22px;animation:shimmer 1.5s ease-in-out infinite;display:none;position:relative;z-index:1;">Crafting her link… ✨</div>
+
+  <!-- share success banner -->
+  <div id="share-banner" class="share-banner hidden">
+    <span class="text-sm">🎉 Your link is ready! Share it with them.</span>
+    <div class="flex gap-2 items-center">
+      <code id="share-url-text" class="text-xs bg-white/20 px-2 py-1 rounded"></code>
+      <button onclick="copyLink()" class="bg-white text-[#2e7d32] text-xs font-bold px-3 py-1 rounded-lg">Copy</button>
+    </div>
+  </div>
+
+  <!-- WATERMARK (removed after payment) -->
+  <div class="watermark-wrap" id="watermark">
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+    <div class="watermark-row"><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span><span>PREVIEW • SURPRISEIT •</span></div>
+  </div>
+
+  <!-- card renders here -->
+  <div id="preview-card-mount"></div>
 </div>
 
-<!-- ══════════════════════════════════ PAYMENT MODAL ════════════════════════ -->
-<div id="pay-modal" class="modal-overlay" style="display:none;">
-  <div class="modal-box">
-    <button onclick="closePayModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:#8a7090;">✕</button>
-    <div style="text-align:center;margin-bottom:28px;">
-      <div style="font-size:44px;margin-bottom:10px;">💌</div>
-      <h2 style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px;color:#f5ead8;margin:0 0 6px;">Unlock &amp; Share</h2>
-      <p style="color:#8a7090;font-size:13px;margin:0;">Remove watermark · Get a clean shareable link</p>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 3 — LIVE CARD (shared link view)
+═══════════════════════════════════════════ -->
+<div class="page" id="pg-card">
+  <div id="card-mount"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAYMENT MODAL
+═══════════════════════════════════════════ -->
+<div class="modal-bg hidden" id="pay-modal">
+  <div class="modal-box fade-in">
+    <button onclick="closePayModal()" class="absolute top-4 right-4 text-2xl text-[#7a5c3a] bg-none border-none cursor-pointer leading-none">×</button>
+
+    <div class="mb-6">
+      <div class="font-dancing text-3xl text-[#1a0f0a] mb-1">Generate Shareable Link 🔗</div>
+      <p class="text-xs text-[#7a5c3a]">Pay once — they get a beautiful surprise, forever.</p>
     </div>
-    <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:14px 18px;margin-bottom:22px;text-align:center;border:1px solid rgba(212,175,55,.18);">
-      <div style="font-size:12px;color:#8a7090;margin-bottom:4px;">Made for</div>
-      <div id="modal-name" style="font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:#d4af37;"></div>
-      <div id="modal-from" style="font-size:12px;color:#8a7090;margin-top:2px;"></div>
-    </div>
-    <div style="margin-bottom:18px;">
-      <div style="font-size:12px;color:#8a7090;margin-bottom:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">🎟 Coupon code</div>
-      <div style="display:flex;gap:8px;">
-        <input id="coupon-input" class="form-input" placeholder="e.g. SAVE20" style="border-radius:10px;padding:10px 14px;font-size:14px;" onkeydown="if(event.key==='Enter')applyCoupon()"/>
-        <button onclick="applyCoupon()" class="btn btn-gold" style="border-radius:10px;padding:10px 16px;font-size:13px;">Apply</button>
-      </div>
-      <div id="coupon-msg" style="margin-top:8px;font-size:13px;font-weight:600;display:none;"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(212,175,55,.07);border-radius:12px;padding:14px 16px;margin-bottom:22px;">
-      <span style="font-size:14px;color:#8a7090;">Total</span>
+
+    <!-- price row -->
+    <div class="card px-5 py-4 mb-5 flex justify-between items-center">
       <div>
-        <span id="modal-strike" style="font-size:13px;color:#8a7090;text-decoration:line-through;margin-right:10px;display:none;">₹79</span>
-        <span id="modal-price" style="font-family:'Playfair Display',serif;font-size:26px;font-style:italic;color:#d4af37;">₹79</span>
+        <div class="text-sm text-[#7a5c3a]">Birthday Card</div>
+        <div class="text-xs text-[#bbb] mt-0.5">Shareable link • Hosted forever</div>
+      </div>
+      <div class="text-right">
+        <div id="original-price" class="text-xs text-[#bbb] line-through hidden">₹99</div>
+        <div id="final-price" class="text-2xl font-bold text-[#8b2020]">₹99</div>
       </div>
     </div>
-    <button id="pay-btn" class="btn btn-gold btn-full" style="border-radius:14px;" onclick="handlePay()">💳 Pay ₹79 &amp; Get Link</button>
-    <p style="text-align:center;font-size:11px;color:#8a7090;margin-top:12px;">🔒 Secured by Razorpay · One-time payment</p>
+
+    <!-- coupon -->
+    <div class="mb-5">
+      <label class="block text-xs font-semibold text-[#5a3e2b] uppercase tracking-wider mb-2">Coupon Code</label>
+      <div class="flex gap-2">
+        <input id="coupon-inp" class="inp flex-1" placeholder="e.g. LOVE" style="text-transform:uppercase"
+          oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')applyCoupon()" />
+        <button onclick="applyCoupon()" class="btn-outline text-xs px-4 py-2 whitespace-nowrap">Apply</button>
+      </div>
+      <div id="coupon-msg" class="text-xs mt-2 font-medium hidden"></div>
+      <div class="text-[10px] text-[#bbb] mt-2">Try: LOVE (₹79) · FEIN1 (₹1) · FEIN (Free)</div>
+    </div>
+
+    <div id="pay-err" class="text-[#c62828] text-sm mb-3 hidden"></div>
+
+    <button id="pay-btn" class="btn-primary w-full" onclick="handlePay()">
+      Pay ₹99 &amp; Get Link
+    </button>
+
+    <div class="text-center text-[10px] text-[#bbb] mt-4">Secured by Razorpay · UPI, Cards, Netbanking</div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════ SCRIPT ════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════
+     RAZORPAY SDK
+═══════════════════════════════════════════ -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
-const RAZORPAY_KEY   = "rzp_live_SmizRaPApu81ZS";
-const BASE_PRICE     = 7900;
-const SUPABASE_URL   = "https://iliakhaufgpjjtwamisn.supabase.co";
-const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsaWFraGF1Zmdwamp0d2FtaXNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTU0NTMsImV4cCI6MjA5NjQzMTQ1M30.nim8jt-cUhb3IIWjnd0FC3NF6xS_gg8RelBBJG1bIno";
-const COUPONS = { LOVE100: 0, LOVE1: 100, SAVE20: BASE_PRICE - 2000 };
+/* ══════════════════════════════════════════════════════════
+   CONFIG — replace key with yours
+   Coupons are validated client-side (soft validation).
+   For hard validation + signature verify, add a CF Worker.
+══════════════════════════════════════════════════════════ */
+const CONFIG = {
+  RZP_KEY: 'rzp_test_REPLACE_WITH_YOUR_KEY',  // ← put YOUR key here
+  COUPONS: {
+    'LOVE':  { amount: 7900,  label: '₹20 off — you pay ₹79' },
+    'FEIN1': { amount: 100,   label: '₹98 off — you pay ₹1'  },
+    'FEIN':  { amount: 0,     label: '100% off — FREE 🎉'    },
+  },
+  BASE: 9900, // ₹99 in paise
+};
 
-let APP = { name:"", from:"", message:"", finalPrice: BASE_PRICE, paid: false, link:"", copied:false };
+/* ══ STATE ══ */
+let state = {
+  recipient: '', sender: '', greeting: '', song: '', letter: '',
+  finalAmount: CONFIG.BASE,
+  couponApplied: null,
+  shareUrl: null,
+};
 
-// ── Starfield ──
-(function(){
-  const sf = document.getElementById('starfield');
-  for(let i=0;i<60;i++){
-    const d = document.createElement('div');
-    d.className = 'star';
-    const sz = 1 + Math.random()*2;
-    d.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${sz>2?'#d4af37':'rgba(240,208,96,.6)'};animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*8}s;`;
-    sf.appendChild(d);
-  }
-  const pt = document.getElementById('petals');
-  const emojis = ['🌸','🌺','🌼','✿','❀','🌷'];
-  for(let i=0;i<18;i++){
-    const d = document.createElement('div');
-    d.className='petal';
-    d.textContent = emojis[i%emojis.length];
-    d.style.cssText=`left:${Math.random()*100}%;font-size:${10+Math.random()*8}px;animation-duration:${12+Math.random()*14}s;animation-delay:${Math.random()*15}s;opacity:.4;`;
-    pt.appendChild(d);
-  }
-})();
-
-// ── Page navigation ──
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+/* ══ PAGE ROUTER ══ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-// ── Form ──
-function submitForm(){
-  const name    = document.getElementById('inp-name').value.trim();
-  const from    = document.getElementById('inp-from').value.trim();
-  const message = document.getElementById('inp-message').value.trim();
-  let ok = true;
-  ['name','from','message'].forEach(f=>{
-    const el  = document.getElementById('err-'+f);
-    const val = f==='name'?name:f==='from'?from:message;
-    if(!val){ el.textContent = f==='name'?"Her name is required":f==='from'?"Your name is required":"Write her a message"; el.style.display='block'; ok=false; }
-    else el.style.display='none';
-  });
-  if(!ok) return;
-  APP.name = name; APP.from = from; APP.message = message;
-  buildDedicationPage();
-  buildContentPage();
-  buildLetterPage();
-  showPage('page-dedication');
+/* ══ ON LOAD — check for card data in URL ══ */
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(location.search);
+  const d = params.get('d');
+  if (d) {
+    try {
+      const data = JSON.parse(atob(d));
+      renderCardInto('card-mount', data);
+      showPage('pg-card');
+    } catch { showPage('pg-form'); }
+  } else {
+    showPage('pg-form');
+  }
+});
+
+/* ══ FORM → PREVIEW ══ */
+function gotoPreview() {
+  const r = document.getElementById('f-recipient').value.trim();
+  const s = document.getElementById('f-sender').value.trim();
+  if (!r || !s) {
+    document.getElementById('form-err').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('form-err').classList.add('hidden');
+  state.recipient = r;
+  state.sender    = s;
+  state.greeting  = document.getElementById('f-greeting').value.trim();
+  state.song      = document.getElementById('f-song').value.trim();
+  state.letter    = document.getElementById('f-letter').value.trim();
+
+  renderCardInto('preview-card-mount', state);
+  showPage('pg-preview');
 }
 
-// ── Dedication page ──
-function buildDedicationPage(){
-  document.getElementById('ded-name-label').textContent = `For ${APP.name}, from ${APP.from}`;
+/* ══ PAYMENT MODAL ══ */
+function openPayModal() {
+  state.finalAmount = CONFIG.BASE;
+  state.couponApplied = null;
+  document.getElementById('coupon-inp').value = '';
+  document.getElementById('coupon-msg').classList.add('hidden');
+  document.getElementById('pay-err').classList.add('hidden');
+  document.getElementById('original-price').classList.add('hidden');
+  document.getElementById('final-price').textContent = '₹99';
+  document.getElementById('pay-btn').textContent = 'Pay ₹99 & Get Link';
+  document.getElementById('pay-modal').classList.remove('hidden');
 }
+function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); }
 
-// ── Content page ──
-const SECTIONS = [
-  { emoji:"🌸", title:"She Carries More Than She Shows",
-    body:"There's a quiet strength in the way she moves through the world — carrying her worries and her warmth in equal measure, never asking for credit, never making it anyone else's problem. That kind of grace is rare. Most people never develop it. She was born with it." },
-  { emoji:"✨", title:"The Things That Make Her Rare",
-    body:"The way she laughs when something genuinely catches her off guard. The way she notices what others walk past. The way she holds space for people even when nobody holds it for her. She doesn't realise how much light she gives off. She never has." },
-  { emoji:"💫", title:"Her Softness Is a Superpower",
-    body:"She feels everything deeply. Her sensitivity isn't too much — it's exactly enough. In a world that's always rushing, her ability to slow down and actually be present with people is one of the most extraordinary things about her. Don't let anyone convince her otherwise." },
-  { emoji:"💕", title:"Why She's Worth Celebrating",
-    body:"Because she shows up. Because she tries. Because even on her hardest days, there's a version of her that keeps going — and that version deserves every soft, beautiful thing the world has to offer. She has always deserved more than she's asked for." },
-  { emoji:"🦋", title:"A Note for the Tough Days",
-    body:"On the days when everything feels heavy and she can't quite remember why she's okay — she should come back here. Nothing that's happened since has changed how loved she is. She was worth celebrating then. She is worth it right now. That part never changes." },
-];
+/* ══ COUPON ══ */
+function applyCoupon() {
+  const code = document.getElementById('coupon-inp').value.trim().toUpperCase();
+  const msg  = document.getElementById('coupon-msg');
+  const fp   = document.getElementById('final-price');
+  const op   = document.getElementById('original-price');
+  const btn  = document.getElementById('pay-btn');
+  msg.classList.remove('hidden');
 
-function buildContentPage(){
-  document.getElementById('content-title').innerHTML = `This is for you,<br/><span style="color:#d4af37;font-weight:700;">${APP.name}</span>`;
-  document.getElementById('content-from').textContent = `with love, from ${APP.from} 💕`;
-  document.getElementById('cta-name').textContent = `Ready for ${APP.name}'s letter?`;
-  document.getElementById('opening-quote').textContent = `${APP.name} — before you read what's ahead, know this: the person who made this for you could have spent five minutes anywhere. They chose to spend it making sure you know how extraordinary you are. That's not nothing. That's everything.`;
+  if (!code) { msg.textContent = ''; msg.classList.add('hidden'); return; }
 
-  const container = document.getElementById('sections-container');
-  container.innerHTML = '';
-  SECTIONS.forEach((s,i)=>{
-    const div = document.createElement('div');
-    div.className = 'section-card';
-    div.id = `sec-${i}`;
-    div.innerHTML = `<div class="section-accent"></div><div class="section-inner"><div class="section-emoji">${s.emoji}</div><h2 class="section-title">${s.title}</h2><p class="section-body">${s.body}</p></div>`;
-    container.appendChild(div);
-    setTimeout(()=>div.classList.add('visible'), i*160+300);
-  });
-}
-
-// ── Letter page (typewriter with beautiful sound) ──
-let typeInterval = null;
-let audioCtx = null;
-let letterDone = false;
-
-function buildLetterPage(){
-  document.getElementById('watermark-letter').style.display = APP.paid ? 'none' : 'flex';
-  document.getElementById('letter-pay-cta').style.display = APP.paid ? 'none' : 'block';
-
-  const lines = document.getElementById('letter-lines');
-  lines.innerHTML='';
-  for(let i=0;i<12;i++){
-    const l=document.createElement('div');
-    l.className='letter-line';
-    l.style.top=`${80+i*32}px`;
-    lines.appendChild(l);
+  const coupon = CONFIG.COUPONS[code];
+  if (!coupon) {
+    msg.textContent = '✗ Invalid coupon code'; msg.style.color = '#c62828';
+    state.finalAmount = CONFIG.BASE; state.couponApplied = null;
+    op.classList.add('hidden'); fp.textContent = '₹99';
+    btn.textContent = 'Pay ₹99 & Get Link';
+    return;
   }
 
-  // reset
-  document.getElementById('letter-text').textContent='';
-  document.getElementById('letter-emojis').style.opacity='0';
-  const card = document.getElementById('letter-card');
-  const env  = document.getElementById('envelope-emoji');
-  const sub  = document.getElementById('envelope-sub');
-  card.style.opacity='0';
-  card.style.animation='none';
-  env.style.transform='scale(1)'; env.style.filter='none';
-  sub.style.opacity='0';
-  env.textContent='📨';
-  letterDone = false;
-  if(typeInterval){ clearInterval(typeInterval); typeInterval=null; }
+  state.finalAmount   = coupon.amount;
+  state.couponApplied = code;
+  msg.textContent = '✓ ' + coupon.label; msg.style.color = '#2e7d32';
 
-  setTimeout(()=>{ env.textContent='💌'; env.style.transform='scale(1.15) rotate(-5deg)'; env.style.filter='drop-shadow(0 0 30px rgba(212,175,55,.4))'; sub.style.opacity='1'; },600);
-  setTimeout(()=>{ card.style.opacity='1'; card.style.animation='unfold .9s cubic-bezier(.34,1.2,.64,1) forwards'; },1400);
-  setTimeout(()=>startTypewriter(),2000);
+  const display = coupon.amount === 0 ? 'FREE' : '₹' + (coupon.amount / 100);
+  fp.textContent = display;
+  if (coupon.amount < CONFIG.BASE) op.classList.remove('hidden');
+  btn.textContent = coupon.amount === 0 ? 'Get Link for FREE' : `Pay ${display} & Get Link`;
 }
 
-function startTypewriter(){
-  const fullLetter = `Dear ${APP.name},\n\n${APP.message}\n\nOn the days when everything feels heavy and you can't quite remember why you're okay — I hope you find your way back here. Because you are seen. You are cherished. More than you probably let yourself believe.\n\nWith all the love in the world,\n${APP.from} 🌷`;
+/* ══ PAY HANDLER ══ */
+function handlePay() {
+  document.getElementById('pay-err').classList.add('hidden');
 
-  const el = document.getElementById('letter-text');
-  let i=0;
-  typeInterval = setInterval(()=>{
-    i++;
-    const slice = fullLetter.slice(0,i);
-    const cursor = `<span class="cursor"></span>`;
-    el.innerHTML = slice.replace(/\n/g,'<br/>') + cursor;
-    playKeySound(fullLetter[i-1]);
-    if(i>=fullLetter.length){
-      clearInterval(typeInterval); typeInterval=null; letterDone=true;
-      el.innerHTML = slice.replace(/\n/g,'<br/>');
-      document.getElementById('letter-emojis').style.opacity='1';
-      if(!APP.paid) document.getElementById('letter-pay-cta').style.display='block';
-    }
-  },28);
-}
-
-// ── Beautiful typewriter sound — soft piano-like pluck ──
-function playKeySound(char){
-  if(!char || char===' ' || char==='\n') return;
-  try {
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    const ctx = audioCtx;
-    // Use a triangle oscillator at pleasant musical frequencies
-    const noteFreqs = [261.6,293.6,329.6,349.2,392,440,493.8,523.2];
-    const freq = noteFreqs[Math.floor(Math.random()*noteFreqs.length)] * (Math.random()>.5?1:0.5);
-
-    const osc   = ctx.createOscillator();
-    const gain  = ctx.createGain();
-    const filt  = ctx.createBiquadFilter();
-
-    osc.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
-
-    osc.type = 'triangle';
-    filt.type = 'lowpass';
-    filt.frequency.value = 1800;
-
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freq*0.98, ctx.currentTime+0.12);
-
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.18);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime+0.2);
-  } catch(e){}
-}
-
-// ── Payment modal ──
-function openPayModal(){
-  document.getElementById('modal-name').textContent = APP.name;
-  document.getElementById('modal-from').textContent = `from ${APP.from}`;
-  document.getElementById('coupon-input').value='';
-  document.getElementById('coupon-msg').style.display='none';
-  document.getElementById('modal-strike').style.display='none';
-  document.getElementById('modal-price').textContent='₹79';
-  document.getElementById('pay-btn').textContent='💳 Pay ₹79 & Get Link';
-  APP.finalPrice = BASE_PRICE;
-  document.getElementById('pay-modal').style.display='flex';
-}
-function closePayModal(){ document.getElementById('pay-modal').style.display='none'; }
-
-function applyCoupon(){
-  const c = document.getElementById('coupon-input').value.trim().toUpperCase();
-  const msg = document.getElementById('coupon-msg');
-  msg.style.display='block';
-  if(COUPONS[c]!==undefined){
-    APP.finalPrice = COUPONS[c];
-    if(c==='LOVE100'){ msg.textContent='🎉 100% off — completely free!'; msg.style.color='#4ade80'; }
-    else if(c==='LOVE1'){ msg.textContent='🎊 Just ₹1!'; msg.style.color='#4ade80'; }
-    else { msg.textContent='✨ ₹20 off applied!'; msg.style.color='#4ade80'; }
-    if(APP.finalPrice<BASE_PRICE && APP.finalPrice>0){
-      document.getElementById('modal-strike').style.display='inline';
-      document.getElementById('modal-price').textContent=`₹${APP.finalPrice/100}`;
-      document.getElementById('pay-btn').textContent=`💳 Pay ₹${APP.finalPrice/100} & Get Link`;
-    } else if(APP.finalPrice===0){
-      document.getElementById('modal-price').textContent='FREE';
-      document.getElementById('pay-btn').textContent='🎉 Claim Free Link';
-    }
-  } else if(c){
-    msg.textContent='❌ Invalid coupon code'; msg.style.color='#e8507a';
-  }
-}
-
-function handlePay(){
-  if(APP.finalPrice===0){ onPaySuccess(); return; }
-  const btn = document.getElementById('pay-btn');
-  btn.disabled=true; btn.textContent='Processing…';
-  const s=document.createElement('script');
-  s.src='https://checkout.razorpay.com/v1/checkout.js';
-  s.onload=()=>{
-    const rzp=new window.Razorpay({
-      key:RAZORPAY_KEY, amount:APP.finalPrice, currency:'INR',
-      name:'FeelGood Link 💌', description:`A special page for ${APP.name}`,
-      prefill:{name:APP.from}, theme:{color:'#d4af37'},
-      handler:()=>onPaySuccess(),
-      modal:{ondismiss:()=>{ btn.disabled=false; btn.textContent='💳 Pay & Get Link'; }},
-    });
-    rzp.open(); btn.disabled=false;
+  const cardData = {
+    recipient: state.recipient, sender: state.sender,
+    greeting:  state.greeting,  song:   state.song, letter: state.letter,
   };
-  s.onerror=()=>{ alert('Payment gateway failed. Try again.'); btn.disabled=false; btn.textContent='💳 Pay & Get Link'; };
-  document.body.appendChild(s);
-}
 
-function onPaySuccess(){
-  APP.paid=true;
-  closePayModal();
-  buildDoneState();
-  showPage('page-done');
-  spawnParticles();
-}
-
-// ── Done page ──
-async function buildDoneState(){
-  const inner  = document.getElementById('done-inner');
-  const saving = document.getElementById('done-saving');
-  inner.style.display='none'; saving.style.display='block';
-  try {
-    const id=Math.random().toString(36).slice(2,8);
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/love_pages`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,Prefer:'return=minimal'},
-      body:JSON.stringify({id,name:APP.name,from:APP.from,message:APP.message}),
-    });
-    APP.link=`${window.location.origin}${window.location.pathname}?id=${id}`;
-    if(!res.ok) throw new Error();
-  } catch(e){
-    const id=Math.random().toString(36).slice(2,8);
-    APP.link=`${window.location.origin}${window.location.pathname}?id=${id}`;
-    document.getElementById('done-error').textContent="(couldn't reach database — save this link)";
-    document.getElementById('done-error').style.display='block';
+  // FREE flow — skip Razorpay
+  if (state.finalAmount === 0) {
+    onPaymentSuccess('free_' + Math.random().toString(36).slice(2), cardData);
+    return;
   }
-  document.getElementById('done-link').textContent=APP.link;
-  document.getElementById('done-name').textContent=`Share this with ${APP.name} — no watermark, no restrictions 💌`;
-  document.getElementById('done-desc').innerHTML=`${APP.name} will see a beautiful, watermark-free page<br/>with her personal letter — made just for her.`;
-  saving.style.display='none'; inner.style.display='block';
+
+  const options = {
+    key:         CONFIG.RZP_KEY,
+    amount:      state.finalAmount,
+    currency:    'INR',
+    name:        'SurpriseIt',
+    description: `Birthday card for ${state.recipient}`,
+    notes:       { coupon: state.couponApplied || '', recipient: state.recipient, sender: state.sender },
+    theme:       { color: '#8b2020' },
+    handler: function(response) {
+      // ⚠️  For production: send response to a CF Worker to verify signature
+      // For now we trust Razorpay's handler callback (acceptable for most use cases)
+      onPaymentSuccess(response.razorpay_payment_id, cardData);
+    },
+    modal: { ondismiss: () => {} },
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
 }
 
-function copyLink(){
-  navigator.clipboard.writeText(APP.link).then(()=>{
-    const btn = event.target;
-    btn.textContent='✓ Copied!';
-    setTimeout(()=>btn.textContent='📋 Copy Link',3000);
+/* ══ POST PAYMENT ══ */
+function onPaymentSuccess(paymentId, cardData) {
+  closePayModal();
+
+  // Encode card data as base64 in URL — no backend needed
+  const encoded  = btoa(JSON.stringify(cardData));
+  const url      = `${location.origin}${location.pathname}?d=${encoded}`;
+  state.shareUrl = url;
+
+  // Remove watermark
+  document.getElementById('watermark').style.display = 'none';
+
+  // Show share banner
+  document.getElementById('share-url-text').textContent = url.length > 60 ? url.slice(0, 57) + '...' : url;
+  document.getElementById('share-banner').classList.remove('hidden');
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyLink() {
+  if (!state.shareUrl) return;
+  navigator.clipboard.writeText(state.shareUrl).then(() => {
+    const btn = document.querySelector('.share-banner button');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
   });
 }
 
-function spawnParticles(){
-  const emojis=['💖','✨','🌸','💕','🦋','💫'];
-  for(let i=0;i<50;i++){
-    const d=document.createElement('div');
-    d.className='particle';
-    d.textContent=emojis[i%6];
-    d.style.setProperty('--tx',`${(Math.random()-.5)*300}px`);
-    d.style.setProperty('--ty',`${(Math.random()-.5)*300}px`);
-    d.style.animationDelay=`${Math.random()*.8}s`;
-    document.body.appendChild(d);
-    setTimeout(()=>d.remove(),2200);
+
+/* ════════════════════════════════════════════════════════
+   CARD RENDERER — renders the full interactive card UI
+   into a given DOM element
+════════════════════════════════════════════════════════ */
+function renderCardInto(mountId, data) {
+  const mount = document.getElementById(mountId);
+  if (!mount) return;
+
+  // State local to this card instance
+  let cardPage    = 'landing'; // landing | decline | app
+  let activeTab   = 'greetings';
+  let flippedGifts = new Set();
+
+  const flowers = [
+    { e:'🌹', n:'Red Rose',       m:`"You're as beautiful as freshly bloomed roses, ${data.recipient}."` },
+    { e:'🌷', n:'Tulip',          m:`"Spending time with you is like receiving a surprise bouquet every day."` },
+    { e:'🌸', n:'Cherry Blossom', m:`"Being around you feels like walking through a blooming spring."` },
+    { e:'💐', n:'Bouquet',        m:`"This whole bouquet couldn't hold all the good things I think of you."` },
+  ];
+  const gifts = [
+    { e:'🎁', r:'🌙', msg:'A night under the stars, just for you two to share.'    },
+    { e:'🎀', r:'☕', msg:'Your favourite drink, your favourite book, a perfect afternoon.' },
+    { e:'💝', r:'🫂', msg:'A thousand hugs, redeemable anytime, forever.'           },
+    { e:'✨', r:'🗺️', msg:'One surprise adventure — destination chosen by you.'     },
+  ];
+
+  function re() { mount.innerHTML = ''; render(); }
+
+  function render() {
+    if (cardPage === 'landing') renderLanding();
+    else if (cardPage === 'decline') renderDecline();
+    else renderApp();
   }
+
+  /* ── SVG FLOWERS ── */
+  const flowerSVG = `
+    <svg width="190" height="270" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(10,20)">
+        <line x1="80" y1="260" x2="70" y2="140" stroke="#5a7a3a" stroke-width="3" stroke-linecap="round"/>
+        <line x1="70" y1="200" x2="40" y2="170" stroke="#5a7a3a" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="30" cy="165" rx="22" ry="12" fill="#7ab84a" transform="rotate(-30 30 165)"/>
+        <line x1="70" y1="170" x2="100" y2="150" stroke="#5a7a3a" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="108" cy="147" rx="22" ry="10" fill="#7ab84a" transform="rotate(20 108 147)"/>
+        <circle cx="70" cy="115" r="32" fill="#c0392b" opacity=".9"/>
+        <circle cx="70" cy="115" r="20" fill="#e74c3c"/>
+        <ellipse cx="50" cy="95"  rx="14" ry="22" fill="#c0392b" transform="rotate(-25 50 95)"/>
+        <ellipse cx="90" cy="95"  rx="14" ry="22" fill="#c0392b" transform="rotate(25 90 95)"/>
+        <ellipse cx="55" cy="130" rx="14" ry="22" fill="#c0392b" transform="rotate(15 55 130)"/>
+        <ellipse cx="85" cy="130" rx="14" ry="22" fill="#c0392b" transform="rotate(-15 85 130)"/>
+        <circle cx="70" cy="115" r="10" fill="#f39c12"/>
+      </g>
+      <g transform="translate(95,75)">
+        <line x1="38" y1="200" x2="33" y2="90" stroke="#5a7a3a" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="14" cy="145" rx="20" ry="10" fill="#7ab84a" transform="rotate(-25 14 145)"/>
+        <circle cx="33" cy="65" r="26" fill="#e8b4b8" opacity=".9"/>
+        <ellipse cx="16" cy="48" rx="12" ry="20" fill="#e8b4b8" transform="rotate(-20 16 48)"/>
+        <ellipse cx="50" cy="48" rx="12" ry="20" fill="#e8b4b8" transform="rotate(20 50 48)"/>
+        <ellipse cx="18" cy="75" rx="12" ry="20" fill="#e8b4b8" transform="rotate(15 18 75)"/>
+        <ellipse cx="48" cy="75" rx="12" ry="20" fill="#e8b4b8" transform="rotate(-15 48 75)"/>
+        <circle cx="33" cy="65" r="9" fill="#f5cba7"/>
+      </g>
+    </svg>`;
+
+  /* ── CAT HTML ── */
+  function catHTML(crying = false) {
+    return `
+    <div style="width:88px;height:108px;position:relative;display:inline-block;margin-bottom:10px"
+         class="${crying ? 'cat-sad' : 'cat-bounce'}">
+      ${!crying ? `<span style="position:absolute;top:-6px;left:50%;font-size:14px;color:#e84393" class="float-heart">♥</span>` : ''}
+      <!-- ears -->
+      <div style="position:absolute;top:2px;left:14px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #fff;filter:drop-shadow(0 -1px 0 #ccc)"></div>
+      <div style="position:absolute;top:2px;right:14px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #fff;filter:drop-shadow(0 -1px 0 #ccc)"></div>
+      <!-- head -->
+      <div style="position:absolute;top:5px;left:17px;width:54px;height:50px;background:#fff;border:2px solid #ccc;border-radius:50%;overflow:hidden">
+        <div style="position:absolute;top:55%;left:50%;transform:translateX(-50%);display:flex;gap:13px">
+          ${crying
+            ? `<div style="width:8px;height:8px;background:#333;border-radius:50%;transform:scaleY(0.25)"></div><div style="width:8px;height:8px;background:#333;border-radius:50%;transform:scaleY(0.25)"></div>`
+            : `<div style="width:8px;height:8px;background:#333;border-radius:50%" class="blink"></div><div style="width:8px;height:8px;background:#333;border-radius:50%" class="blink"></div>`}
+        </div>
+        <div style="position:absolute;top:72%;left:50%;transform:translateX(-50%);width:6px;height:4px;background:#f9a0a0;border-radius:50%"></div>
+        ${crying ? `
+          <div style="position:absolute;top:80%;left:16px;width:5px;height:12px;background:#7ab8f5;border-radius:0 0 50% 50%" class="tear-l"></div>
+          <div style="position:absolute;top:80%;right:16px;width:5px;height:12px;background:#7ab8f5;border-radius:0 0 50% 50%" class="tear-r"></div>` : ''}
+      </div>
+      <!-- body -->
+      <div style="position:absolute;bottom:0;left:15px;width:58px;height:64px;background:#fff;border:2px solid #ccc;border-radius:50% 50% 45% 45%;overflow:hidden">
+        ${!crying
+          ? `<div style="position:absolute;bottom:24px;left:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%" class="wave-l"></div>
+             <div style="position:absolute;bottom:24px;right:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%" class="wave-r"></div>`
+          : `<div style="position:absolute;bottom:24px;left:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%"></div>
+             <div style="position:absolute;bottom:24px;right:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%"></div>`}
+        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:24px;background:#f9d0d0;border-radius:10px 10px 0 0"></div>
+      </div>
+    </div>`;
+  }
+
+  /* ── CONFETTI ── */
+  function confetti() {
+    return ['#e74c3c','#f39c12','#e8b4b8','#8b2020','#c0392b'].map((c,i) =>
+      `<div style="width:10px;height:10px;border-radius:50%;background:${c};animation:confBounce .8s ease-in-out infinite;animation-delay:${i*.1}s"></div>`
+    ).join('');
+  }
+
+  /* ── LANDING ── */
+  function renderLanding() {
+    mount.innerHTML = `
+    <div class="min-h-screen flex flex-col items-center justify-center text-center relative overflow-hidden" style="background:#f5efe6;padding:60px 24px">
+      <!-- flowers -->
+      <div style="position:absolute;left:0;bottom:0;pointer-events:none;z-index:1">${flowerSVG}</div>
+      <div style="position:absolute;right:0;bottom:0;pointer-events:none;z-index:1;transform:scaleX(-1)">${flowerSVG}</div>
+
+      <div style="position:relative;z-index:2">
+        ${catHTML(false)}
+        <div class="font-dancing" style="font-size:clamp(44px,9vw,74px);color:#1a0f0a;line-height:1;margin-bottom:4px">
+          Hello there<span class="cursor-blink" style="display:inline-block;width:3px;height:0.75em;background:#8b2020;vertical-align:bottom;margin-left:2px"></span>
+        </div>
+        <p class="font-caveat" style="font-size:20px;color:#7a5c3a;margin:16px 0 32px">
+          do you want to see your gift, <strong>${data.recipient}</strong>?
+        </p>
+        <div class="flex gap-4 justify-center flex-wrap">
+          <button class="btn-primary" onclick="cardNav('app')">YES PLEASE</button>
+          <button class="btn-outline" onclick="cardNav('decline')">NO THANKS</button>
+        </div>
+      </div>
+    </div>`;
+    bindCardNav();
+  }
+
+  /* ── DECLINE ── */
+  function renderDecline() {
+    mount.innerHTML = `
+    <div class="min-h-screen flex flex-col items-center justify-center text-center relative overflow-hidden" style="background:#f5efe6;padding:60px 24px">
+      <div style="position:absolute;left:0;bottom:0;pointer-events:none;z-index:1;opacity:0.5">${flowerSVG}</div>
+      <div style="position:absolute;right:0;bottom:0;pointer-events:none;z-index:1;transform:scaleX(-1);opacity:0.5">${flowerSVG}</div>
+      <div style="position:relative;z-index:2">
+        ${catHTML(true)}
+        <div class="font-dancing" style="font-size:clamp(30px,7vw,52px);color:#8b2020;line-height:1.2;margin:16px 0 28px">
+          I promise you'll like it :(
+        </div>
+        <button class="btn-primary" onclick="cardNav('landing')">TRY AGAIN</button>
+      </div>
+    </div>`;
+    bindCardNav();
+  }
+
+  /* ── APP (tabs) ── */
+  function renderApp() {
+    mount.innerHTML = `
+    <div style="min-height:100vh;background:#f5efe6">
+      <!-- tab nav -->
+      <nav class="tab-nav">
+        ${['greetings','gifts','flowers','song','letter'].map(t =>
+          `<button class="tab-btn ${activeTab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`
+        ).join('')}
+      </nav>
+
+      <div style="padding:32px 20px;max-width:820px;margin:0 auto">
+
+        <!-- GREETINGS -->
+        <div id="sec-greetings" style="display:${activeTab==='greetings'?'block':'none'}" class="fade-in">
+          <div class="card p-8 text-center">
+            <div class="flex justify-center gap-2 mb-4">${confetti()}</div>
+            <div class="font-dancing" style="font-size:42px;color:#1a0f0a;margin-bottom:14px">
+              Happy Birthday, ${data.recipient}! 🎂
+            </div>
+            <p class="font-caveat" style="font-size:20px;color:#5a3e2b;line-height:1.7;max-width:520px;margin:0 auto">
+              ${(data.greeting||'You make every day brighter just by being in it. Happy Birthday! 🎉').replace(/\n/g,'<br>')}
+            </p>
+            <div class="flex justify-center gap-2 mt-4">${confetti()}</div>
+            <div class="mt-6">${catHTML(false)}</div>
+          </div>
+        </div>
+
+        <!-- GIFTS -->
+        <div id="sec-gifts" style="display:${activeTab==='gifts'?'grid':'none'};grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px" class="fade-in">
+          ${gifts.map((g,i) => `
+          <div style="perspective:600px;min-height:160px;cursor:pointer" onclick="flipGift(${i})">
+            <div id="gift-inner-${i}" class="gift-inner" style="position:relative;min-height:160px">
+              <div class="gift-front card" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center;border-radius:14px">
+                <span style="font-size:44px;display:block;margin-bottom:10px">${g.e}</span>
+                <div class="font-dancing" style="font-size:20px;color:#1a0f0a">Tap to open!</div>
+              </div>
+              <div class="gift-back card" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;border-radius:14px">
+                <span style="font-size:36px;margin-bottom:10px">${g.r}</span>
+                <p class="font-caveat" style="font-size:16px;color:#5a3e2b;line-height:1.5">${g.msg}</p>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>
+
+        <!-- FLOWERS -->
+        <div id="sec-flowers" style="display:${activeTab==='flowers'?'grid':'none'};grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px" class="fade-in">
+          ${flowers.map(f => `
+          <div class="card p-5 text-center">
+            <span style="font-size:48px;display:block;margin-bottom:10px">${f.e}</span>
+            <div class="font-dancing" style="font-size:22px;color:#1a0f0a;margin-bottom:6px">${f.n}</div>
+            <div class="font-caveat" style="font-size:15px;color:#7a5c3a;line-height:1.5">${f.m}</div>
+          </div>`).join('')}
+        </div>
+
+        <!-- SONG -->
+        <div id="sec-song" style="display:${activeTab==='song'?'flex':'none'};justify-content:center" class="fade-in">
+          <div class="card p-8 text-center" style="max-width:480px;width:100%">
+            <span style="font-size:42px;display:block;margin-bottom:12px" class="note-sway">🎵</span>
+            <div class="font-dancing" style="font-size:28px;color:#1a0f0a;margin-bottom:8px">A Song for You</div>
+            ${data.song
+              ? (data.song.includes('spotify')
+                ? `<iframe src="${data.song.replace('open.spotify.com/track','open.spotify.com/embed/track')}" width="100%" height="80" style="border-radius:12px;border:none;margin-top:16px" allow="autoplay;clipboard-write;encrypted-media;fullscreen"></iframe>`
+                : data.song.includes('youtu')
+                  ? `<iframe src="${data.song.replace('watch?v=','embed/').replace('youtu.be/','www.youtube.com/embed/')}" width="100%" height="200" style="border-radius:12px;border:none;margin-top:16px" allowfullscreen></iframe>`
+                  : `<a href="${data.song}" target="_blank" style="color:#8b2020;font-size:14px;display:block;margin-top:16px">🎵 Open Song</a>`)
+              : `<p class="font-caveat" style="font-size:17px;color:#7a5c3a;margin-top:12px">Ask ${data.sender} which song they picked for you 🎶</p>`}
+          </div>
+        </div>
+
+        <!-- LETTER -->
+        <div id="sec-letter" style="display:${activeTab==='letter'?'flex':'none'};justify-content:center" class="fade-in">
+          <div class="letter-paper" style="border:1.5px solid #d4a98a;border-radius:6px;padding:48px 36px;max-width:560px;width:100%;box-shadow:2px 4px 0 #d4a98a">
+            <div class="font-dancing" style="font-size:26px;color:#1a0f0a;margin-bottom:8px">Dear ${data.recipient},</div>
+            <div class="font-caveat" style="font-size:18px;color:#5a3e2b;white-space:pre-wrap;line-height:29px">
+${data.letter||'You are someone truly special. Happy Birthday.'}
+            </div>
+            <div class="font-dancing" style="font-size:24px;color:#8b2020;margin-top:20px;text-align:right">
+              With love, ${data.sender} ♥
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+
+    bindCardNav();
+
+    // re-apply flipped state
+    flippedGifts.forEach(i => {
+      const el = document.getElementById(`gift-inner-${i}`);
+      if (el) el.style.transform = 'rotateY(180deg)';
+    });
+  }
+
+  function bindCardNav() {
+    window.cardNav = (p) => { cardPage = p; re(); };
+    window.switchTab = (t) => { activeTab = t; re(); };
+    window.flipGift  = (i) => {
+      flippedGifts.has(i) ? flippedGifts.delete(i) : flippedGifts.add(i);
+      const el = document.getElementById(`gift-inner-${i}`);
+      if (el) el.style.transform = flippedGifts.has(i) ? 'rotateY(180deg)' : '';
+    };
+  }
+
+  render();
 }
 </script>
 </body>
