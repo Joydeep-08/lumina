@@ -357,7 +357,21 @@ async function loadCardFromSupabase(id) {
   return rows[0].data;
 }
 
-/* ══ ON LOAD — check for card id in URL ══ */
+/* ══ SAVE WITH RETRY (handles transient network/Supabase failures) ══ */
+async function saveCardToSupabaseWithRetry(cardData, attempts = 4) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await saveCardToSupabase(cardData);
+    } catch (e) {
+      lastErr = e;
+      await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i))); // 1s, 2s, 4s, 8s
+    }
+  }
+  throw lastErr;
+}
+
+/* ══ ON LOAD — check for card id in URL, then check for any unfinished payment ══ */
 window.addEventListener('load', async () => {
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
@@ -372,15 +386,21 @@ window.addEventListener('load', async () => {
       console.error(e);
       showPage('pg-form');
     }
+    return; // don't run recovery on a shared-card view
   } else if (d) {
     try {
       const data = JSON.parse(atob(d));
       renderCardInto('card-mount', data);
       showPage('pg-card');
     } catch { showPage('pg-form'); }
+    return;
   } else {
     showPage('pg-form');
   }
+
+  // If we land on the base creation URL and there's a payment that
+  // succeeded but never got a link generated, finish it automatically.
+  recoverPendingPayment();
 });
 
 /* ══ FORM → PREVIEW ══ */
@@ -471,17 +491,31 @@ function handlePay() {
     notes:       { coupon: state.couponApplied || '', recipient: state.recipient, sender: state.sender },
     theme:       { color: '#b83b5e' },
     handler: function(response) {
+      // Persist immediately so a paid card is NEVER lost, even if the
+      // Supabase save fails, the tab closes, or the network drops.
+      try {
+        localStorage.setItem('pendingCard_' + response.razorpay_payment_id, JSON.stringify(cardData));
+        localStorage.setItem('lastPendingPaymentId', response.razorpay_payment_id);
+      } catch (e) { /* ignore storage errors */ }
+
       // ⚠️  For production: send response to a CF Worker to verify signature
       onPaymentSuccess(response.razorpay_payment_id, cardData);
     },
-    modal: { ondismiss: () => {} },
+    modal: {
+      ondismiss: () => {
+        // If payment actually succeeded but the handler above didn't run
+        // (rare edge case), recoverPendingPayment() on next load will
+        // pick nothing up here since handler didn't fire — but Razorpay
+        // guarantees handler fires on success, so this is just a no-op.
+      }
+    },
   };
 
   const rzp = new Razorpay(options);
   rzp.open();
 }
 
-/* ══ POST PAYMENT — save to Supabase, then show link ══ */
+/* ══ POST PAYMENT — save to Supabase (with retries), then show link ══ */
 async function onPaymentSuccess(paymentId, cardData) {
   const btn = document.getElementById('pay-btn');
   const err = document.getElementById('pay-err');
@@ -490,26 +524,88 @@ async function onPaymentSuccess(paymentId, cardData) {
   btn.textContent = 'Generating your link...';
 
   try {
-    const id  = await saveCardToSupabase(cardData);
+    const id  = await saveCardToSupabaseWithRetry(cardData);
     const url = `${location.origin}${location.pathname}?id=${id}`;
     state.shareUrl = url;
+
+    // Saved successfully — clear recovery data for this payment
+    try {
+      localStorage.removeItem('pendingCard_' + paymentId);
+      if (localStorage.getItem('lastPendingPaymentId') === paymentId) {
+        localStorage.removeItem('lastPendingPaymentId');
+      }
+    } catch (e) {}
 
     closePayModal();
 
     // Remove watermark
-    document.getElementById('watermark').style.display = 'none';
+    const wm = document.getElementById('watermark');
+    if (wm) wm.style.display = 'none';
 
     // Show share banner
+    const bannerSpan = document.querySelector('#share-banner span');
+    if (bannerSpan) bannerSpan.textContent = '🎉 Your link is ready! Share it with her.';
     document.getElementById('share-url-text').textContent = url.length > 60 ? url.slice(0, 57) + '...' : url;
     document.getElementById('share-banner').classList.remove('hidden');
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {
     console.error(e);
-    err.textContent = 'Payment succeeded, but saving your card failed. Please contact support with payment id: ' + paymentId;
+    // Payment id + card data remain safe in localStorage (pendingCard_<id>).
+    // Offer a one-click retry that reuses the SAME data — no re-payment needed.
+    err.innerHTML = 'Payment succeeded, but saving your card failed.<br>' +
+      '<button id="retry-save-btn" class="btn-primary" style="margin-top:10px">Retry Generating Link</button><br>' +
+      '<span style="font-size:11px;color:#cda5ae">If this keeps failing, contact support with payment id: ' + paymentId + '</span>';
     err.classList.remove('hidden');
     btn.disabled = false;
     btn.textContent = 'Retry — Get Link';
+
+    const retryBtn = document.getElementById('retry-save-btn');
+    if (retryBtn) {
+      retryBtn.onclick = () => onPaymentSuccess(paymentId, cardData);
+    }
+  }
+}
+
+/* ══ RECOVERY ON LOAD — auto-finish any payment that didn't get a link ══ */
+async function recoverPendingPayment() {
+  try {
+    const lastId = localStorage.getItem('lastPendingPaymentId');
+    if (!lastId) return;
+    const raw = localStorage.getItem('pendingCard_' + lastId);
+    if (!raw) return;
+
+    const cardData = JSON.parse(raw);
+
+    state.recipient = cardData.recipient;
+    state.sender    = cardData.sender;
+    state.greeting  = cardData.greeting;
+    state.song      = cardData.song;
+    state.letter    = cardData.letter;
+
+    renderCardInto('preview-card-mount', state);
+    showPage('pg-preview');
+
+    const banner = document.getElementById('share-banner');
+    const bannerSpan = banner.querySelector('span');
+    banner.classList.remove('hidden');
+    bannerSpan.textContent = '⏳ Recovering your previous payment — finishing link generation...';
+
+    const id  = await saveCardToSupabaseWithRetry(cardData);
+    const url = `${location.origin}${location.pathname}?id=${id}`;
+    state.shareUrl = url;
+
+    localStorage.removeItem('pendingCard_' + lastId);
+    localStorage.removeItem('lastPendingPaymentId');
+
+    const wm = document.getElementById('watermark');
+    if (wm) wm.style.display = 'none';
+
+    bannerSpan.textContent = '🎉 Your link is ready! Share it with her.';
+    document.getElementById('share-url-text').textContent = url.length > 60 ? url.slice(0, 57) + '...' : url;
+  } catch (e) {
+    console.error('Recovery failed:', e);
+    // Leave the localStorage entry in place so it can be retried on next load
   }
 }
 
