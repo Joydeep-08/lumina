@@ -644,28 +644,11 @@ function renderCardInto(mountId, data) {
   </svg>`;
 
   function catHTML(crying = false) {
-    return `<div style="width:88px;height:108px;position:relative;display:inline-block;margin-bottom:10px" class="${crying ? 'cat-sad' : 'cat-bounce'}">
-      ${!crying ? `<span style="position:absolute;top:-6px;left:50%;font-size:14px;color:#e84393" class="float-heart">♥</span>` : ''}
-      <div style="position:absolute;top:2px;left:14px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #fff;filter:drop-shadow(0 -1px 0 #ccc)"></div>
-      <div style="position:absolute;top:2px;right:14px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #fff;filter:drop-shadow(0 -1px 0 #ccc)"></div>
-      <div style="position:absolute;top:5px;left:17px;width:54px;height:50px;background:#fff;border:2px solid #ccc;border-radius:50%;overflow:hidden">
-        <div style="position:absolute;top:55%;left:50%;transform:translateX(-50%);display:flex;gap:13px">
-          ${crying
-            ? `<div style="width:8px;height:8px;background:#333;border-radius:50%;transform:scaleY(0.25)"></div><div style="width:8px;height:8px;background:#333;border-radius:50%;transform:scaleY(0.25)"></div>`
-            : `<div style="width:8px;height:8px;background:#333;border-radius:50%" class="blink"></div><div style="width:8px;height:8px;background:#333;border-radius:50%" class="blink"></div>`}
-        </div>
-        <div style="position:absolute;top:72%;left:50%;transform:translateX(-50%);width:6px;height:4px;background:#f9a0a0;border-radius:50%"></div>
-        ${crying ? `<div style="position:absolute;top:80%;left:16px;width:5px;height:12px;background:#7ab8f5;border-radius:0 0 50% 50%" class="tear-l"></div>
-          <div style="position:absolute;top:80%;right:16px;width:5px;height:12px;background:#7ab8f5;border-radius:0 0 50% 50%" class="tear-r"></div>` : ''}
-      </div>
-      <div style="position:absolute;bottom:0;left:15px;width:58px;height:64px;background:#fff;border:2px solid #ccc;border-radius:50% 50% 45% 45%;overflow:hidden">
-        ${!crying
-          ? `<div style="position:absolute;bottom:24px;left:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%" class="wave-l"></div>
-             <div style="position:absolute;bottom:24px;right:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%" class="wave-r"></div>`
-          : `<div style="position:absolute;bottom:24px;left:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%"></div>
-             <div style="position:absolute;bottom:24px;right:2px;width:18px;height:30px;background:#fff;border:2px solid #ccc;border-radius:50%"></div>`}
-        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:24px;background:#f9d0d0;border-radius:10px 10px 0 0"></div>
-      </div>
+    const gifUrl = crying
+      ? 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjNhMjFkbzdpb2Vzb21jMWowbnR4aDJlNDBxa3puMnQweTZnejNzdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3ov9ka1OzbTGjQtCXC/giphy.gif'
+      : 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHE2dHd1N2J2anBkMmpkeDVqOWFpeDRja3ZjbG9iYWViejBqMTg0YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/W8hVGGjOjV82Rh6Oyi/giphy.gif';
+    return `<div style="width:130px;height:130px;position:relative;display:inline-block;margin-bottom:10px">
+      <img src="${gifUrl}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px" />
     </div>`;
   }
 
