@@ -111,7 +111,7 @@
   }
   .inp:focus { border-color: #b83b5e; }
 
-  /* GIFT FLIP */
+  /* GIFT FLIP (kept for potential future use elsewhere) */
   .gift-inner { transition: transform 0.5s; transform-style: preserve-3d; }
   .gift-front, .gift-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
   .gift-back { transform: rotateY(180deg); }
@@ -559,9 +559,10 @@ function renderCardInto(mountId, data) {
   const mount = document.getElementById(mountId);
   if (!mount) return;
 
-  let cardPage     = 'landing';
-  let activeTab    = 'greetings';
-  let flippedGifts = new Set();
+  let cardPage      = 'landing';
+  let activeTab     = 'greetings';
+
+  const TAB_LABELS = { greetings: 'Greetings', flowers: 'Bouquet', letter: 'Letter' };
 
   const flowers = [
     { e:'🌹', n:'Red Rose',       m:`"You're as beautiful as freshly bloomed roses, ${data.recipient}."` },
@@ -569,18 +570,34 @@ function renderCardInto(mountId, data) {
     { e:'🌸', n:'Cherry Blossom', m:`"Being around you feels like walking through a blooming spring."` },
     { e:'💐', n:'Grand Bouquet',  m:`"This whole bouquet couldn't hold all the good things I think of you, ${data.recipient}."` },
   ];
-  const gifts = [
-    { e:'🎁', r:'🌙', msg:'A night under the stars, just for the two of us.' },
-    { e:'🎀', r:'☕', msg:'Your favourite drink, your favourite book, a perfect afternoon.' },
-    { e:'💝', r:'🫂', msg:'A thousand hugs, redeemable anytime, forever.' },
-    { e:'✨', r:'🗺️', msg:'One surprise date — destination chosen by you.' },
-  ];
 
   function re() { mount.innerHTML = ''; render(); }
   function render() {
+    mountBackgroundSong();
     if (cardPage === 'landing') renderLanding();
     else if (cardPage === 'decline') renderDecline();
     else renderApp();
+  }
+
+  /* ── BACKGROUND AUTOPLAY SONG (hidden, plays as soon as card opens) ── */
+  function mountBackgroundSong() {
+    if (!data.song || document.getElementById('bg-song-embed')) return;
+    let embedUrl = '';
+    if (data.song.includes('spotify')) {
+      const base = data.song.replace('open.spotify.com/track', 'open.spotify.com/embed/track');
+      embedUrl = base + (base.includes('?') ? '&autoplay=1' : '?autoplay=1');
+    } else if (data.song.includes('youtu')) {
+      let vid = '';
+      if (data.song.includes('youtu.be/')) vid = data.song.split('youtu.be/')[1].split(/[?&]/)[0];
+      else if (data.song.includes('watch?v=')) vid = data.song.split('watch?v=')[1].split('&')[0];
+      if (vid) embedUrl = `https://www.youtube.com/embed/${vid}?autoplay=1&playsinline=1&controls=0`;
+    }
+    if (!embedUrl) return;
+    const wrap = document.createElement('div');
+    wrap.id = 'bg-song-embed';
+    wrap.style.cssText = 'position:fixed;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;bottom:0;right:0;';
+    wrap.innerHTML = `<iframe src="${embedUrl}" width="1" height="1" allow="autoplay" frameborder="0"></iframe>`;
+    document.body.appendChild(wrap);
   }
 
   const flowerSVG = `<svg width="190" height="270" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
@@ -608,39 +625,6 @@ function renderCardInto(mountId, data) {
       <ellipse rx="12" ry="20" fill="#f8c9d4" transform="translate(33,65) rotate(155)"/>
       <circle cx="33" cy="65" r="9" fill="#ffe066"/>
     </g>
-  </svg>`;
-
-  const bouquetSVG = `<svg width="220" height="260" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
-    <path d="M70 260 L110 140 L150 260 Z" fill="#fdf2f4" stroke="#f0c4ce" stroke-width="2"/>
-    <path d="M85 260 L110 150 L135 260 Z" fill="#f8c9d4" opacity="0.6"/>
-    <line x1="110" y1="150" x2="75" y2="70" stroke="#7a9a5a" stroke-width="3" stroke-linecap="round"/>
-    <line x1="110" y1="150" x2="110" y2="55" stroke="#7a9a5a" stroke-width="3" stroke-linecap="round"/>
-    <line x1="110" y1="150" x2="145" y2="70" stroke="#7a9a5a" stroke-width="3" stroke-linecap="round"/>
-    <line x1="110" y1="150" x2="55" y2="100" stroke="#7a9a5a" stroke-width="3" stroke-linecap="round"/>
-    <line x1="110" y1="150" x2="165" y2="100" stroke="#7a9a5a" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="60" cy="120" rx="20" ry="10" fill="#9bd86a" transform="rotate(-30 60 120)"/>
-    <ellipse cx="160" cy="120" rx="20" ry="10" fill="#9bd86a" transform="rotate(30 160 120)"/>
-    <g transform="translate(75,70)"><circle r="26" fill="#d6336c" opacity="0.9"/><circle r="16" fill="#f06595"/>
-      <ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(-25)"/><ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(25)"/>
-      <ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(115)"/><ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(155)"/>
-      <circle r="8" fill="#ffd43b"/></g>
-    <g transform="translate(110,55)"><circle r="32" fill="#b83b5e"/><circle r="20" fill="#e0607e"/>
-      <ellipse rx="15" ry="24" fill="#b83b5e" transform="rotate(-25)"/><ellipse rx="15" ry="24" fill="#b83b5e" transform="rotate(25)"/>
-      <ellipse rx="15" ry="24" fill="#b83b5e" transform="rotate(115)"/><ellipse rx="15" ry="24" fill="#b83b5e" transform="rotate(155)"/>
-      <circle r="10" fill="#ffe066"/></g>
-    <g transform="translate(145,70)"><circle r="26" fill="#d6336c" opacity="0.9"/><circle r="16" fill="#f06595"/>
-      <ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(-25)"/><ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(25)"/>
-      <ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(115)"/><ellipse rx="12" ry="18" fill="#d6336c" transform="rotate(155)"/>
-      <circle r="8" fill="#ffd43b"/></g>
-    <g transform="translate(55,100)"><circle r="18" fill="#f8c9d4"/>
-      <ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(-20)"/><ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(20)"/>
-      <ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(110)"/><ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(150)"/>
-      <circle r="6" fill="#ffe066"/></g>
-    <g transform="translate(165,100)"><circle r="18" fill="#f8c9d4"/>
-      <ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(-20)"/><ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(20)"/>
-      <ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(110)"/><ellipse rx="9" ry="14" fill="#f8c9d4" transform="rotate(150)"/>
-      <circle r="6" fill="#ffe066"/></g>
-    <path d="M95 155 Q110 175 125 155" fill="none" stroke="#b83b5e" stroke-width="4" stroke-linecap="round"/>
   </svg>`;
 
   function catHTML(crying = false) {
@@ -700,43 +684,47 @@ function renderCardInto(mountId, data) {
     mount.innerHTML = `
     <div style="min-height:100vh;background:#fdf2f4">
       <nav class="tab-nav">
-        ${['greetings','gifts','flowers','song','letter'].map(t =>
-          `<button class="tab-btn ${activeTab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`
+        ${['greetings','flowers','letter'].map(t =>
+          `<button class="tab-btn ${activeTab===t?'active':''}" onclick="switchTab('${t}')">${TAB_LABELS[t]}</button>`
         ).join('')}
       </nav>
       <div style="padding:32px 20px;max-width:820px;margin:0 auto">
 
         <!-- GREETINGS -->
         <div id="sec-greetings" style="display:${activeTab==='greetings'?'block':'none'}" class="fade-in">
-          <div class="card p-8 text-center">
-            <div class="flex justify-center gap-2 mb-4">${confetti()}</div>
-            <div class="font-dancing" style="font-size:42px;color:#1a0f0a;margin-bottom:14px">For You, ${data.recipient} 💕</div>
-            <p class="font-caveat" style="font-size:20px;color:#5a1f33;line-height:1.7;max-width:520px;margin:0 auto">
-              ${(data.greeting||'You make every day brighter just by being in it. I love you. 💕').replace(/\n/g,'<br>')}
-            </p>
-            <div class="flex justify-center gap-2 mt-4">${confetti()}</div>
-            <div class="mt-6">${catHTML(false)}</div>
+          <div class="greet-card" style="position:relative;overflow:hidden;border-radius:22px;padding:48px 28px;text-align:center;background:linear-gradient(160deg,#fff6f7 0%,#fdeaef 55%,#fbe1e9 100%);border:1px solid #f3cdd7;box-shadow:0 18px 46px -18px rgba(184,59,94,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:520px">
+
+            <div style="position:absolute;top:-40px;left:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(248,165,194,0.55),rgba(248,165,194,0) 70%);pointer-events:none"></div>
+            <div style="position:absolute;bottom:-50px;right:-50px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(224,96,126,0.35),rgba(224,96,126,0) 70%);pointer-events:none"></div>
+            <div style="position:absolute;top:18px;left:26px;font-size:22px;opacity:.55;animation:confBounce 2.6s ease-in-out infinite">✨</div>
+            <div style="position:absolute;top:24px;right:28px;font-size:20px;opacity:.5;animation:confBounce 3.1s ease-in-out infinite .3s">🌸</div>
+            <div style="position:absolute;bottom:24px;left:34px;font-size:18px;opacity:.5;animation:confBounce 2.8s ease-in-out infinite .5s">💗</div>
+
+            <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;max-width:520px">
+              <div style="font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#c2708a;margin-bottom:12px">A little note</div>
+
+              <div class="font-dancing" style="font-size:clamp(34px,7vw,50px);color:#1a0f0a;line-height:1.15;margin-bottom:24px">For You, ${data.recipient} 💕</div>
+
+              <div style="width:190px;max-width:65%;margin:0 auto 26px;border-radius:18px;overflow:hidden;box-shadow:0 14px 34px -12px rgba(184,59,94,0.45);border:3px solid #fff">
+                <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcW93dzN3aTNxcWllNjMwZTRuNHFjZjdlOWU3dHEzeGV0amFmZXhjcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/s6fnVyWTfM2nUKuMVY/giphy.gif"
+                     alt="A cute animated greeting"
+                     style="display:block;width:100%;height:auto" />
+              </div>
+
+              <p class="font-caveat" style="font-size:24px;color:#5a1f33;line-height:1.75;margin:0 auto;font-weight:600">
+                ${(data.greeting||'You make every day brighter just by being in it. I love you. 💕').replace(/\n/g,'<br>')}
+              </p>
+
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin:26px auto 0;max-width:220px;width:100%">
+                <span style="flex:1;height:1px;background:linear-gradient(to right,transparent,#e6b3c0)"></span>
+                <span style="font-size:14px;color:#c2708a">♥</span>
+                <span style="flex:1;height:1px;background:linear-gradient(to left,transparent,#e6b3c0)"></span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- GIFTS -->
-        <div id="sec-gifts" style="display:${activeTab==='gifts'?'grid':'none'};grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px" class="fade-in">
-          ${gifts.map((g,i) => `
-          <div style="perspective:600px;min-height:160px;cursor:pointer" onclick="flipGift(${i})">
-            <div id="gift-inner-${i}" class="gift-inner" style="position:relative;min-height:160px">
-              <div class="gift-front card" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center;border-radius:14px">
-                <span style="font-size:44px;display:block;margin-bottom:10px">${g.e}</span>
-                <div class="font-dancing" style="font-size:20px;color:#1a0f0a">Tap to open!</div>
-              </div>
-              <div class="gift-back card" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;border-radius:14px">
-                <span style="font-size:36px;margin-bottom:10px">${g.r}</span>
-                <p class="font-caveat" style="font-size:16px;color:#5a1f33;line-height:1.5">${g.msg}</p>
-              </div>
-            </div>
-          </div>`).join('')}
-        </div>
-
-        <!-- FLOWERS -->
+        <!-- BOUQUET -->
         <div id="sec-flowers" style="display:${activeTab==='flowers'?'block':'none'}" class="fade-in">
           <div class="card p-6 text-center mb-6" style="position:relative;overflow:hidden">
             <div style="position:absolute;top:0;left:10%;font-size:18px" class="petal">🌸</div>
@@ -744,9 +732,13 @@ function renderCardInto(mountId, data) {
             <div style="position:absolute;top:0;left:60%;font-size:20px" class="petal">🌸</div>
             <div style="position:absolute;top:0;left:85%;font-size:16px" class="petal">🌸</div>
             <div class="font-dancing" style="font-size:28px;color:#1a0f0a;margin-bottom:6px">A Bouquet, Just For You</div>
-            <div style="display:flex;justify-content:center">${bouquetSVG}</div>
-            <p class="font-caveat" style="font-size:18px;color:#5a1f33;line-height:1.6;max-width:480px;margin:10px auto 0">
-              Every flower in here is a reason I'm grateful for you, ${data.recipient}. 🌹
+            <div style="display:flex;justify-content:center">
+              <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExemdncHphaXN5Z2Rqc3IxeXBhZ29ub2hmc2hhcjZqYWZrd2F1ZTVpMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/a39kqrdmasEaQ/giphy.gif"
+                   alt="A vase overflowing with lilies, roses, and delphiniums with butterflies resting among the petals"
+                   style="max-width:100%;width:340px;border-radius:14px;box-shadow:0 8px 24px rgba(184,59,94,0.18)" />
+            </div>
+            <p class="font-caveat" style="font-size:18px;color:#5a1f33;line-height:1.6;max-width:480px;margin:14px auto 0">
+              A whole bouquet, painted just for this moment — soft pink lilies, blush roses, and sprigs of violet delphinium spilling out of the vase, with butterflies too enchanted to leave. That's what being with you feels like, ${data.recipient}: something that took its time to bloom, and turned out even more beautiful than I imagined. 🦋🌹
             </p>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
@@ -756,15 +748,6 @@ function renderCardInto(mountId, data) {
               <div class="font-dancing" style="font-size:22px;color:#1a0f0a;margin-bottom:6px">${f.n}</div>
               <div class="font-caveat" style="font-size:15px;color:#b8718a;line-height:1.5">${f.m}</div>
             </div>`).join('')}
-          </div>
-        </div>
-
-        <!-- SONG -->
-        <div id="sec-song" style="display:${activeTab==='song'?'flex':'none'};justify-content:center" class="fade-in">
-          <div class="card p-8 text-center" style="max-width:480px;width:100%">
-            <span style="font-size:42px;display:block;margin-bottom:12px" class="note-sway">🎵</span>
-            <div class="font-dancing" style="font-size:28px;color:#1a0f0a;margin-bottom:8px">A Song for You</div>
-            <div id="song-embed-slot" style="margin-top:16px"></div>
           </div>
         </div>
 
@@ -783,38 +766,11 @@ ${data.letter||'You are someone truly special. I love you.'}
     </div>`;
 
     bindCardNav();
-    flippedGifts.forEach(i => {
-      const el = document.getElementById(`gift-inner-${i}`);
-      if (el) el.style.transform = 'rotateY(180deg)';
-    });
-    if (activeTab === 'song') mountSongEmbed();
   }
 
   function bindCardNav() {
-    window.cardNav   = (p) => { cardPage = p; re(); };
-    window.switchTab = (t) => { activeTab = t; re(); };
-    window.flipGift  = (i) => {
-      flippedGifts.has(i) ? flippedGifts.delete(i) : flippedGifts.add(i);
-      const el = document.getElementById(`gift-inner-${i}`);
-      if (el) el.style.transform = flippedGifts.has(i) ? 'rotateY(180deg)' : '';
-    };
-  }
-
-  function mountSongEmbed() {
-    const slot = document.getElementById('song-embed-slot');
-    if (!slot || slot.dataset.loaded) return;
-    slot.dataset.loaded = '1';
-    if (!data.song) {
-      slot.innerHTML = `<p class="font-caveat" style="font-size:17px;color:#b8718a">Ask ${data.sender} which song they picked for you 🎶</p>`;
-      return;
-    }
-    if (data.song.includes('spotify')) {
-      slot.innerHTML = `<iframe src="${data.song.replace('open.spotify.com/track','open.spotify.com/embed/track')}" width="100%" height="80" style="border-radius:12px;border:none" allow="autoplay;clipboard-write;encrypted-media;fullscreen" loading="lazy"></iframe>`;
-    } else if (data.song.includes('youtu')) {
-      slot.innerHTML = `<iframe src="${data.song.replace('watch?v=','embed/').replace('youtu.be/','www.youtube.com/embed/')}" width="100%" height="200" style="border-radius:12px;border:none" allowfullscreen loading="lazy"></iframe>`;
-    } else {
-      slot.innerHTML = `<a href="${data.song}" target="_blank" style="color:#b83b5e;font-size:14px">🎵 Open Song</a>`;
-    }
+    window.cardNav       = (p) => { cardPage = p; re(); };
+    window.switchTab     = (t) => { activeTab = t; re(); };
   }
 
   render();
