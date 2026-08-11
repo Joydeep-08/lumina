@@ -147,6 +147,16 @@
   }
   #pg-loading.active { display: flex; }
 
+  /* MUSIC TOGGLE (fallback for browsers/players that still block autoplay after gesture) */
+  #music-toggle {
+    position: fixed; bottom: 18px; right: 18px; z-index: 500;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: #b83b5e; color: #fff; border: none; cursor: pointer;
+    font-size: 18px; display: none; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px rgba(184,59,94,0.4);
+  }
+  #music-toggle.show { display: flex; }
+
   /* scrollbar */
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:#fdf2f4; }
@@ -240,6 +250,9 @@ I love you, from the bottom of my heart.</textarea>
   <div id="card-mount"></div>
 </div>
 
+<!-- FLOATING MUSIC TOGGLE (shows if a song is set) -->
+<button id="music-toggle" onclick="toggleMusic()" title="Play/pause music">🔊</button>
+
 
 <!-- PAYMENT MODAL -->
 <div class="modal-bg hidden" id="pay-modal">
@@ -295,6 +308,8 @@ let state = {
   recipient: '', sender: '', greeting: '', song: '', letter: '',
   finalAmount: CONFIG.BASE, couponApplied: null, shareUrl: null,
 };
+
+let musicPlaying = true;
 
 /* ── PAGE ROUTER ── */
 function showLoading() {
@@ -551,6 +566,26 @@ function copyLink() {
   });
 }
 
+/* ── MUSIC TOGGLE (fallback control, since some players still block autoplay after gesture) ── */
+function toggleMusic() {
+  const frame = document.querySelector('#bg-song-embed iframe');
+  const btn = document.getElementById('music-toggle');
+  if (!frame) return;
+  musicPlaying = !musicPlaying;
+  btn.textContent = musicPlaying ? '🔊' : '🔇';
+  try {
+    // Spotify + YouTube both support postMessage play/pause commands
+    if (frame.src.includes('spotify')) {
+      frame.contentWindow.postMessage({ command: musicPlaying ? 'play' : 'pause' }, '*');
+    } else if (frame.src.includes('youtube')) {
+      frame.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: musicPlaying ? 'playVideo' : 'pauseVideo', args: [] }),
+        '*'
+      );
+    }
+  } catch (e) {}
+}
+
 
 /* ══════════════════════════════════════════════════════════
    CARD RENDERER
@@ -573,31 +608,51 @@ function renderCardInto(mountId, data) {
 
   function re() { mount.innerHTML = ''; render(); }
   function render() {
-    mountBackgroundSong();
     if (cardPage === 'landing') renderLanding();
     else if (cardPage === 'decline') renderDecline();
     else renderApp();
   }
 
-  /* ── BACKGROUND AUTOPLAY SONG (hidden, plays as soon as card opens) ── */
+  /* ── BACKGROUND SONG — mounted only after a real user gesture (clicking YES PLEASE),
+     so browser/YouTube/Spotify autoplay policies don't silently block it. ── */
   function mountBackgroundSong() {
     if (!data.song || document.getElementById('bg-song-embed')) return;
     let embedUrl = '';
+    let isYouTube = false;
+
     if (data.song.includes('spotify')) {
       const base = data.song.replace('open.spotify.com/track', 'open.spotify.com/embed/track');
       embedUrl = base + (base.includes('?') ? '&autoplay=1' : '?autoplay=1');
     } else if (data.song.includes('youtu')) {
+      isYouTube = true;
       let vid = '';
       if (data.song.includes('youtu.be/')) vid = data.song.split('youtu.be/')[1].split(/[?&]/)[0];
       else if (data.song.includes('watch?v=')) vid = data.song.split('watch?v=')[1].split('&')[0];
-      if (vid) embedUrl = `https://www.youtube.com/embed/${vid}?autoplay=1&playsinline=1&controls=0`;
+      // enablejsapi lets us send play/pause commands via postMessage from the toggle button
+      if (vid) embedUrl = `https://www.youtube.com/embed/${vid}?autoplay=1&playsinline=1&controls=0&enablejsapi=1&mute=0`;
     }
     if (!embedUrl) return;
+
     const wrap = document.createElement('div');
     wrap.id = 'bg-song-embed';
     wrap.style.cssText = 'position:fixed;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;bottom:0;right:0;';
     wrap.innerHTML = `<iframe src="${embedUrl}" width="1" height="1" allow="autoplay" frameborder="0"></iframe>`;
     document.body.appendChild(wrap);
+
+    musicPlaying = true;
+    const toggleBtn = document.getElementById('music-toggle');
+    if (toggleBtn) { toggleBtn.classList.add('show'); toggleBtn.textContent = '🔊'; }
+
+    // YouTube sometimes still needs an unmute nudge shortly after the iframe loads
+    if (isYouTube) {
+      setTimeout(() => {
+        try {
+          const f = wrap.querySelector('iframe');
+          f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+          f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+        } catch (e) {}
+      }, 700);
+    }
   }
 
   const flowerSVG = `<svg width="190" height="270" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
@@ -769,8 +824,13 @@ ${data.letter||'You are someone truly special. I love you.'}
   }
 
   function bindCardNav() {
-    window.cardNav       = (p) => { cardPage = p; re(); };
-    window.switchTab     = (t) => { activeTab = t; re(); };
+    window.cardNav = (p) => {
+      // Real user click → safe to start audio now (browser gesture requirement satisfied here)
+      if (p === 'app') mountBackgroundSong();
+      cardPage = p;
+      re();
+    };
+    window.switchTab = (t) => { activeTab = t; re(); };
   }
 
   render();
